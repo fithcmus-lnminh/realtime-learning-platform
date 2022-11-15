@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import * as yup from "yup";
 import "./Auth.scss";
 import kahoot from "../../assets/images/kahoot_logo.svg";
 import google from "../../assets/images/google.svg";
+import $axios from "../../utils/axios";
 
 const schema = yup
   .object({
@@ -37,6 +38,19 @@ function Login() {
     setIsLoading(false);
     reset();
   };
+
+  const fetchDta = async () => {
+    const res = await $axios.post("/api/auth/login", {
+      email: "lenhatminh11a1@gmail.com",
+      password: "123456"
+    });
+
+    console.log(res);
+  };
+
+  useEffect(() => {
+    fetchDta();
+  });
 
   return (
     <div className="auth">
