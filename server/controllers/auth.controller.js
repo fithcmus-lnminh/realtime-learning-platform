@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const { API_CODE_SUCCESS } = require("../constants");
+const { API_CODE_SUCCESS, API_CODE_NOTFOUND } = require("../constants");
 const User = require("../models/user.model");
 const generateToken = require("../utils/generateToken");
 
@@ -22,8 +22,11 @@ exports.login = async (req, res, next) => {
         }
       });
     } else {
-      res.status(401);
-      throw new Error("Invalid email or password");
+      res.status(401).json({
+        code: API_CODE_NOTFOUND,
+        message: "Invalid email or password",
+        data: null
+      });
     }
   } catch (err) {
     next(err);
@@ -57,8 +60,11 @@ exports.register = async (req, res, next) => {
         data: null
       });
     } else {
-      res.status(400);
-      throw new Error("Invalid user data");
+      res.status(401).json({
+        code: API_CODE_NOTFOUND,
+        message: "Invalid email or password",
+        data: null
+      });
     }
   } catch (err) {
     next(err);
