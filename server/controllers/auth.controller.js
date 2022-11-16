@@ -2,7 +2,8 @@ const bcrypt = require("bcryptjs");
 const {
   API_CODE_SUCCESS,
   API_CODE_NOTFOUND,
-  API_CODE_BY_SERVER
+  API_CODE_BY_SERVER,
+  API_CODE_VALIDATION_ERROR
 } = require("../constants");
 const User = require("../models/user.model");
 const generateToken = require("../utils/generateToken");
@@ -16,17 +17,25 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
-      res.json({
-        code: API_CODE_SUCCESS,
-        message: "Success",
-        data: {
-          _id: user._id,
-          email: user.email,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          token: generateToken(user._id, process.env.JWT_SECRET)
-        }
-      });
+      if (user.activated) {
+        return res.json({
+          code: API_CODE_SUCCESS,
+          message: "Success",
+          data: {
+            _id: user._id,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            token: generateToken(user._id, process.env.JWT_SECRET)
+          }
+        });
+      } else {
+        return res.json({
+          code: API_CODE_VALIDATION_ERROR,
+          message: "Account has not already been verified",
+          data: null
+        });
+      }
     } else {
       res.json({
         code: API_CODE_NOTFOUND,
