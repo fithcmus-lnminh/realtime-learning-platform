@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-// import axios from "axios";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -39,18 +38,16 @@ function Login() {
     reset();
   };
 
-  const fetchDta = async () => {
-    const res = await $axios.post("/api/auth/login", {
-      email: "lenhatminh11a1@gmail.com",
-      password: "123456"
-    });
-
-    console.log(res);
+  const loginWithGoogle = () => {
+    const clientURL =
+      process.env.NODE_ENV === "development" ? "http://localhost:5000" : "...";
+    window.open(`${clientURL}/auth/google`, "_self");
   };
 
-  useEffect(() => {
-    fetchDta();
-  });
+  const testHandler = async () => {
+    const res = await $axios.get("/api/auth/test");
+    console.log(res);
+  };
 
   return (
     <div className="auth">
@@ -73,7 +70,9 @@ function Login() {
                       type="text"
                       name="email"
                       placeholder="abc@example.com"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.password ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("email")}
                     />
@@ -109,9 +108,16 @@ function Login() {
                 <span className="auth__line-text">Or</span>
               </div>
               <div className="auth__btn_other">
-                <button type="button" className="auth__btn_social">
+                <button
+                  type="button"
+                  className="auth__btn_social"
+                  onClick={loginWithGoogle}
+                >
                   <img src={google} alt="" />
                   <div className="auth__btn-text">Continue with Google</div>
+                </button>
+                <button type="button" onClick={testHandler}>
+                  Test
                 </button>
               </div>
             </div>

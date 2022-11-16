@@ -9,6 +9,7 @@ const User = require("../models/user.model");
 const generateToken = require("../utils/generateToken");
 const sendMail = require("../utils/mailer");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -64,7 +65,8 @@ exports.register = async (req, res, next) => {
       first_name,
       last_name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      activated: false
     });
 
     if (user) {
@@ -116,4 +118,18 @@ exports.verifyEmail = async (req, res, next) => {
       data: null
     });
   }
+};
+
+exports.loginWithGoogle = (req, res, next) => {
+  passport.authenticate("google", {
+    scope: ["profile", "email"]
+  })(req, res, next);
+};
+
+exports.loginGoogleCallback = (req, res, next) => {
+  passport.authenticate("google", {
+    successRedirect: "http://localhost:3000/login",
+    failureRedirect: "/login",
+    session: true
+  })(req, res, next);
 };

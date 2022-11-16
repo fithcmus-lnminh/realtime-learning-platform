@@ -15,8 +15,7 @@ const userSchema = mongoose.Schema(
       unique: true
     },
     password: {
-      type: String,
-      required: true
+      type: String
     },
     first_name: {
       type: String,
@@ -26,10 +25,15 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true
     },
+    google_id: {
+      type: String
+    },
     activated: {
-      type: Boolean,
-      required: true,
-      default: false
+      type: Boolean
+    },
+    source: {
+      type: String,
+      default: "normal"
     }
   },
   {
