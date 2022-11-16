@@ -19,7 +19,7 @@ exports.login = async (req, res, next) => {
           email: user.email,
           first_name: user.first_name,
           last_name: user.last_name,
-          token: generateToken(user._id)
+          token: generateToken(user._id, process.env.JWT_SECRET)
         }
       });
     } else {
@@ -59,10 +59,22 @@ exports.register = async (req, res, next) => {
         message: "Success",
         data: null
       });
+      const token = generateToken(user._id, process.env.EMAIL_VERIFIY_SECRET);
+
+      const verifyLink =
+        (process.env.NODE_ENV === "development"
+          ? "http://localhost:3000/verify/"
+          : ".../verify/") + token;
+
       await sendMail(
         "lenhatminh11a1@gmail.com",
-        "Register successfully",
-        "<h1>You have register an account.</h1>"
+        "Verify Account",
+        `<div style="font-size: 16px">
+          <p>Hi ${user.first_name + " " + user.last_name},</p>
+          <p>Please click the link below to verify account on Realtime Learning Platform Website</p>
+          <a href="${verifyLink}">${verifyLink}</a>
+          <p>Thank you!</p>
+        </div>`
       );
     }
   } catch (err) {
