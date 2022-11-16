@@ -51,6 +51,9 @@ function Login() {
   useEffect(() => {
     fetchDta();
   });
+  useEffect(() => {
+    document.title = "Login Page";
+  }, []);
 
   return (
     <div className="auth">
@@ -73,7 +76,9 @@ function Login() {
                       type="text"
                       name="email"
                       placeholder="abc@example.com"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.email ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("email")}
                     />
@@ -85,7 +90,9 @@ function Login() {
                       type="password"
                       name="password"
                       placeholder="Enter a password"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.password ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("password")}
                     />
@@ -118,7 +125,7 @@ function Login() {
 
             <div className="auth__alert">
               Dont&apos;t have an account?{" "}
-              <NavLink to="/sign-up">Sign up</NavLink>
+              <NavLink to="/register">Register</NavLink>
             </div>
           </div>
         </div>
