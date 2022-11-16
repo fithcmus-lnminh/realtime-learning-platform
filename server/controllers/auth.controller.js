@@ -81,7 +81,7 @@ exports.register = async (req, res, next) => {
           : ".../verify/") + token;
 
       await sendMail(
-        "lenhatminh11a1@gmail.com",
+        user.email,
         "Verify Account",
         `<div style="font-size: 16px">
           <p>Hi ${user.first_name + " " + user.last_name},</p>
