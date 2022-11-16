@@ -1,8 +1,13 @@
 const bcrypt = require("bcryptjs");
-const { API_CODE_SUCCESS, API_CODE_NOTFOUND } = require("../constants");
+const {
+  API_CODE_SUCCESS,
+  API_CODE_NOTFOUND,
+  API_CODE_BY_SERVER
+} = require("../constants");
 const User = require("../models/user.model");
 const generateToken = require("../utils/generateToken");
 const sendMail = require("../utils/mailer");
+const jwt = require("jsonwebtoken");
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -79,5 +84,27 @@ exports.register = async (req, res, next) => {
     }
   } catch (err) {
     next(err);
+  }
+};
+
+exports.verifyEmail = async (req, res, next) => {
+  const token = req.params.token;
+
+  try {
+    const decoded = jwt.verify(token, process.env.EMAIL_VERIFIY_SECRET);
+
+    await User.updateOne({ _id: decoded.id, activated: true });
+
+    return res.json({
+      code: API_CODE_SUCCESS,
+      message: "Success",
+      data: null
+    });
+  } catch (err) {
+    res.json({
+      code: API_CODE_BY_SERVER,
+      message: "Invalid Token",
+      data: null
+    });
   }
 };

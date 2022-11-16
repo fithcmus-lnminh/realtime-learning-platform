@@ -32,7 +32,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "client": "PORT=3001 react-scripts start",
+    "client": "react-scripts start",
     "client-build": "react-scripts build",
     "server": "nodemon server/index",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
