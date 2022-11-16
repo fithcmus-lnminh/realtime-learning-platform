@@ -6,11 +6,11 @@ exports.notFound = (req, res, next) => {
   next(error);
 };
 
-exports.errorHandler = (err, req, res) => {
-  const statusCode = res.statusCode || 500;
-  res.status(statusCode).json({
+exports.errorHandler = (err, req, res, next) => {
+  res.json({
     code: API_CODE_FAIL,
     message: err.message,
     data: null
   });
+  next();
 };

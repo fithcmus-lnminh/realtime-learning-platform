@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const { API_CODE_SUCCESS, API_CODE_NOTFOUND } = require("../constants");
 const User = require("../models/user.model");
 const generateToken = require("../utils/generateToken");
+const sendMail = require("../utils/mailer");
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -22,7 +23,7 @@ exports.login = async (req, res, next) => {
         }
       });
     } else {
-      res.status(401).json({
+      res.json({
         code: API_CODE_NOTFOUND,
         message: "Invalid email or password",
         data: null
@@ -40,7 +41,6 @@ exports.register = async (req, res, next) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      res.status(400);
       throw new Error("Email has already exists");
     }
 
@@ -54,17 +54,16 @@ exports.register = async (req, res, next) => {
     });
 
     if (user) {
-      res.status(201).json({
+      res.json({
         code: API_CODE_SUCCESS,
         message: "Success",
         data: null
       });
-    } else {
-      res.status(401).json({
-        code: API_CODE_NOTFOUND,
-        message: "Invalid email or password",
-        data: null
-      });
+      await sendMail(
+        "lenhatminh11a1@gmail.com",
+        "Register successfully",
+        "<h1>You have register an account.</h1>"
+      );
     }
   } catch (err) {
     next(err);
