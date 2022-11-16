@@ -6,7 +6,7 @@ exports.notFound = (req, res, next) => {
   next(error);
 };
 
-exports.errorHandler = (err, req, res, next) => {
+exports.errorHandler = (err, req, res) => {
   const statusCode = res.statusCode || 500;
   res.status(statusCode).json({
     code: API_CODE_FAIL,
