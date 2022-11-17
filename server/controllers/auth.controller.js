@@ -139,8 +139,8 @@ exports.loginWithGoogle = (req, res, next) => {
 
 exports.loginGoogleCallback = (req, res, next) => {
   passport.authenticate("google", {
-    successRedirect: "http://localhost:3002/login",
-    failureRedirect: "/login",
+    successRedirect: "http://localhost:3000",
+    failureRedirect: "http://localhost:3000/login",
     session: true
   })(req, res, next);
 };
