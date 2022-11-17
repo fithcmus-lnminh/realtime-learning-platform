@@ -12,8 +12,6 @@ const Verify = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ success: true, data: "" });
 
-  console.log("params:", params);
-
   const onClickNavigate = () => {
     navigate("/login");
   };
