@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,7 +6,6 @@ import * as yup from "yup";
 import "./Auth.scss";
 import kahoot from "../../assets/images/kahoot_logo.svg";
 import google from "../../assets/images/google.svg";
-import $axios from "../../utils/axios";
 
 const schema = yup
   .object({
@@ -44,10 +43,9 @@ function Login() {
     window.open(`${clientURL}/auth/google`, "_self");
   };
 
-  const testHandler = async () => {
-    const res = await $axios.get("/api/auth/test");
-    console.log(res);
-  };
+  useEffect(() => {
+    document.title = "Login Page";
+  }, []);
 
   return (
     <div className="auth">
@@ -71,7 +69,7 @@ function Login() {
                       name="email"
                       placeholder="abc@example.com"
                       className={`auth__input ${
-                        errors.password ? "auth__input-error" : ""
+                        errors.email ? "auth__input-error" : ""
                       }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("email")}
@@ -84,7 +82,9 @@ function Login() {
                       type="password"
                       name="password"
                       placeholder="Enter a password"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.password ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("password")}
                     />
@@ -116,15 +116,12 @@ function Login() {
                   <img src={google} alt="" />
                   <div className="auth__btn-text">Continue with Google</div>
                 </button>
-                <button type="button" onClick={testHandler}>
-                  Test
-                </button>
               </div>
             </div>
 
             <div className="auth__alert">
               Dont&apos;t have an account?{" "}
-              <NavLink to="/sign-up">Sign up</NavLink>
+              <NavLink to="/register">Register</NavLink>
             </div>
           </div>
         </div>

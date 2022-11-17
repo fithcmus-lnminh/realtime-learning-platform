@@ -9,7 +9,7 @@ const passport = require("passport");
 const session = require("express-session");
 
 const app = express();
-app.use(cors({ origin: "http://localhost:3002", credentials: true }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 const port = process.env.PORT || 5000;
 
 app.use(express.json());

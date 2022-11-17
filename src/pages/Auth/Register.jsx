@@ -1,17 +1,19 @@
-import React, { useState } from "react";
-// import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import "./Auth.scss";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../redux/actions/userAction";
+
 import kahoot from "../../assets/images/kahoot_logo.svg";
 import google from "../../assets/images/google.svg";
+import "./Auth.scss";
 
 const schema = yup
   .object({
-    firstName: yup.string().required("Please enter your first name"),
-    lastName: yup.string().required("Please enter your last name"),
+    first_name: yup.string().required("Please enter your first name"),
+    last_name: yup.string().required("Please enter your last name"),
     email: yup
       .string()
       .required("Please enter your email address")
@@ -29,7 +31,9 @@ const schema = yup
   .required();
 
 function Register() {
-  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ success: true, data: "" });
   const {
     register,
     handleSubmit,
@@ -39,10 +43,21 @@ function Register() {
     resolver: yupResolver(schema)
   });
   const onSubmit = async (data) => {
-    console.log("submit data", data);
-    setIsLoading(false);
-    reset();
+    setLoading(true);
+    const { email, password, first_name, last_name } = data;
+    dispatch(
+      registerUser(
+        { email, password, first_name, last_name },
+        setLoading,
+        setMessage,
+        reset
+      )
+    );
   };
+
+  useEffect(() => {
+    document.title = "Register Page";
+  }, []);
 
   return (
     <div className="auth">
@@ -53,6 +68,15 @@ function Register() {
               <img src={kahoot} alt="" />
             </div>
             <h1 className="auth__title">Register</h1>
+            <p
+              className={`auth__message ${
+                message.success
+                  ? "auth__message-success"
+                  : "auth__message-failure"
+              }`}
+            >
+              {message.data}
+            </p>
             <div className="auth__content">
               <form
                 className="auth__form-wrapper"
@@ -63,25 +87,30 @@ function Register() {
                     <p className="auth__label">First name</p>
                     <input
                       type="text"
-                      name="firstName"
+                      name="first_name"
                       placeholder="Enter a first name"
-                      className="auth__input"
+                      className={`
+                      auth__input ${
+                        errors.first_name ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
-                      {...register("firstName")}
+                      {...register("first_name")}
                     />
-                    <p className="auth__error">{errors.firstName?.message}</p>
+                    <p className="auth__error">{errors.first_name?.message}</p>
                   </div>
                   <div className="auth__form-field">
                     <p className="auth__label">Last name</p>
                     <input
                       type="text"
-                      name="lastName"
+                      name="last_name"
                       placeholder="Enter a last name"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.last_name ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
-                      {...register("lastName")}
+                      {...register("last_name")}
                     />
-                    <p className="auth__error">{errors.lastName?.message}</p>
+                    <p className="auth__error">{errors.last_name?.message}</p>
                   </div>
                   <div className="auth__form-field">
                     <p className="auth__label">Email</p>
@@ -89,7 +118,9 @@ function Register() {
                       type="text"
                       name="email"
                       placeholder="abc@example.com"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.email ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("email")}
                     />
@@ -101,7 +132,9 @@ function Register() {
                       type="password"
                       name="password"
                       placeholder="Enter a password"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.password ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("password")}
                     />
@@ -113,7 +146,9 @@ function Register() {
                       type="password"
                       name="confirmPassword"
                       placeholder="Enter a confirm password"
-                      className="auth__input"
+                      className={`auth__input ${
+                        errors.confirmPassword ? "auth__input-error" : ""
+                      }`}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("confirmPassword")}
                     />
@@ -125,9 +160,9 @@ function Register() {
                     <button
                       type="submit"
                       className="auth__btn"
-                      disabled={isLoading}
+                      disabled={loading}
                     >
-                      {!isLoading ? "Register" : "Registering..."}
+                      Register
                     </button>
                   </div>
                 </div>

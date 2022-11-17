@@ -104,7 +104,9 @@ exports.verifyEmail = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.EMAIL_VERIFIY_SECRET);
 
-    await User.updateOne({ _id: decoded.id, activated: true });
+    const user = await User.updateOne({ _id: decoded.id }, { activated: true });
+
+    console.log(user);
 
     return res.json({
       code: API_CODE_SUCCESS,
