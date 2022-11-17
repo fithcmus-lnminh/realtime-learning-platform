@@ -1,11 +1,12 @@
 import axios from "axios";
-import keysToCamel from "./toCamel";
+import { toCamel } from "./normalizer";
 
 const API_URL =
   process.env.NODE_ENV === "development" ? "http://localhost:5000" : "/...";
 
 const Axios = axios.create({
   baseURL: API_URL,
+  withCredentials: true,
   headers: {
     Accept: "application/json"
   }
@@ -18,7 +19,6 @@ Axios.interceptors.request.use(
       /* eslint-disable no-param-reassign */
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    console.log(config.headers);
     return config;
   },
   (error) => {
@@ -28,7 +28,7 @@ Axios.interceptors.request.use(
 
 Axios.interceptors.response.use(
   (response) => {
-    const res = keysToCamel(response);
+    const res = toCamel(response);
     return res.data;
   },
   (error) => {

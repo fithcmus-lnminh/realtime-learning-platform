@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
+const { API_CODE_UNAUTHORIZED } = require("../constants");
 const User = require("../models/user.model");
 
 exports.isAuth = async (req, res, next) => {
   try {
-    console.log(req.user);
     if (req.user) {
       next();
     } else {
@@ -17,9 +17,19 @@ exports.isAuth = async (req, res, next) => {
 
         req.user = await User.findById(decoded.id).select("-password");
         next();
-      } else throw new Error("Not authorized!", 401);
+      } else {
+        return res.status(401).json({
+          code: API_CODE_UNAUTHORIZED,
+          message: "Not authorized",
+          data: null
+        });
+      }
     }
   } catch (err) {
-    next(err);
+    res.status(401).json({
+      code: API_CODE_UNAUTHORIZED,
+      message: err.message,
+      data: null
+    });
   }
 };

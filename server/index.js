@@ -6,10 +6,10 @@ const { errorHandler } = require("./middlewares/error");
 const authRouter = require("./routes/auth.route");
 const OAuth2Router = require("./routes/oauth2.route");
 const passport = require("passport");
-const session = require("cookie-session");
+const session = require("express-session");
 
 const app = express();
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: "http://localhost:3002", credentials: true }));
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -18,9 +18,9 @@ connectDb();
 
 app.use(
   session({
-    maxAge: 86400000,
-    keys: ["secret"],
-    secure: true
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true
   })
 );
 app.use(passport.initialize());

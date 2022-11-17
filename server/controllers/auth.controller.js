@@ -120,6 +120,15 @@ exports.verifyEmail = async (req, res, next) => {
   }
 };
 
+exports.logout = (req, res, next) => {
+  delete req.user;
+  return res.json({
+    code: 0,
+    message: "Success",
+    data: null
+  });
+};
+
 exports.loginWithGoogle = (req, res, next) => {
   passport.authenticate("google", {
     scope: ["profile", "email"]
@@ -128,7 +137,7 @@ exports.loginWithGoogle = (req, res, next) => {
 
 exports.loginGoogleCallback = (req, res, next) => {
   passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/login",
+    successRedirect: "http://localhost:3002/login",
     failureRedirect: "/login",
     session: true
   })(req, res, next);
