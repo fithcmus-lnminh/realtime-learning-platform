@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./Auth.scss";
 import kahoot from "../../assets/images/kahoot_logo.svg";
 import google from "../../assets/images/google.svg";
+import { loginUser } from "../../redux/actions/userAction";
 
 const schema = yup
   .object({
@@ -21,8 +23,10 @@ const schema = yup
   .required();
 
 function Login() {
-  const [isLoading, setIsLoading] = useState(false);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ success: true, data: "" });
   const {
     register,
     handleSubmit,
@@ -32,15 +36,8 @@ function Login() {
     resolver: yupResolver(schema)
   });
   const onSubmit = async (data) => {
-    console.log("submit data", data);
-    setIsLoading(false);
-    reset();
-  };
-
-  const loginWithGoogle = () => {
-    const clientURL =
-      process.env.NODE_ENV === "development" ? "http://localhost:5000" : "...";
-    window.open(`${clientURL}/auth/google`, "_self");
+    setLoading(true);
+    dispatch(loginUser(data, setLoading, setMessage, reset, navigate));
   };
 
   useEffect(() => {
@@ -56,6 +53,15 @@ function Login() {
               <img src={kahoot} alt="" />
             </div>
             <h1 className="auth__title">Log in</h1>
+            <p
+              className={`auth__message ${
+                message.success
+                  ? "auth__message-success"
+                  : "auth__message-failure"
+              }`}
+            >
+              {message.data}
+            </p>
             <div className="auth__content">
               <form
                 className="auth__form-wrapper"
@@ -68,9 +74,7 @@ function Login() {
                       type="text"
                       name="email"
                       placeholder="abc@example.com"
-                      className={`auth__input ${
-                        errors.email ? "auth__input-error" : ""
-                      }`}
+                      className="auth__input"
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("email")}
                     />
@@ -82,9 +86,7 @@ function Login() {
                       type="password"
                       name="password"
                       placeholder="Enter a password"
-                      className={`auth__input ${
-                        errors.password ? "auth__input-error" : ""
-                      }`}
+                      className="auth__input"
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("password")}
                     />
@@ -94,9 +96,9 @@ function Login() {
                     <button
                       type="submit"
                       className="auth__btn"
-                      disabled={isLoading}
+                      disabled={loading}
                     >
-                      {!isLoading ? "Login" : "Login..."}
+                      Login
                     </button>
                   </div>
                 </div>
@@ -108,11 +110,7 @@ function Login() {
                 <span className="auth__line-text">Or</span>
               </div>
               <div className="auth__btn_other">
-                <button
-                  type="button"
-                  className="auth__btn_social"
-                  onClick={loginWithGoogle}
-                >
+                <button type="button" className="auth__btn_social">
                   <img src={google} alt="" />
                   <div className="auth__btn-text">Continue with Google</div>
                 </button>
@@ -121,7 +119,7 @@ function Login() {
 
             <div className="auth__alert">
               Dont&apos;t have an account?{" "}
-              <NavLink to="/register">Register</NavLink>
+              <NavLink to="/sign-up">Sign up</NavLink>
             </div>
           </div>
         </div>
