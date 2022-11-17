@@ -19,6 +19,7 @@ passport.use(
       callbackURL: "/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
       const googleId = profile.id;
       const email = profile.emails[0].value;
       const firstName = profile.name.givenName;

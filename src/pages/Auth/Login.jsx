@@ -44,6 +44,12 @@ function Login() {
     document.title = "Login Page";
   }, []);
 
+  const handleGoogleLogin = () => {
+    const clientURL =
+      process.env.NODE_ENV === "development" ? "http://localhost:5000" : "...";
+    window.open(`${clientURL}/auth/google`, "_self");
+  };
+
   return (
     <div className="auth">
       <div className="auth__wrapper">
@@ -110,7 +116,11 @@ function Login() {
                 <span className="auth__line-text">Or</span>
               </div>
               <div className="auth__btn_other">
-                <button type="button" className="auth__btn_social">
+                <button
+                  type="button"
+                  className="auth__btn_social"
+                  onClick={handleGoogleLogin}
+                >
                   <img src={google} alt="" />
                   <div className="auth__btn-text">Continue with Google</div>
                 </button>
@@ -119,7 +129,7 @@ function Login() {
 
             <div className="auth__alert">
               Dont&apos;t have an account?{" "}
-              <NavLink to="/sign-up">Sign up</NavLink>
+              <NavLink to="/register">Sign up</NavLink>
             </div>
           </div>
         </div>
