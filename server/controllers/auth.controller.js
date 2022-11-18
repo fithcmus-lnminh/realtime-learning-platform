@@ -16,9 +16,12 @@ exports.login = async (req, res, next) => {
 
   try {
     const user = await User.findOne({ email });
+    const token = generateToken(user._id, process.env.JWT_SECRET);
 
     if (user && (await user.comparePassword(password))) {
       if (user.activated) {
+        user.token = token;
+        user.save();
         return res.json({
           code: API_CODE_SUCCESS,
           message: "Success",
@@ -27,7 +30,7 @@ exports.login = async (req, res, next) => {
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
-            token: generateToken(user._id, process.env.JWT_SECRET)
+            token
           }
         });
       } else {
@@ -66,6 +69,7 @@ exports.register = async (req, res, next) => {
       last_name,
       email,
       password: hashedPassword,
+      token: null,
       activated: false
     });
 
@@ -120,7 +124,13 @@ exports.verifyEmail = async (req, res, next) => {
   }
 };
 
-exports.logout = (req, res, next) => {
+exports.logout = async (req, res, next) => {
+  console.log(req.user);
+  const user = await User.findById(req.user._id);
+  if (user.token) {
+    user.token = null;
+    user.save();
+  }
   delete req.user;
   return res.json({
     code: 0,
