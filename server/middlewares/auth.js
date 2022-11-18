@@ -4,7 +4,6 @@ const User = require("../models/user.model");
 
 exports.isAuth = async (req, res, next) => {
   try {
-    console.log(req.user);
     if (req.user) {
       next();
     } else {

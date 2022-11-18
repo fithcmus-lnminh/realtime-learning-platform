@@ -13,8 +13,5 @@ router.post("/login", login);
 router.post("/logout", isAuth, logout);
 router.post("/register", register);
 router.post("/verify/:token", verifyEmail);
-router.get("/test", isAuth, (req, res) => {
-  res.json(req.user);
-});
 
 module.exports = router;
