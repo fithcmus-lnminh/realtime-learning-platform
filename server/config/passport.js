@@ -34,6 +34,7 @@ passport.use(
           first_name: firstName,
           last_name: lastName,
           activated: true,
+          token: null,
           source
         });
         return done(null, newUser);
