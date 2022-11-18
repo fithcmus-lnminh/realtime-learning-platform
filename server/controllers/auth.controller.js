@@ -106,8 +106,6 @@ exports.verifyEmail = async (req, res, next) => {
 
     const user = await User.updateOne({ _id: decoded.id }, { activated: true });
 
-    console.log(user);
-
     return res.json({
       code: API_CODE_SUCCESS,
       message: "Success",
@@ -116,7 +114,7 @@ exports.verifyEmail = async (req, res, next) => {
   } catch (err) {
     res.json({
       code: API_CODE_BY_SERVER,
-      message: "Invalid Token",
+      message: " ",
       data: null
     });
   }
@@ -140,7 +138,7 @@ exports.loginWithGoogle = (req, res, next) => {
 exports.loginGoogleCallback = (req, res, next) => {
   passport.authenticate("google", {
     successRedirect: "http://localhost:3000",
-    failureRedirect: "http://localhost:3000/login",
+    failureRedirect: "http://localhost:3000/verify/google-login-error",
     session: true
   })(req, res, next);
 };

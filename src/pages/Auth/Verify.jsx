@@ -18,8 +18,13 @@ const Verify = () => {
 
   const verifyAccount = () => {
     setLoading(true);
-    console.log(params.token);
-    dispatch(verifyUser(params.token, setLoading, setMessage));
+    if (params.token === "google-login-error") {
+      setLoading(false);
+      setMessage({
+        success: false,
+        data: "Can't login with Google. This issue happens due to internal error or you have previously signed up with a different signin method."
+      });
+    } else dispatch(verifyUser(params.token, setLoading, setMessage));
   };
 
   useEffect(() => {
