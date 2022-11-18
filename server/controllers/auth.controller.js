@@ -80,6 +80,8 @@ exports.register = async (req, res, next) => {
         data: null
       });
       const token = generateToken(user._id, process.env.EMAIL_VERIFIY_SECRET);
+      user.token = token;
+      user.save();
 
       const verifyLink =
         (process.env.NODE_ENV === "development"
@@ -108,24 +110,34 @@ exports.verifyEmail = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.EMAIL_VERIFIY_SECRET);
 
-    const user = await User.updateOne({ _id: decoded.id }, { activated: true });
+    const user = await User.findById(decoded.id);
 
-    return res.json({
-      code: API_CODE_SUCCESS,
-      message: "Success",
-      data: null
-    });
+    if (user.token) {
+      user.token = null;
+      user.activated = true;
+      user.save();
+      return res.json({
+        code: API_CODE_SUCCESS,
+        message: "Success",
+        data: null
+      });
+    } else {
+      res.json({
+        code: API_CODE_BY_SERVER,
+        message: "Token has been expired",
+        data: null
+      });
+    }
   } catch (err) {
     res.json({
       code: API_CODE_BY_SERVER,
-      message: " ",
+      message: "Invalid Token",
       data: null
     });
   }
 };
 
 exports.logout = async (req, res, next) => {
-  console.log(req.user);
   const user = await User.findById(req.user._id);
   if (user.token) {
     user.token = null;
