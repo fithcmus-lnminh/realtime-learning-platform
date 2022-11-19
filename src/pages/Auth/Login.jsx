@@ -41,7 +41,7 @@ function Login() {
   };
 
   useEffect(() => {
-    document.title = "Login Page";
+    document.title = "Login - RLP";
   }, []);
 
   const handleGoogleLogin = () => {

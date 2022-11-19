@@ -5,6 +5,7 @@ const connectDb = require("./config/db");
 const { errorHandler } = require("./middlewares/error");
 const authRouter = require("./routes/auth.route");
 const OAuth2Router = require("./routes/oauth2.route");
+const userRouter = require("./routes/user.route");
 const passport = require("passport");
 const session = require("express-session");
 
@@ -30,6 +31,7 @@ require("./config/passport");
 
 app.use("/api/auth", authRouter);
 app.use("/auth/google", OAuth2Router);
+app.use("/api/user", userRouter);
 
 app.use(errorHandler);
 

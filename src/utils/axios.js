@@ -32,7 +32,11 @@ Axios.interceptors.response.use(
     return res.data;
   },
   (error) => {
-    console.log(error);
+    if (error.response?.status === 401) {
+      /* eslint-disable no-return-assign */
+      return (window.location.href = "/login");
+    }
+    return Promise.reject(error);
   }
 );
 

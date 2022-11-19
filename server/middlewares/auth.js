@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { API_CODE_UNAUTHORIZED } = require("../constants");
+const { API_CODE_UNAUTHORIZED, API_CODE_FAIL } = require("../constants");
 const User = require("../models/user.model");
 
 exports.isAuth = async (req, res, next) => {
@@ -36,8 +36,8 @@ exports.isAuth = async (req, res, next) => {
       }
     }
   } catch (err) {
-    res.status(401).json({
-      code: API_CODE_UNAUTHORIZED,
+    res.json({
+      code: API_CODE_FAIL,
       message: err.message,
       data: null
     });
