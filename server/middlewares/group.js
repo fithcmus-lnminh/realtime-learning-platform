@@ -21,7 +21,7 @@ exports.isInGroup = async (req, res, next) => {
       });
     }
   } catch (err) {
-    res.status(401).json({
+    res.status(403).json({
       code: API_CODE_PERMISSION_DENIED,
       message: err.message,
       data: null
@@ -33,7 +33,7 @@ exports.isGroupOwner = async (req, res, next) => {
   if (req.groupUser.role === "Owner") {
     next();
   } else {
-    res.status(401).json({
+    res.status(403).json({
       code: API_CODE_PERMISSION_DENIED,
       message: "Permission denied",
       data: null
