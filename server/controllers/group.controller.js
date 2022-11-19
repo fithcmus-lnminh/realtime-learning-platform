@@ -55,10 +55,10 @@ exports.createGroup = async (req, res) => {
         role: groupUser.role
       }
     });
-  } catch (error) {
+  } catch (err) {
     res.json({
       code: API_CODE_BY_SERVER,
-      message: error.message,
+      message: err.message,
       data: null
     });
   }
@@ -108,7 +108,7 @@ exports.deleteGroup = async (req, res) => {
   } catch (err) {
     res.json({
       code: API_CODE_BY_SERVER,
-      message: error.message,
+      message: err.message,
       data: null
     });
   }

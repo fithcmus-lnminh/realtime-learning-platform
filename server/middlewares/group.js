@@ -1,5 +1,5 @@
 const GroupUser = require("../models/groupUser.model");
-const { API_CODE_UNAUTHORIZED } = require("../constants");
+const { API_CODE_PERMISSION_DENIED } = require("../constants");
 
 exports.isInGroup = async (req, res, next) => {
   const { group_id } = req.params;
@@ -14,15 +14,15 @@ exports.isInGroup = async (req, res, next) => {
       req.groupUser = groupUser;
       next();
     } else {
-      res.status(401).json({
-        code: API_CODE_UNAUTHORIZED,
-        message: "Not authorized",
+      res.status(403).json({
+        code: API_CODE_PERMISSION_DENIED,
+        message: "Permission denied",
         data: null
       });
     }
   } catch (err) {
     res.status(401).json({
-      code: API_CODE_UNAUTHORIZED,
+      code: API_CODE_PERMISSION_DENIED,
       message: err.message,
       data: null
     });
@@ -34,8 +34,8 @@ exports.isGroupOwner = async (req, res, next) => {
     next();
   } else {
     res.status(401).json({
-      code: API_CODE_UNAUTHORIZED,
-      message: "Not authorized",
+      code: API_CODE_PERMISSION_DENIED,
+      message: "Permission denied",
       data: null
     });
   }
