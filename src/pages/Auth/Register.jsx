@@ -56,7 +56,7 @@ function Register() {
   };
 
   useEffect(() => {
-    document.title = "Register Page";
+    document.title = "Register - RLP";
   }, []);
 
   return (

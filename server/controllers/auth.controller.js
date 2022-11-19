@@ -144,6 +144,7 @@ exports.logout = async (req, res, next) => {
     user.save();
   }
   delete req.user;
+  req.logout();
   return res.json({
     code: 0,
     message: "Success",
@@ -161,6 +162,6 @@ exports.loginGoogleCallback = (req, res, next) => {
   passport.authenticate("google", {
     successRedirect: "http://localhost:3000",
     failureRedirect: "http://localhost:3000/verify/google-login-error",
-    session: true
+    keepSessionInfo: true
   })(req, res, next);
 };

@@ -1,13 +1,21 @@
-import { LOGIN_SUCCESS } from "../../constants/userConstants";
+import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../../constants/userConstants";
+
+const initialState = {
+  userInfo: localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : {}
+};
 
 /* eslint-disable import/prefer-default-export */
-export const userReducer = (state = {}, action = {}) => {
+export const userReducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        user: action.payload
+        userInfo: action.payload
       };
+    case LOGOUT_SUCCESS:
+      return {};
     default:
       return state;
   }

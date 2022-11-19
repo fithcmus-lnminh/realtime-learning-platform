@@ -1,0 +1,21 @@
+.topbar {
+  &__container {
+    display: flex;
+    justify-content: flex-end;
+    cursor: default;
+  }
+
+  &__content {
+    background-color: #fff;
+    padding: 4px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+    border-radius: 16px;
+  }
+
+  &__icon {
+    color: #05a3e8;
+  }
+}

@@ -1,5 +1,5 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
-import { LOGIN_SUCCESS } from "../../constants/userConstants";
+import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../../constants/userConstants";
 import $axios from "../../utils/axios";
 
 /* eslint-disable import/prefer-default-export */
@@ -49,7 +49,8 @@ export const loginUser =
           type: LOGIN_SUCCESS,
           payload: res.data
         });
-        localStorage.setItem("accessToken", JSON.stringify(res.data.token));
+        localStorage.setItem("accessToken", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data));
         navigate("/");
       } else {
         setLoading(false);
@@ -91,5 +92,43 @@ export const verifyUser = (token, setLoading, setMessage) => async () => {
       success: false,
       data: error.response.data.message
     });
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const getCurrentUser = () => async (dispatch) => {
+  try {
+    const res = await $axios.get("/api/user/current_user");
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data
+      });
+      localStorage.setItem("user", JSON.stringify(res.data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const logoutUser = (setLoading, navigate) => async (dispatch) => {
+  try {
+    const res = await $axios.post("/api/auth/logout");
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      setLoading(false);
+      dispatch({
+        type: LOGOUT_SUCCESS
+      });
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      navigate("/login");
+    }
+  } catch (error) {
+    setLoading(false);
   }
 };
