@@ -77,7 +77,7 @@ function Profile() {
           <TextField
             className="profile__text-field"
             variant="standard"
-            value={userInfo?.createdAt || ""}
+            value={new Date(userInfo?.createdAt).toLocaleString("en") || ""}
             InputProps={{
               readOnly: true,
               style: {
