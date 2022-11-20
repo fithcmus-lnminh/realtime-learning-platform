@@ -1,7 +1,5 @@
-import store from "../redux/store";
-
 /* eslint-disable import/prefer-default-export */
 export const isAuthenticated = () => {
-  const user = store.getState().user?.userInfo;
+  const user = localStorage.getItem("user");
   return user && Object.keys(user).length > 0;
 };

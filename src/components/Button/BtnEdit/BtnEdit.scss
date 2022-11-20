@@ -1,0 +1,15 @@
+.button {
+  &__edit {
+    background-color: #3a4856;
+    border: none;
+    padding: 8px;
+    border-radius: 5px;
+  }
+}
+
+.icon {
+  &__edit {
+    color: #fff;
+    font-size: 12px;
+  }
+}
