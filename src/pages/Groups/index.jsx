@@ -12,6 +12,8 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { getAllGroups } from "../../redux/actions/groupAction";
 import Layout from "../Layout";
 import GroupAddNew from "./GroupAddNew/GroupAddNew";
@@ -20,13 +22,20 @@ import "./Groups.scss";
 function Groups() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const groups = useSelector((state) => state.group.groups);
   const [open, setOpen] = useState(false);
+
   const handleClickOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const navigateToGroupDetail = (id) => {
+    navigate(`/group/${id}`);
   };
 
   useEffect(() => {
@@ -39,14 +48,27 @@ function Groups() {
   return (
     <Layout itemId={2}>
       <div className="group">
-        <Button variant="contained" color="primary" onClick={handleClickOpen}>
+        <Button
+          className="button__add-group"
+          sx={{ fontSize: 18 }}
+          variant="contained"
+          color="primary"
+          onClick={handleClickOpen}
+        >
+          <AiOutlineUsergroupAdd />
           Create Group
         </Button>
         {groups.length > 0 ? (
           <Box sx={{ width: 1 }} className="group__box">
             <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={3}>
               {groups.map((group) => (
-                <Box gridColumn="span 3" key={group.id}>
+                <Box
+                  gridColumn="span 3"
+                  key={group.id}
+                  onClick={() => {
+                    navigateToGroupDetail(group.id);
+                  }}
+                >
                   <Card sx={{ maxWidth: "100%" }}>
                     <CardHeader
                       action={
