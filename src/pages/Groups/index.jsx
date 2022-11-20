@@ -46,7 +46,7 @@ function Groups() {
           <Box sx={{ width: 1 }} className="group__box">
             <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={3}>
               {groups.map((group) => (
-                <Box gridColumn="span 3">
+                <Box gridColumn="span 3" key={group.id}>
                   <Card sx={{ maxWidth: "100%" }}>
                     <CardHeader
                       action={

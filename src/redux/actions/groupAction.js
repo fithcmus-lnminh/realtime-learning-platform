@@ -43,8 +43,6 @@ export const createGroup =
           open: true
         });
 
-        // console.log("getState:", getState);
-
         // dispatch({
         //   type: GET_ALL_GROUPS_SUCCESS,
         //   payload: {
