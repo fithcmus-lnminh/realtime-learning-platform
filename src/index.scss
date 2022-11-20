@@ -8,6 +8,17 @@
   }
 }
 
+.container {
+  margin-left: 250px;
+  padding: 16px 48px 0;
+}
+
+.common {
+  &__title {
+    margin: 24px 0 12px 0;
+  }
+}
+
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
