@@ -22,6 +22,7 @@
         "endOfLine": "auto"
       }
     ],
-    "camelcase": ["off"]
+    "camelcase": ["off"],
+    "import/no-unresolved": "off"
   }
 }
