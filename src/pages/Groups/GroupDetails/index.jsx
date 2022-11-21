@@ -19,14 +19,51 @@ function GroupDetails() {
     <Layout itemId={2}>
       <Box
         sx={{ width: "100%", typography: "body1" }}
-        className="tab-group__container"
+        className="tab__container"
       >
         <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleChange} aria-label="lab API tabs example">
-              <Tab label="Information" value="info" />
-              <Tab label="People" value="people" />
-              <Tab label="More" value="more" />
+          <Box sx={{ borderBottom: 1, borderColor: "divider", fontSize: 18 }}>
+            <TabList
+              textColor="secondary"
+              indicatorColor="secondary"
+              onChange={handleChange}
+            >
+              <Tab
+                label={
+                  <span
+                    className={`tab__label ${
+                      value === "info" ? "tab__active" : ""
+                    }`}
+                  >
+                    Information
+                  </span>
+                }
+                value="info"
+              />
+              <Tab
+                label={
+                  <span
+                    className={`tab__label ${
+                      value === "people" ? "tab__active" : ""
+                    }`}
+                  >
+                    People
+                  </span>
+                }
+                value="people"
+              />
+              <Tab
+                label={
+                  <span
+                    className={`tab__label ${
+                      value === "more" ? "tab__active" : ""
+                    }`}
+                  >
+                    More
+                  </span>
+                }
+                value="more"
+              />
             </TabList>
           </Box>
           <TabPanel value="info">Group #{groupId}</TabPanel>
