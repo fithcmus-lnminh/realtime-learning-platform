@@ -21,7 +21,7 @@ exports.login = async (req, res, next) => {
     if (user && (await user.comparePassword(password))) {
       if (user.activated) {
         user.token = token;
-        user.save();
+        await user.save();
         return res.json({
           code: API_CODE_SUCCESS,
           message: "Success",
@@ -81,7 +81,7 @@ exports.register = async (req, res, next) => {
       });
       const token = generateToken(user._id, process.env.EMAIL_VERIFIY_SECRET);
       user.token = token;
-      user.save();
+      await user.save();
 
       const verifyLink =
         (process.env.NODE_ENV === "development"
@@ -115,7 +115,7 @@ exports.verifyEmail = async (req, res, next) => {
     if (user.token) {
       user.token = null;
       user.activated = true;
-      user.save();
+      await user.save();
       return res.json({
         code: API_CODE_SUCCESS,
         message: "Success",
@@ -141,7 +141,7 @@ exports.logout = async (req, res, next) => {
   const user = await User.findById(req.user._id);
   if (user.token) {
     user.token = null;
-    user.save();
+    await user.save();
   }
   delete req.user;
   return res.json({
