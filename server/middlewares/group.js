@@ -40,3 +40,27 @@ exports.isGroupOwner = async (req, res, next) => {
     });
   }
 };
+
+exports.isFullMember = async (req, res, next) => {
+  const { group_id } = req.params;
+
+  try {
+    group = await Group.findById(group_id);
+
+    if (await group.isFullMember()) {
+      res.status(403).json({
+        code: API_CODE_PERMISSION_DENIED,
+        message: "Group is full",
+        data: null
+      });
+    } else {
+      next();
+    }
+  } catch (err) {
+    res.status(401).json({
+      code: API_CODE_PERMISSION_DENIED,
+      message: err.message,
+      data: null
+    });
+  }
+};

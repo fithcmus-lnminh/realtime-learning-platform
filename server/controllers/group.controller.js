@@ -3,25 +3,32 @@ const GroupUser = require("../models/groupUser.model");
 const { API_CODE_SUCCESS, API_CODE_BY_SERVER } = require("../constants");
 
 exports.getGroups = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, role } = req.query;
 
   try {
-    const groups = await GroupUser.find({ user_id: req.user._id })
-      .populate("group_id", "name maximum_members")
+    const groups = await GroupUser.find(
+      {
+        user_id: req.user._id,
+        role: role ? { $in: role } : { $ne: null }
+      },
+      { _id: 0, __v: 0, user_id: 0 }
+    )
+      .populate("group_id", "name maximum_members description")
       .skip((page - 1) * limit)
       .limit(limit * 1);
 
-    const totalPages =
-      ((await GroupUser.countDocuments({ user_id: req.user._id })) +
-        limit -
-        1) /
-      limit;
+    const totalGroups = await GroupUser.countDocuments({
+      user_id: req.user._id
+    });
+
+    const totalPages = Math.ceil(totalGroups / limit);
 
     res.json({
       code: API_CODE_SUCCESS,
       message: "Success",
       data: {
         groups,
+        totalGroups,
         totalPages
       }
     });
@@ -35,10 +42,10 @@ exports.getGroups = async (req, res) => {
 };
 
 exports.createGroup = async (req, res) => {
-  const { name, maximum_members } = req.body;
+  const { name, description, maximum_members } = req.body;
 
   try {
-    const group = await Group.create({ name, maximum_members });
+    const group = await Group.create({ name, description, maximum_members });
     const groupUser = await GroupUser.create({
       group_id: group._id,
       user_id: req.user._id,
@@ -66,7 +73,7 @@ exports.createGroup = async (req, res) => {
 
 exports.updateGroup = async (req, res) => {
   const { group_id } = req.params;
-  const { name, maximum_members } = req.body;
+  const { name, description, maximum_members } = req.body;
 
   try {
     const group = await Group.findByIdAndUpdate(
