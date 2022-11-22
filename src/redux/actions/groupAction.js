@@ -10,7 +10,9 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
-      setLoading(false);
+      if (setLoading) {
+        setLoading(false);
+      }
       dispatch({
         type: GET_ALL_GROUPS_SUCCESS,
         payload: {
@@ -19,10 +21,15 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
         }
       });
     } else {
-      setLoading(false);
+      /* eslint-disable no-lonely-if */
+      if (setLoading) {
+        setLoading(false);
+      }
     }
   } catch (error) {
-    setLoading(false);
+    if (setLoading) {
+      setLoading(false);
+    }
   }
 };
 

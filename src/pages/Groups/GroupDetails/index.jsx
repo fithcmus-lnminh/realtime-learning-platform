@@ -4,6 +4,7 @@ import { Tab, Box } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import Layout from "../../Layout";
 import "./GroupDetails.scss";
+import TabMember from "./TabMember";
 
 function GroupDetails() {
   const [value, setValue] = React.useState("info");
@@ -67,7 +68,9 @@ function GroupDetails() {
             </TabList>
           </Box>
           <TabPanel value="info">Group #{groupId}</TabPanel>
-          <TabPanel value="people">Item Two</TabPanel>
+          <TabPanel value="people">
+            <TabMember groupId={groupId} />
+          </TabPanel>
           <TabPanel value="more">Item Three</TabPanel>
         </TabContext>
       </Box>
