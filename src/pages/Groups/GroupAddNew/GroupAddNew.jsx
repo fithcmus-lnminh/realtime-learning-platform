@@ -1,20 +1,12 @@
 import {
   Alert as MuiAlert,
-  Dialog,
-  DialogActions,
   DialogContent,
-  DialogTitle,
   FormHelperText,
   Grid,
-  IconButton,
   Snackbar,
   TextField,
   Stack
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import { styled } from "@mui/material/styles";
-import CloseIcon from "@mui/icons-material/Close";
-import SendIcon from "@mui/icons-material/Send";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
@@ -22,42 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./GroupAddNew.scss";
 import { createGroup } from "../../../redux/actions/groupAction";
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-    width: "600px"
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1)
-  }
-}));
-
-/* eslint-disable react/prop-types */
-function BootstrapDialogTitle(props) {
-  const { children, onClose, ...other } = props;
-
-  return (
-    /* eslint-disable react/jsx-props-no-spreading */
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-      {children}
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500]
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </DialogTitle>
-  );
-}
+import Modal from "../../../components/Modal";
 
 const schema = yup
   .object({
@@ -72,10 +29,12 @@ const schema = yup
   .required();
 
 const Alert = React.forwardRef(function Alert(props, ref) {
+  /* eslint-disable react/jsx-props-no-spreading */
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-function GroupAddNew({ open, handleClose }) {
+function GroupAddNew(prop) {
+  const { open, handleClose } = prop;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
@@ -92,6 +51,11 @@ function GroupAddNew({ open, handleClose }) {
   } = useForm({
     resolver: yupResolver(schema)
   });
+
+  const closeModalHandler = () => {
+    handleClose();
+    reset();
+  };
 
   const onSubmit = async (data) => {
     dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
@@ -127,93 +91,66 @@ function GroupAddNew({ open, handleClose }) {
         </Snackbar>
       </Stack>
 
-      <BootstrapDialog
-        onClose={() => {
-          handleClose();
-          reset();
-        }}
-        aria-labelledby="customized-dialog-title"
-        open={open}
+      <Modal
+        title="Create a group"
+        loading={loading}
+        actions={["Cancel", "OK"]}
+        actionText="Create"
+        show={open}
+        onCloseModal={closeModalHandler}
+        onActionClick={handleSubmit(onSubmit)}
       >
-        <BootstrapDialogTitle
-          id="customized-dialog-title"
-          onClose={() => {
-            handleClose();
-            reset();
-          }}
-        >
-          Create a group
-        </BootstrapDialogTitle>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogContent dividers>
-            <Grid container spacing={4}>
-              <Controller
-                name="name"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Name"
-                        size="small"
-                        error={!!errors.name?.message}
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...field}
-                      />
-                      {errors.name?.message && (
-                        <FormHelperText id="component-error-text" error>
-                          {errors.name.message}
-                        </FormHelperText>
-                      )}
-                    </Grid>
-                  );
-                }}
-              />
-              <Controller
-                name="maximumMembers"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Number of members"
-                        size="small"
-                        error={!!errors.maximumMembers?.message}
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...field}
-                      />
-                      {errors.maximumMembers?.message && (
-                        <FormHelperText id="component-error-text" error>
-                          {errors.maximumMembers.message}
-                        </FormHelperText>
-                      )}
-                    </Grid>
-                  );
-                }}
-              />
-            </Grid>
-          </DialogContent>
-
-          <DialogActions>
-            {/* <Button autoFocus type="submit" color="primary" variant="contained">
-              Create
-            </Button> */}
-            <LoadingButton
-              autoFocus
-              type="submit"
-              endIcon={<SendIcon />}
-              loading={loading}
-              loadingPosition="end"
-              variant="contained"
-            >
-              Create
-            </LoadingButton>
-          </DialogActions>
-        </form>
-      </BootstrapDialog>
+        <DialogContent dividers>
+          <Grid container spacing={3}>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Name"
+                      size="small"
+                      error={!!errors.name?.message}
+                      /* eslint-disable react/jsx-props-no-spreading */
+                      {...field}
+                    />
+                    {errors.name?.message && (
+                      <FormHelperText id="component-error-text" error>
+                        {errors.name.message}
+                      </FormHelperText>
+                    )}
+                  </Grid>
+                );
+              }}
+            />
+            <Controller
+              name="maximumMembers"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Number of members"
+                      size="small"
+                      error={!!errors.maximumMembers?.message}
+                      /* eslint-disable react/jsx-props-no-spreading */
+                      {...field}
+                    />
+                    {errors.maximumMembers?.message && (
+                      <FormHelperText id="component-error-text" error>
+                        {errors.maximumMembers.message}
+                      </FormHelperText>
+                    )}
+                  </Grid>
+                );
+              }}
+            />
+          </Grid>
+        </DialogContent>
+      </Modal>
     </>
   );
 }
