@@ -1,7 +1,6 @@
 const express = require("express");
 const {
   createGroup,
-  getGroup,
   getGroups,
   updateGroup,
   deleteGroup
