@@ -26,7 +26,7 @@ function BootstrapDialogTitle(prop) {
 
   return (
     /* eslint-disable react/jsx-props-no-spreading */
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+    <DialogTitle sx={{ m: 0, px: 3 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
