@@ -1,11 +1,11 @@
 import {
   Alert as MuiAlert,
-  DialogContent,
   FormHelperText,
   Grid,
   Snackbar,
   Stack,
-  OutlinedInput
+  OutlinedInput,
+  DialogContent
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -94,7 +94,7 @@ function GroupAddNew(prop) {
       </Stack>
 
       <Modal
-        title="Create a group"
+        title="CREATE A GROUP"
         loading={loading}
         actions={["Cancel", "OK"]}
         actionText="Create"
@@ -102,8 +102,8 @@ function GroupAddNew(prop) {
         onCloseModal={closeModalHandler}
         onActionClick={handleSubmit(onSubmit)}
       >
-        <DialogContent dividers>
-          <Grid container spacing={3}>
+        <DialogContent>
+          <Grid>
             <Controller
               name="name"
               control={control}
@@ -113,6 +113,7 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Name</p>
                     <OutlinedInput
                       id="name"
+                      sx={{ width: 500, mb: 3, mt: 1 }}
                       fullWidth
                       error={!!errors.name?.message}
                       {...field}
@@ -135,7 +136,9 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Number of members</p>
                     <OutlinedInput
                       id="maximumMembers"
+                      sx={{ width: 500, mb: 3, mt: 1 }}
                       fullWidth
+                      type="number"
                       error={!!errors.maximumMembers?.message}
                       {...field}
                     />
@@ -157,6 +160,7 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Description</p>
                     <OutlinedInput
                       id="description"
+                      sx={{ width: 500, mb: 3, mt: 1 }}
                       fullWidth
                       error={!!errors.description?.message}
                       {...field}

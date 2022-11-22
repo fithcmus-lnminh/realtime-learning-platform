@@ -2,8 +2,14 @@
   &__actions {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
-    padding-top: 16px;
-    padding-right: 12px;
+    gap: 12px;
+    padding: 16px 16px 6px 0;
+  }
+}
+
+.modal {
+  &__title {
+    font-weight: bold;
+    margin-left: 4px;
   }
 }

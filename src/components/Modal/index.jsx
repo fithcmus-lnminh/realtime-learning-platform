@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   Button,
   Dialog,
   DialogContent,
@@ -7,7 +8,6 @@ import {
   IconButton
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { LoadingButton } from "@mui/lab";
 import styled from "@emotion/styled";
 import "./Modal.scss";
 
@@ -66,12 +66,13 @@ function Modal(prop) {
       onClose={onCloseModal}
       aria-labelledby="customized-dialog-title"
       open={show}
+      maxWidth={false}
     >
       <BootstrapDialogTitle id="customized-dialog-title" onClose={onCloseModal}>
-        {title}
+        <span className="modal__title">{title}</span>
       </BootstrapDialogTitle>
-      <DialogContent>
-        {children}
+      <DialogContent dividers>
+        <Box sx={{ px: 3, py: 1 }}>{children}</Box>
         <div className="button__actions">
           {isShowCancelButton && (
             <Button variant="outlined" color="secondary" onClick={onCloseModal}>
@@ -79,15 +80,14 @@ function Modal(prop) {
             </Button>
           )}
           {isShowSubmitButton && (
-            <LoadingButton
+            <Button
               autoFocus
-              loading={loading}
-              // loadingPosition="end"
+              disabled={loading}
               variant="contained"
               onClick={onActionClick}
             >
-              {actionText}
-            </LoadingButton>
+              {loading ? "Loading..." : actionText}
+            </Button>
           )}
         </div>
       </DialogContent>
