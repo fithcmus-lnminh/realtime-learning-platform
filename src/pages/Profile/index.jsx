@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import { useSelector } from "react-redux";
 import { Box, OutlinedInput } from "@mui/material";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Layout from "../Layout";
 import "./Profile.scss";
 import BtnEdit from "../../components/Button/BtnEdit";
@@ -11,8 +14,27 @@ function Profile() {
   const [isShowPopupEditName, setIsShowPopupEditName] = useState(false);
   const { userInfo } = useSelector((state) => state.user);
 
+  const schema = yup.object().shape({
+    firstName: yup.string().required().label("First name"),
+    lastName: yup.string().required().label("Last name")
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm({
+    resolver: yupResolver(schema)
+  });
+
+  const editUserNameHandler = (data) => {
+    console.log(data);
+  };
+
   const onCloseEditNamePopup = () => {
     setIsShowPopupEditName(false);
+    reset();
   };
 
   return (
@@ -111,19 +133,25 @@ function Profile() {
         actionText="Edit"
         show={isShowPopupEditName}
         onCloseModal={onCloseEditNamePopup}
-        onActionClick={() => {}}
+        onActionClick={handleSubmit(editUserNameHandler)}
       >
         <Box>
-          <p className="required">First Name</p>
+          <p className="required edit__label">First Name</p>
           <OutlinedInput
             placeholder="Please enter first name"
             sx={{ width: 500, mb: 3, mt: 1 }}
+            /* eslint-disable react/jsx-props-no-spreading */
+            {...register("firstName")}
           />
-          <p className="required">Last Name</p>
+          <p className="auth__error">{errors.firstName?.message}</p>
+          <p className="required edit__label">Last Name</p>
           <OutlinedInput
             placeholder="Please enter last name"
             sx={{ width: 500, mb: 3, mt: 1 }}
+            /* eslint-disable react/jsx-props-no-spreading */
+            {...register("lastName")}
           />
+          <p className="auth__error">{errors.lastName?.message}</p>
         </Box>
       </Modal>
     </Layout>
