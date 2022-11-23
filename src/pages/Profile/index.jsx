@@ -13,6 +13,7 @@ import { updateProfile } from "../../redux/actions/userAction";
 
 function Profile() {
   const [isShowPopupEditName, setIsShowPopupEditName] = useState(false);
+  const [isShowPopupEditPassword, setIsShowPopupEditPassword] = useState(false);
   const { userInfo } = useSelector((state) => state.user);
   const [isLoading, setIsLoading] = useState(false);
   const [alertStatus, setAlertStatus] = useState({
@@ -24,7 +25,14 @@ function Profile() {
 
   const schema = yup.object().shape({
     firstName: yup.string().required().label("First name"),
-    lastName: yup.string().required().label("Last name")
+    lastName: yup.string().required().label("Last name"),
+    currentPassword: yup.string().min(8).label("Current password"),
+    newPassword: yup.string().min(8).label("New password"),
+    confirmNewPassword: yup
+      .string()
+      .min(8)
+      .oneOf([yup.ref("newPassword"), null], "Passwords must match")
+      .label("Confirm new password")
   });
 
   const {
@@ -48,10 +56,19 @@ function Profile() {
     reset();
   };
 
+  const onCloseEditPasswordPopup = () => {
+    setIsShowPopupEditPassword(false);
+    reset();
+  };
+
   const editUserNameHandler = (data) => {
     dispatch(
       updateProfile(data, setIsLoading, setAlertStatus, setIsShowPopupEditName)
     );
+  };
+
+  const editPasswordHandler = (data) => {
+    console.log(data);
   };
 
   const handleCloseAlert = () => {
@@ -112,7 +129,9 @@ function Profile() {
               style: {
                 fontSize: 18
               },
-              endAdornment: <BtnEdit />
+              endAdornment: (
+                <BtnEdit onClick={() => setIsShowPopupEditPassword(true)} />
+              )
             }}
           />
         </div>
@@ -162,6 +181,46 @@ function Profile() {
           {...register("lastName")}
         />
         <p className="validation__error">{errors.lastName?.message}</p>
+      </Modal>
+
+      <Modal
+        title="CHANGE PASSWORD"
+        actionText="Change"
+        loading={isLoading}
+        show={isShowPopupEditPassword}
+        disableAction={!isDirty}
+        onCloseModal={onCloseEditPasswordPopup}
+        onActionClick={handleSubmit(editPasswordHandler)}
+      >
+        <p className="required edit__label first">Current Password</p>
+        <OutlinedInput
+          placeholder="Please enter your current password"
+          sx={{ width: 500 }}
+          error={errors?.currentPassword}
+          /* eslint-disable react/jsx-props-no-spreading */
+          {...register("currentPassword")}
+        />
+        <p className="validation__error">{errors.currentPassword?.message}</p>
+        <p className="required edit__label">New Password</p>
+        <OutlinedInput
+          placeholder="Please enter last name"
+          sx={{ width: 500 }}
+          error={errors?.newPassword}
+          /* eslint-disable react/jsx-props-no-spreading */
+          {...register("newPassword")}
+        />
+        <p className="validation__error">{errors.newPassword?.message}</p>
+        <p className="required edit__label">Confirm New Password</p>
+        <OutlinedInput
+          placeholder="Please enter last name"
+          sx={{ width: 500 }}
+          error={errors?.confirmNewPassword}
+          /* eslint-disable react/jsx-props-no-spreading */
+          {...register("confirmNewPassword")}
+        />
+        <p className="validation__error">
+          {errors.confirmNewPassword?.message}
+        </p>
       </Modal>
 
       <Stack spacing={2} sx={{ width: "100%" }}>
