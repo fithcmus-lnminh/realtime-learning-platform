@@ -42,6 +42,14 @@
   color: red;
 }
 
+.validation {
+  &__error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+}
+
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;

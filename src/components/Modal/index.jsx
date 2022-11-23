@@ -2,6 +2,7 @@ import React from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -53,6 +54,7 @@ function Modal(prop) {
     actions = ["Cancel", "OK"],
     actionText = "OK",
     loading = false,
+    disableAction = false,
     onCloseModal,
     onActionClick,
     children
@@ -82,11 +84,15 @@ function Modal(prop) {
           {isShowSubmitButton && (
             <Button
               autoFocus
-              disabled={loading}
+              disabled={disableAction || loading}
               variant="contained"
               onClick={onActionClick}
             >
-              {loading ? "Loading..." : actionText}
+              {loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                actionText
+              )}
             </Button>
           )}
         </div>

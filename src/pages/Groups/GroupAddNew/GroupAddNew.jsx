@@ -29,11 +29,6 @@ const schema = yup
   })
   .required();
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  /* eslint-disable react/jsx-props-no-spreading */
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 function GroupAddNew(prop) {
   const { open, handleClose } = prop;
   const [loading, setLoading] = useState(false);
@@ -63,14 +58,9 @@ function GroupAddNew(prop) {
     dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
   };
 
-  const handleCloseAlert = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
+  const handleCloseAlert = () => {
     setMessage({
-      success: true,
-      data: "",
+      ...message,
       open: false
     });
   };
@@ -83,13 +73,14 @@ function GroupAddNew(prop) {
           autoHideDuration={6000}
           onClose={handleCloseAlert}
         >
-          <Alert
+          <MuiAlert
+            variant="filled"
             onClose={handleCloseAlert}
             severity={message.success ? "success" : "error"}
             sx={{ width: "100%" }}
           >
             {message.data}
-          </Alert>
+          </MuiAlert>
         </Snackbar>
       </Stack>
 

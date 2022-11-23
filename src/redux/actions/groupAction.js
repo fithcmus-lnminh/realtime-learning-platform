@@ -80,7 +80,7 @@ export const createGroup =
         setLoading(false);
         setMessage({
           success: true,
-          data: "Create a successful group",
+          data: "Create group successfully",
           open: true
         });
 

@@ -1,6 +1,7 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
 import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../../constants/userConstants";
 import $axios from "../../utils/axios";
+import { toSnake } from "../../utils/normalizer";
 
 /* eslint-disable import/prefer-default-export */
 export const registerUser =
@@ -132,3 +133,28 @@ export const logoutUser = (setLoading, navigate) => async (dispatch) => {
     setLoading(false);
   }
 };
+
+/* eslint-disable import/prefer-default-export */
+export const updateProfile =
+  (data, setLoading, setMessage, setShowPopup) => async (dispatch) => {
+    setLoading(true);
+    const res = await $axios.put("/api/account", toSnake(data));
+
+    if (res.code === ApiResposeCodeNumber.Success) {
+      setLoading(false);
+      setMessage({ success: true, data: "Edit name successfully", open: true });
+      setShowPopup(false);
+
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data
+      });
+    } else if (res.code === ApiResposeCodeNumber.ErrorCodeByServer) {
+      setLoading(false);
+      setMessage({
+        success: false,
+        data: res.message,
+        open: true
+      });
+    }
+  };
