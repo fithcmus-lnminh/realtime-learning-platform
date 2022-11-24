@@ -172,10 +172,13 @@ export const changeUserPassword =
       });
       setShowPopup(false);
 
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+
       setTimeout(() => {
         dispatch(logoutUser());
       }, 5000);
-    } else if (res.code === ApiResposeCodeNumber.ErrorCodeByServer) {
+    } else if (res.code === ApiResposeCodeNumber.ValidationError) {
       setLoading(false);
       setMessage({
         success: false,
