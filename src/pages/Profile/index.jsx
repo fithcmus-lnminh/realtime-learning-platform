@@ -9,7 +9,10 @@ import Layout from "../Layout";
 import "./Profile.scss";
 import BtnEdit from "../../components/Button/BtnEdit";
 import Modal from "../../components/Modal";
-import { updateProfile } from "../../redux/actions/userAction";
+import {
+  changeUserPassword,
+  updateProfile
+} from "../../redux/actions/userAction";
 
 function Profile() {
   const [isShowPopupEditName, setIsShowPopupEditName] = useState(false);
@@ -25,7 +28,10 @@ function Profile() {
 
   const schema = yup.object().shape({
     firstName: yup.string().required().label("First name"),
-    lastName: yup.string().required().label("Last name"),
+    lastName: yup.string().required().label("Last name")
+  });
+
+  const schemaPassword = yup.object().shape({
     currentPassword: yup.string().min(8).label("Current password"),
     newPassword: yup.string().min(8).label("New password"),
     confirmNewPassword: yup
@@ -44,6 +50,15 @@ function Profile() {
     resolver: yupResolver(schema)
   });
 
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    formState: { errors: errorsPassword, isDirty: isDirtyPassword },
+    reset: resetFormPassword
+  } = useForm({
+    resolver: yupResolver(schemaPassword)
+  });
+
   useEffect(() => {
     const defaultValues = {};
     defaultValues.firstName = userInfo?.firstName;
@@ -58,7 +73,7 @@ function Profile() {
 
   const onCloseEditPasswordPopup = () => {
     setIsShowPopupEditPassword(false);
-    reset();
+    resetFormPassword();
   };
 
   const editUserNameHandler = (data) => {
@@ -68,7 +83,14 @@ function Profile() {
   };
 
   const editPasswordHandler = (data) => {
-    console.log(data);
+    dispatch(
+      changeUserPassword(
+        data,
+        setIsLoading,
+        setAlertStatus,
+        setIsShowPopupEditPassword
+      )
+    );
   };
 
   const handleCloseAlert = () => {
@@ -188,38 +210,45 @@ function Profile() {
         actionText="Change"
         loading={isLoading}
         show={isShowPopupEditPassword}
-        disableAction={!isDirty}
+        disableAction={!isDirtyPassword}
         onCloseModal={onCloseEditPasswordPopup}
-        onActionClick={handleSubmit(editPasswordHandler)}
+        onActionClick={handleSubmitPassword(editPasswordHandler)}
       >
         <p className="required edit__label first">Current Password</p>
         <OutlinedInput
           placeholder="Please enter your current password"
+          type="password"
           sx={{ width: 500 }}
-          error={errors?.currentPassword}
+          error={errorsPassword?.currentPassword}
           /* eslint-disable react/jsx-props-no-spreading */
-          {...register("currentPassword")}
-        />
-        <p className="validation__error">{errors.currentPassword?.message}</p>
-        <p className="required edit__label">New Password</p>
-        <OutlinedInput
-          placeholder="Please enter last name"
-          sx={{ width: 500 }}
-          error={errors?.newPassword}
-          /* eslint-disable react/jsx-props-no-spreading */
-          {...register("newPassword")}
-        />
-        <p className="validation__error">{errors.newPassword?.message}</p>
-        <p className="required edit__label">Confirm New Password</p>
-        <OutlinedInput
-          placeholder="Please enter last name"
-          sx={{ width: 500 }}
-          error={errors?.confirmNewPassword}
-          /* eslint-disable react/jsx-props-no-spreading */
-          {...register("confirmNewPassword")}
+          {...registerPassword("currentPassword")}
         />
         <p className="validation__error">
-          {errors.confirmNewPassword?.message}
+          {errorsPassword.currentPassword?.message}
+        </p>
+        <p className="required edit__label">New Password</p>
+        <OutlinedInput
+          placeholder="Please enter new passwprd"
+          type="password"
+          sx={{ width: 500 }}
+          error={errorsPassword?.newPassword}
+          /* eslint-disable react/jsx-props-no-spreading */
+          {...registerPassword("newPassword")}
+        />
+        <p className="validation__error">
+          {errorsPassword.newPassword?.message}
+        </p>
+        <p className="required edit__label">Confirm New Password</p>
+        <OutlinedInput
+          placeholder="Please enter confirm new password"
+          type="password"
+          sx={{ width: 500 }}
+          error={errorsPassword?.confirmNewPassword}
+          /* eslint-disable react/jsx-props-no-spreading */
+          {...registerPassword("confirmNewPassword")}
+        />
+        <p className="validation__error">
+          {errorsPassword.confirmNewPassword?.message}
         </p>
       </Modal>
 

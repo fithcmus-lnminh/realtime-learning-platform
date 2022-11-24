@@ -115,22 +115,20 @@ export const getCurrentUser = () => async (dispatch) => {
 };
 
 /* eslint-disable import/prefer-default-export */
-export const logoutUser = (setLoading, navigate) => async (dispatch) => {
+export const logoutUser = () => async (dispatch) => {
   try {
     const res = await $axios.post("/api/auth/logout");
-
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
-      setLoading(false);
       dispatch({
         type: LOGOUT_SUCCESS
       });
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
-      navigate("/login");
+      window.location.href = "/login";
     }
   } catch (error) {
-    setLoading(false);
+    console.log(error);
   }
 };
 
@@ -149,6 +147,34 @@ export const updateProfile =
         type: LOGIN_SUCCESS,
         payload: res.data
       });
+    } else if (res.code === ApiResposeCodeNumber.ErrorCodeByServer) {
+      setLoading(false);
+      setMessage({
+        success: false,
+        data: res.message,
+        open: true
+      });
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const changeUserPassword =
+  (data, setLoading, setMessage, setShowPopup) => async (dispatch) => {
+    setLoading(true);
+    const res = await $axios.put("/api/account/password", toSnake(data));
+
+    if (res.code === ApiResposeCodeNumber.Success) {
+      setLoading(false);
+      setMessage({
+        success: true,
+        data: "Change password successfully. You will be signed out in 5 seconds",
+        open: true
+      });
+      setShowPopup(false);
+
+      setTimeout(() => {
+        dispatch(logoutUser());
+      }, 5000);
     } else if (res.code === ApiResposeCodeNumber.ErrorCodeByServer) {
       setLoading(false);
       setMessage({

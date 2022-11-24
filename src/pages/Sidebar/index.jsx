@@ -11,13 +11,12 @@ import { logoutUser } from "../../redux/actions/userAction";
 function Sidebar(prop) {
   const { itemId } = prop;
   const [itemActive, setItemActive] = useState(itemId);
-  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const logoutHandler = () => {
-    dispatch(logoutUser(setLoading, navigate));
+    dispatch(logoutUser());
   };
 
   const activeHandler = (id) => {
@@ -80,12 +79,7 @@ function Sidebar(prop) {
           <span>MY ACCOUNT</span>
         </div>
       </div>
-      <button
-        type="button"
-        className="button__logout"
-        onClick={logoutHandler}
-        disabled={loading}
-      >
+      <button type="button" className="button__logout" onClick={logoutHandler}>
         <CiLogout />
         <span>Log Out</span>
       </button>
