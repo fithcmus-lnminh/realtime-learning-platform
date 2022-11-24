@@ -1,5 +1,8 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
-import { GET_ALL_GROUPS_SUCCESS } from "../../constants/groupConstants";
+import {
+  GET_ALL_GROUPS_SUCCESS,
+  GET_GROUP_USERS_SUCCESS
+} from "../../constants/groupConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
 
@@ -10,7 +13,9 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
-      setLoading(false);
+      if (setLoading) {
+        setLoading(false);
+      }
       dispatch({
         type: GET_ALL_GROUPS_SUCCESS,
         payload: {
@@ -19,10 +24,46 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
         }
       });
     } else {
-      setLoading(false);
+      /* eslint-disable no-lonely-if */
+      if (setLoading) {
+        setLoading(false);
+      }
     }
   } catch (error) {
-    setLoading(false);
+    if (setLoading) {
+      setLoading(false);
+    }
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const getGroupUsers = (groupId, setLoading) => async (dispatch) => {
+  try {
+    const res = await $axios.get(`/api/group/${groupId}/user`);
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      if (setLoading) {
+        setLoading(false);
+      }
+      dispatch({
+        type: GET_GROUP_USERS_SUCCESS,
+        payload: {
+          groupUsers: res.data.groupUsers,
+          totalPages: res.data.totalPages,
+          totalUsers: res.data.totalUsers
+        }
+      });
+    } else {
+      /* eslint-disable no-lonely-if */
+      if (setLoading) {
+        setLoading(false);
+      }
+    }
+  } catch (error) {
+    if (setLoading) {
+      setLoading(false);
+    }
   }
 };
 
@@ -43,13 +84,6 @@ export const createGroup =
           open: true
         });
 
-        // dispatch({
-        //   type: GET_ALL_GROUPS_SUCCESS,
-        //   payload: {
-        //     groups: res.data.groups,
-        //     totalPages: res.data.totalPages
-        //   }
-        // });
         dispatch(getAllGroups());
       } else {
         setLoading(false);
