@@ -12,7 +12,7 @@ export const userReducer = (state = initialState, action = {}) => {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        userInfo: action.payload
+        userInfo: { ...state.userInfo, ...action.payload }
       };
     case LOGOUT_SUCCESS:
       return {};

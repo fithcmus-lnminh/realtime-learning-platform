@@ -36,8 +36,8 @@ exports.isAuth = async (req, res, next) => {
       }
     }
   } catch (err) {
-    res.json({
-      code: API_CODE_FAIL,
+    res.status(401).json({
+      code: API_CODE_UNAUTHORIZED,
       message: err.message,
       data: null
     });

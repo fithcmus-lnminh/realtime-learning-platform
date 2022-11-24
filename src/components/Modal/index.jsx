@@ -1,13 +1,14 @@
 import React from "react";
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
   IconButton
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { LoadingButton } from "@mui/lab";
 import styled from "@emotion/styled";
 import "./Modal.scss";
 
@@ -53,6 +54,7 @@ function Modal(prop) {
     actions = ["Cancel", "OK"],
     actionText = "OK",
     loading = false,
+    disableAction = false,
     onCloseModal,
     onActionClick,
     children
@@ -66,12 +68,13 @@ function Modal(prop) {
       onClose={onCloseModal}
       aria-labelledby="customized-dialog-title"
       open={show}
+      maxWidth={false}
     >
       <BootstrapDialogTitle id="customized-dialog-title" onClose={onCloseModal}>
-        {title}
+        <span className="modal__title">{title}</span>
       </BootstrapDialogTitle>
-      <DialogContent>
-        {children}
+      <DialogContent dividers>
+        <Box sx={{ px: 3, py: 1 }}>{children}</Box>
         <div className="button__actions">
           {isShowCancelButton && (
             <Button variant="outlined" color="secondary" onClick={onCloseModal}>
@@ -79,15 +82,18 @@ function Modal(prop) {
             </Button>
           )}
           {isShowSubmitButton && (
-            <LoadingButton
+            <Button
               autoFocus
-              loading={loading}
-              // loadingPosition="end"
+              disabled={disableAction || loading}
               variant="contained"
               onClick={onActionClick}
             >
-              {actionText}
-            </LoadingButton>
+              {loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                actionText
+              )}
+            </Button>
           )}
         </div>
       </DialogContent>

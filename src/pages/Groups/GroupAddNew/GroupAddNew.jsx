@@ -1,11 +1,11 @@
 import {
   Alert as MuiAlert,
-  DialogContent,
   FormHelperText,
   Grid,
   Snackbar,
   Stack,
-  OutlinedInput
+  OutlinedInput,
+  DialogContent
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -28,11 +28,6 @@ const schema = yup
       .required("Please enter number of group members")
   })
   .required();
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  /* eslint-disable react/jsx-props-no-spreading */
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 function GroupAddNew(prop) {
   const { open, handleClose } = prop;
@@ -63,14 +58,9 @@ function GroupAddNew(prop) {
     dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
   };
 
-  const handleCloseAlert = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
+  const handleCloseAlert = () => {
     setMessage({
-      success: true,
-      data: "",
+      ...message,
       open: false
     });
   };
@@ -83,18 +73,19 @@ function GroupAddNew(prop) {
           autoHideDuration={6000}
           onClose={handleCloseAlert}
         >
-          <Alert
+          <MuiAlert
+            variant="filled"
             onClose={handleCloseAlert}
             severity={message.success ? "success" : "error"}
             sx={{ width: "100%" }}
           >
             {message.data}
-          </Alert>
+          </MuiAlert>
         </Snackbar>
       </Stack>
 
       <Modal
-        title="Create a group"
+        title="CREATE A GROUP"
         loading={loading}
         actions={["Cancel", "OK"]}
         actionText="Create"
@@ -102,8 +93,8 @@ function GroupAddNew(prop) {
         onCloseModal={closeModalHandler}
         onActionClick={handleSubmit(onSubmit)}
       >
-        <DialogContent dividers>
-          <Grid container spacing={3}>
+        <DialogContent>
+          <Grid>
             <Controller
               name="name"
               control={control}
@@ -113,6 +104,7 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Name</p>
                     <OutlinedInput
                       id="name"
+                      sx={{ width: 500, mb: 3, mt: 1 }}
                       fullWidth
                       error={!!errors.name?.message}
                       {...field}
@@ -135,7 +127,9 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Number of members</p>
                     <OutlinedInput
                       id="maximumMembers"
+                      sx={{ width: 500, mb: 3, mt: 1 }}
                       fullWidth
+                      type="number"
                       error={!!errors.maximumMembers?.message}
                       {...field}
                     />
@@ -157,6 +151,7 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Description</p>
                     <OutlinedInput
                       id="description"
+                      sx={{ width: 500, mb: 3, mt: 1 }}
                       fullWidth
                       error={!!errors.description?.message}
                       {...field}
