@@ -139,24 +139,26 @@ function Profile() {
             }}
           />
         </div>
-        <div className="profile__item">
-          <span>Password :</span>
-          <TextField
-            className="profile__text-field"
-            variant="standard"
-            value="0000000000"
-            type="password"
-            InputProps={{
-              readOnly: true,
-              style: {
-                fontSize: 18
-              },
-              endAdornment: (
-                <BtnEdit onClick={() => setIsShowPopupEditPassword(true)} />
-              )
-            }}
-          />
-        </div>
+        {userInfo?.source === "normal" && (
+          <div className="profile__item">
+            <span>Password :</span>
+            <TextField
+              className="profile__text-field"
+              variant="standard"
+              value="0000000000"
+              type="password"
+              InputProps={{
+                readOnly: true,
+                style: {
+                  fontSize: 18
+                },
+                endAdornment: (
+                  <BtnEdit onClick={() => setIsShowPopupEditPassword(true)} />
+                )
+              }}
+            />
+          </div>
+        )}
         <div className="profile__item">
           <span>Account Type : </span>
           <TextField
