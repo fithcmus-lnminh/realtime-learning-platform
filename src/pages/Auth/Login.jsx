@@ -45,8 +45,8 @@ function Login() {
   }, []);
 
   const handleGoogleLogin = () => {
-    const clientURL =
-      process.env.NODE_ENV === "development" ? "http://localhost:5000" : "...";
+    const clientURL = process.env.REACT_APP_SERVER_URL;
+    console.log(clientURL);
     window.open(`${clientURL}/auth/google`, "_self");
   };
 

@@ -84,10 +84,7 @@ exports.register = async (req, res, next) => {
       user.token = token;
       await user.save();
 
-      const verifyLink =
-        (process.env.NODE_ENV === "development"
-          ? "http://localhost:3000/verify/"
-          : ".../verify/") + token;
+      const verifyLink = `${process.env.CLIENT_URL}/verify/` + token;
 
       await sendMail(
         user.email,
@@ -161,8 +158,8 @@ exports.loginWithGoogle = (req, res, next) => {
 
 exports.loginGoogleCallback = (req, res, next) => {
   passport.authenticate("google", {
-    successRedirect: "http://localhost:3000",
-    failureRedirect: "http://localhost:3000/verify/google-login-error",
+    successRedirect: process.env.CLIENT_URL,
+    failureRedirect: `${process.env.CLIENT_URL}/verify/google-login-error`,
     keepSessionInfo: true
   })(req, res, next);
 };

@@ -6,10 +6,12 @@ import {
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
 
+const API_URL = process.env.REACT_APP_SERVER_URL;
+
 /* eslint-disable import/prefer-default-export */
 export const getAllGroups = (setLoading) => async (dispatch) => {
   try {
-    const res = await $axios.get("/api/group");
+    const res = await $axios.get(`${API_URL}/api/group`);
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
@@ -39,7 +41,7 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
 /* eslint-disable import/prefer-default-export */
 export const getGroupUsers = (groupId, setLoading) => async (dispatch) => {
   try {
-    const res = await $axios.get(`/api/group/${groupId}/user`);
+    const res = await $axios.get(`${API_URL}/api/group/${groupId}/user`);
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
@@ -71,7 +73,7 @@ export const getGroupUsers = (groupId, setLoading) => async (dispatch) => {
 export const createGroup =
   (data, handleClose, setLoading, reset, setMessage) => async (dispatch) => {
     try {
-      const res = await $axios.post("/api/group", toSnake(data));
+      const res = await $axios.post(`${API_URL}/api/group`, toSnake(data));
 
       /* eslint-disable prefer-destructuring */
       if (res.code === ApiResposeCodeNumber.Success) {

@@ -3,11 +3,13 @@ import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../../constants/userConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
 
+const API_URL = process.env.REACT_APP_SERVER_URL;
+
 /* eslint-disable import/prefer-default-export */
 export const registerUser =
   (userData, setLoading, setMessage, reset) => async () => {
     try {
-      const res = await $axios.post("/api/auth/register", userData);
+      const res = await $axios.post(`${API_URL}/api/auth/register`, userData);
 
       if (res.code === ApiResposeCodeNumber.Success) {
         setLoading(false);
@@ -36,7 +38,7 @@ export const registerUser =
 export const loginUser =
   (userData, setLoading, setMessage, reset, navigate) => async (dispatch) => {
     try {
-      const res = await $axios.post("/api/auth/login", userData);
+      const res = await $axios.post(`${API_URL}/api/auth/login`, userData);
 
       /* eslint-disable prefer-destructuring */
       if (res.code === ApiResposeCodeNumber.Success) {
@@ -72,7 +74,7 @@ export const loginUser =
 /* eslint-disable import/prefer-default-export */
 export const verifyUser = (token, setLoading, setMessage) => async () => {
   try {
-    const res = await $axios.post(`/api/auth/verify/${token}`);
+    const res = await $axios.post(`${API_URL}/api/auth/verify/${token}`);
 
     if (res.code === ApiResposeCodeNumber.Success) {
       setLoading(false);
@@ -99,7 +101,7 @@ export const verifyUser = (token, setLoading, setMessage) => async () => {
 /* eslint-disable import/prefer-default-export */
 export const getCurrentUser = () => async (dispatch) => {
   try {
-    const res = await $axios.get("/api/user/current_user");
+    const res = await $axios.get(`${API_URL}/api/user/current_user`);
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
@@ -117,7 +119,7 @@ export const getCurrentUser = () => async (dispatch) => {
 /* eslint-disable import/prefer-default-export */
 export const logoutUser = () => async (dispatch) => {
   try {
-    const res = await $axios.post("/api/auth/logout");
+    const res = await $axios.post(`${API_URL}/api/auth/logout`);
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
       dispatch({
@@ -136,7 +138,7 @@ export const logoutUser = () => async (dispatch) => {
 export const updateProfile =
   (data, setLoading, setMessage, setShowPopup) => async (dispatch) => {
     setLoading(true);
-    const res = await $axios.put("/api/account", toSnake(data));
+    const res = await $axios.put(`${API_URL}/api/account`, toSnake(data));
 
     if (res.code === ApiResposeCodeNumber.Success) {
       setLoading(false);
@@ -161,7 +163,10 @@ export const updateProfile =
 export const changeUserPassword =
   (data, setLoading, setMessage, setShowPopup) => async (dispatch) => {
     setLoading(true);
-    const res = await $axios.put("/api/account/password", toSnake(data));
+    const res = await $axios.put(
+      `${API_URL}/api/account/password`,
+      toSnake(data)
+    );
 
     if (res.code === ApiResposeCodeNumber.Success) {
       setLoading(false);

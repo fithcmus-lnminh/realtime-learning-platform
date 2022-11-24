@@ -12,13 +12,14 @@ const passport = require("passport");
 const session = require("express-session");
 
 const app = express();
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
-const port = process.env.PORT || 5000;
 
+dotenv.config();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-dotenv.config();
 connectDb();
+
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+const port = process.env.PORT || 5000;
 
 app.use(
   session({

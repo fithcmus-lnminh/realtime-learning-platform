@@ -1,8 +1,7 @@
 import axios from "axios";
 import { toCamel } from "./normalizer";
 
-const API_URL =
-  process.env.NODE_ENV === "development" ? "http://localhost:5000" : "/...";
+const API_URL = process.env.REACT_APP_SERVER_URL;
 
 const Axios = axios.create({
   baseURL: API_URL,
@@ -32,6 +31,7 @@ Axios.interceptors.response.use(
     return res.data;
   },
   (error) => {
+    console.log(error);
     if (error.response?.status === 401) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
