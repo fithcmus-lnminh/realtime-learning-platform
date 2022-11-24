@@ -1,5 +1,4 @@
 import {
-  // Backdrop,
   Button,
   CircularProgress,
   Box,
@@ -8,7 +7,8 @@ import {
   CardHeader,
   CardContent,
   Typography,
-  IconButton
+  IconButton,
+  Grid
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useState } from "react";
@@ -21,6 +21,69 @@ import { getAllGroups } from "../../redux/actions/groupAction";
 import Layout from "../Layout";
 import GroupAddNew from "./GroupAddNew/GroupAddNew";
 import "./Groups.scss";
+
+/* eslint-disable react/prop-types */
+function RenderListGroup({ groups, navigateToGroupDetail }) {
+  return (
+    <Box sx={{ width: 1 }} className="group__box">
+      <Grid
+        container
+        spacing={{ xs: 2, md: 3, lg: 4 }}
+        columns={{ xs: 4, sm: 8, md: 12, lg: 24, xl: 24 }}
+      >
+        {groups.map((group) => (
+          <Grid
+            item
+            xs={4}
+            sm={8}
+            md={6}
+            lg={8}
+            xl={6}
+            key={
+              group && group.groupId && group.groupId.id ? group.groupId.id : ""
+            }
+          >
+            <Card
+              variant="outlined"
+              sx={{ maxWidth: "100%" }}
+              onClick={() => {
+                navigateToGroupDetail(
+                  group && group.groupId && group.groupId.id
+                    ? group.groupId.id
+                    : ""
+                );
+              }}
+            >
+              <CardHeader
+                action={
+                  <IconButton aria-label="settings">
+                    <MoreVertIcon />
+                  </IconButton>
+                }
+                title={
+                  group && group.groupId && group.groupId.name
+                    ? group.groupId.name
+                    : ""
+                }
+              />
+              <CardContent>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ height: "48px" }}
+                >
+                  {group && group.groupId && group.groupId.description
+                    ? group.groupId.description
+                    : ""}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+}
 
 function Groups() {
   const [value, setValue] = React.useState("own");
@@ -85,9 +148,9 @@ function Groups() {
           className="tab__container"
         >
           {loading ? (
-            <div className="tab__loading">
+            <Box className="tab__loading">
               <CircularProgress color="inherit" />
-            </div>
+            </Box>
           ) : (
             <TabContext value={value}>
               <Box
@@ -126,51 +189,10 @@ function Groups() {
               </Box>
               <TabPanel value="own">
                 {groups.length > 0 ? (
-                  <Box sx={{ width: 1 }} className="group__box">
-                    <Box
-                      display="grid"
-                      gridTemplateColumns="repeat(12, 1fr)"
-                      gap={3}
-                    >
-                      {groups.map((group) => (
-                        <Box
-                          gridColumn="span 3"
-                          key={group.id}
-                          onClick={() => {
-                            navigateToGroupDetail(group.id);
-                          }}
-                        >
-                          <Card sx={{ maxWidth: "100%" }}>
-                            <CardHeader
-                              action={
-                                <IconButton aria-label="settings">
-                                  <MoreVertIcon />
-                                </IconButton>
-                              }
-                              title={
-                                group && group.groupId && group.groupId.name
-                                  ? group.groupId.name
-                                  : ""
-                              }
-                            />
-                            <CardContent>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                {group &&
-                                group.groupId &&
-                                group.groupId.maximumMembers
-                                  ? group.groupId.maximumMembers
-                                  : ""}{" "}
-                                members
-                              </Typography>
-                            </CardContent>
-                          </Card>
-                        </Box>
-                      ))}
-                    </Box>
-                  </Box>
+                  <RenderListGroup
+                    groups={groups}
+                    navigateToGroupDetail={navigateToGroupDetail}
+                  />
                 ) : (
                   <Typography
                     variant="body2"

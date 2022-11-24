@@ -82,7 +82,7 @@ function Modal(prop) {
             <LoadingButton
               autoFocus
               loading={loading}
-              loadingPosition="end"
+              // loadingPosition="end"
               variant="contained"
               onClick={onActionClick}
             >

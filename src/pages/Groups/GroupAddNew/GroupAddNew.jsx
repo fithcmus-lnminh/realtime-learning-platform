@@ -4,8 +4,9 @@ import {
   FormHelperText,
   Grid,
   Snackbar,
-  TextField,
-  Stack
+  Stack,
+  InputLabel,
+  OutlinedInput
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -19,6 +20,7 @@ import Modal from "../../../components/Modal";
 const schema = yup
   .object({
     name: yup.string().required("Please enter group name"),
+    description: yup.string().required("Please enter group description"),
     maximumMembers: yup
       .number("Please enter number of group members")
       .typeError("Please enter number of group members")
@@ -58,6 +60,7 @@ function GroupAddNew(prop) {
   };
 
   const onSubmit = async (data) => {
+    setLoading(true);
     dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
   };
 
@@ -108,12 +111,18 @@ function GroupAddNew(prop) {
               render={({ field }) => {
                 return (
                   <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Name"
-                      size="small"
+                    <InputLabel
+                      className="required"
+                      shrink
+                      htmlFor="name"
                       error={!!errors.name?.message}
-                      /* eslint-disable react/jsx-props-no-spreading */
+                    >
+                      Name
+                    </InputLabel>
+                    <OutlinedInput
+                      id="name"
+                      fullWidth
+                      error={!!errors.name?.message}
                       {...field}
                     />
                     {errors.name?.message && (
@@ -131,17 +140,52 @@ function GroupAddNew(prop) {
               render={({ field }) => {
                 return (
                   <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Number of members"
-                      size="small"
+                    <InputLabel
+                      className="required"
+                      shrink
+                      htmlFor="maximumMembers"
                       error={!!errors.maximumMembers?.message}
-                      /* eslint-disable react/jsx-props-no-spreading */
+                    >
+                      Number of members
+                    </InputLabel>
+                    <OutlinedInput
+                      id="maximumMembers"
+                      fullWidth
+                      error={!!errors.maximumMembers?.message}
                       {...field}
                     />
                     {errors.maximumMembers?.message && (
                       <FormHelperText id="component-error-text" error>
                         {errors.maximumMembers.message}
+                      </FormHelperText>
+                    )}
+                  </Grid>
+                );
+              }}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Grid item xs={12}>
+                    <InputLabel
+                      className="required"
+                      shrink
+                      htmlFor="description"
+                      error={!!errors.description?.message}
+                    >
+                      Description
+                    </InputLabel>
+                    <OutlinedInput
+                      id="description"
+                      fullWidth
+                      error={!!errors.description?.message}
+                      {...field}
+                    />
+                    {errors.description?.message && (
+                      <FormHelperText id="component-error-text" error>
+                        {errors.description.message}
                       </FormHelperText>
                     )}
                   </Grid>

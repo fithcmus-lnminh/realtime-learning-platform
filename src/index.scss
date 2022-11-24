@@ -37,6 +37,11 @@
   }
 }
 
+.required::after {
+  content: ' *';
+  color: red;
+}
+
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -45,16 +50,14 @@
 
 *::-webkit-scrollbar-thumb {
   background-color: #dc3f3f;
-  background-image: -webkit-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.2) 25%,
-    transparent 25%,
-    transparent 50%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0.2) 75%,
-    transparent 75%,
-    transparent
-  );
+  background-image: -webkit-linear-gradient(45deg,
+      rgba(255, 255, 255, 0.2) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.2) 75%,
+      transparent 75%,
+      transparent);
 }
 
 *::-webkit-scrollbar-track {
