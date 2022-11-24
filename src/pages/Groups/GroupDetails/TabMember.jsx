@@ -174,7 +174,7 @@ function RenderListMember({
         </Typography>
         {title !== "Owner" ? (
           <Typography variant="body2" gutterBottom sx={{ color: "#1967d2" }}>
-            {members.length} members
+            {members.length} {members.length > 1 ? "members" : "member"}
           </Typography>
         ) : null}
       </Box>

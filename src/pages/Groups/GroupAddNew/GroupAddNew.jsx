@@ -115,7 +115,7 @@ function GroupAddNew(prop) {
                       className="required"
                       shrink
                       htmlFor="name"
-                      error={!!errors.name?.message}
+                      sx={{ fontSize: "18px" }}
                     >
                       Name
                     </InputLabel>
@@ -144,7 +144,7 @@ function GroupAddNew(prop) {
                       className="required"
                       shrink
                       htmlFor="maximumMembers"
-                      error={!!errors.maximumMembers?.message}
+                      sx={{ fontSize: "18px" }}
                     >
                       Number of members
                     </InputLabel>
@@ -173,7 +173,7 @@ function GroupAddNew(prop) {
                       className="required"
                       shrink
                       htmlFor="description"
-                      error={!!errors.description?.message}
+                      sx={{ fontSize: "18px" }}
                     >
                       Description
                     </InputLabel>

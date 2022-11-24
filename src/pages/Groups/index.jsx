@@ -45,7 +45,11 @@ function RenderListGroup({ groups, navigateToGroupDetail }) {
           >
             <Card
               variant="outlined"
-              sx={{ maxWidth: "100%" }}
+              sx={{
+                maxWidth: "100%",
+                backgroundColor: "rgba(255, 245, 245, 0.5)",
+                boxShadow: "rgba(100, 100, 111, 0.1) 0px 7px 29px 0px"
+              }}
               onClick={() => {
                 navigateToGroupDetail(
                   group && group.groupId && group.groupId.id
