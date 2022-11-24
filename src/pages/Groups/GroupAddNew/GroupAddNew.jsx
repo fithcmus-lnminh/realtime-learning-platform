@@ -107,6 +107,7 @@ function GroupAddNew(prop) {
                       sx={{ width: 500, mb: 3, mt: 1 }}
                       fullWidth
                       error={!!errors.name?.message}
+                      /* eslint-disable react/jsx-props-no-spreading */
                       {...field}
                     />
                     {errors.name?.message && (
@@ -131,6 +132,7 @@ function GroupAddNew(prop) {
                       fullWidth
                       type="number"
                       error={!!errors.maximumMembers?.message}
+                      /* eslint-disable react/jsx-props-no-spreading */
                       {...field}
                     />
                     {errors.maximumMembers?.message && (
