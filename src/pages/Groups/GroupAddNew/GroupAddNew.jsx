@@ -5,7 +5,6 @@ import {
   Grid,
   Snackbar,
   Stack,
-  InputLabel,
   OutlinedInput
 } from "@mui/material";
 import React, { useState } from "react";
@@ -111,14 +110,7 @@ function GroupAddNew(prop) {
               render={({ field }) => {
                 return (
                   <Grid item xs={12}>
-                    <InputLabel
-                      className="required"
-                      shrink
-                      htmlFor="name"
-                      sx={{ fontSize: "18px" }}
-                    >
-                      Name
-                    </InputLabel>
+                    <p className="required form__label">Name</p>
                     <OutlinedInput
                       id="name"
                       fullWidth
@@ -140,14 +132,7 @@ function GroupAddNew(prop) {
               render={({ field }) => {
                 return (
                   <Grid item xs={12}>
-                    <InputLabel
-                      className="required"
-                      shrink
-                      htmlFor="maximumMembers"
-                      sx={{ fontSize: "18px" }}
-                    >
-                      Number of members
-                    </InputLabel>
+                    <p className="required form__label">Number of members</p>
                     <OutlinedInput
                       id="maximumMembers"
                       fullWidth
@@ -169,14 +154,7 @@ function GroupAddNew(prop) {
               render={({ field }) => {
                 return (
                   <Grid item xs={12}>
-                    <InputLabel
-                      className="required"
-                      shrink
-                      htmlFor="description"
-                      sx={{ fontSize: "18px" }}
-                    >
-                      Description
-                    </InputLabel>
+                    <p className="required form__label">Description</p>
                     <OutlinedInput
                       id="description"
                       fullWidth

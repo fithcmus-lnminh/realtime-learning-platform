@@ -7,10 +7,8 @@ import {
   CardHeader,
   CardContent,
   Typography,
-  IconButton,
   Grid
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +45,9 @@ function RenderListGroup({ groups, navigateToGroupDetail }) {
               variant="outlined"
               sx={{
                 maxWidth: "100%",
-                backgroundColor: "rgba(255, 245, 245, 0.5)",
+                backgroundColor: "#05a3e8",
+                color: "#fff",
+                border: "none",
                 boxShadow: "rgba(100, 100, 111, 0.1) 0px 7px 29px 0px"
               }}
               onClick={() => {
@@ -59,11 +59,6 @@ function RenderListGroup({ groups, navigateToGroupDetail }) {
               }}
             >
               <CardHeader
-                action={
-                  <IconButton aria-label="settings">
-                    <MoreVertIcon />
-                  </IconButton>
-                }
                 title={
                   group && group.groupId && group.groupId.name
                     ? group.groupId.name
@@ -71,14 +66,8 @@ function RenderListGroup({ groups, navigateToGroupDetail }) {
                 }
               />
               <CardContent>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ height: "48px" }}
-                >
-                  {group && group.groupId && group.groupId.description
-                    ? group.groupId.description
-                    : ""}
+                <Typography variant="body2" color="#fff">
+                  27/50 members
                 </Typography>
               </CardContent>
             </Card>
