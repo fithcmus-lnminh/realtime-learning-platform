@@ -45,7 +45,7 @@ function RenderListGroup({ groups, navigateToGroupDetail }) {
               variant="outlined"
               sx={{
                 maxWidth: "100%",
-                backgroundColor: "#05a3e8",
+                backgroundColor: "#316cd3",
                 color: "#fff",
                 border: "none",
                 boxShadow: "rgba(100, 100, 111, 0.1) 0px 7px 29px 0px"
