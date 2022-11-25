@@ -1,6 +1,7 @@
 const Group = require("../models/group.model");
 const GroupUser = require("../models/groupUser.model");
 const { API_CODE_SUCCESS, API_CODE_BY_SERVER } = require("../constants");
+const sendMail = require("../utils/mailer");
 
 exports.getGroups = async (req, res) => {
   const { page = 1, limit = 10, role } = req.query;
@@ -148,6 +149,66 @@ exports.deleteGroup = async (req, res) => {
       code: API_CODE_SUCCESS,
       message: "Success",
       data: null
+    });
+  } catch (err) {
+    res.json({
+      code: API_CODE_BY_SERVER,
+      message: err.message,
+      data: null
+    });
+  }
+};
+
+exports.inviteUser = async (req, res) => {
+  const { group_id } = req.params;
+  const { email } = req.body;
+  const { user, group } = req;
+  const inviteLink = `${process.env.CLIENT_URL}/group/${group_id}/join`;
+
+  try {
+    await sendMail(
+      email,
+      `Group invitation: "${group.name}"`,
+      `<div style="font-size: 16px">
+        <p>Hi! </p>
+        <p>${user.first_name} ${user.last_name} invited you to the group ${group.name}!</p>
+        <a href="${inviteLink}">Join now</a>
+        <p>If you accept, your contact information will be shared with members of the group.</p>
+      </div>`
+    );
+
+    res.json({
+      code: API_CODE_SUCCESS,
+      message: "Success",
+      data: null
+    });
+  } catch (err) {
+    res.json({
+      code: API_CODE_BY_SERVER,
+      message: err.message,
+      data: null
+    });
+  }
+};
+
+exports.joinGroup = async (req, res) => {
+  const { group_id } = req.params;
+  const { user } = req;
+
+  try {
+    const groupUser = await GroupUser.create({
+      group_id,
+      user_id: user._id,
+      role: "Member"
+    });
+
+    res.json({
+      code: API_CODE_SUCCESS,
+      message: "Success",
+      data: {
+        _id: groupUser._id,
+        role: groupUser.role
+      }
     });
   } catch (err) {
     res.json({
