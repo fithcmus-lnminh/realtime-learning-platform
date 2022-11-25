@@ -158,7 +158,7 @@ exports.loginWithGoogle = (req, res, next) => {
 
 exports.loginGoogleCallback = (req, res, next) => {
   passport.authenticate("google", {
-    successRedirect: process.env.CLIENT_URL,
+    successRedirect: `${process.env.CLIENT_URL}/google-login`,
     failureRedirect: `${process.env.CLIENT_URL}/verify/google-login-error`,
     keepSessionInfo: true
   })(req, res, next);

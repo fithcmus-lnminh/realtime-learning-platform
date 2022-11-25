@@ -12,6 +12,7 @@ import { getCurrentUser } from "./redux/actions/userAction";
 import { isAuthenticated } from "./utils/isAuthenticated";
 import GroupDetails from "./pages/Groups/GroupDetails";
 import Invite from "./pages/Invite";
+import GoogleLogin from "./pages/GoogleLogin";
 
 function App() {
   const theme = createTheme({
@@ -58,6 +59,7 @@ function App() {
         <Route path="/groups" element={<Groups />} />
         <Route path="/group/:id" element={<GroupDetails />} />
         <Route path="/invite/:groupId" element={<Invite />} />
+        <Route path="/google-login" element={<GoogleLogin />} />
         <Route path="/*" element={<Navigate to="/" />} />
       </Routes>
     </ThemeProvider>

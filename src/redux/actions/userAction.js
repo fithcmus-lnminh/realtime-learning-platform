@@ -36,7 +36,8 @@ export const registerUser =
 
 /* eslint-disable import/prefer-default-export */
 export const loginUser =
-  (userData, setLoading, setMessage, reset, navigate) => async (dispatch) => {
+  (userData, setLoading, setMessage, reset, navigate, redirect) =>
+  async (dispatch) => {
     try {
       const res = await $axios.post(`${API_URL}/api/auth/login`, userData);
 
@@ -54,7 +55,7 @@ export const loginUser =
         });
         localStorage.setItem("accessToken", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data));
-        navigate("/");
+        window.location.href = redirect ?? "/";
       } else {
         setLoading(false);
         setMessage({
@@ -127,6 +128,7 @@ export const logoutUser = () => async (dispatch) => {
       });
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
+      localStorage.removeItem("redirect");
       window.location.href = "/login";
     }
   } catch (error) {

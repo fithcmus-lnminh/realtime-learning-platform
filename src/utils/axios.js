@@ -31,7 +31,6 @@ Axios.interceptors.response.use(
     return res.data;
   },
   (error) => {
-    console.log(error);
     if (error.response?.status === 401) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
