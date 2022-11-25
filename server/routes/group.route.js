@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   createGroup,
+  getGroup,
   getGroups,
   updateGroup,
   deleteGroup,
@@ -17,6 +18,8 @@ const {
 const GroupUserRouter = require("./groupUser.route");
 
 const router = express.Router();
+
+router.get("/:group_id", isGroupExist, getGroup);
 
 router.use(isAuth);
 router.get("/", getGroups);

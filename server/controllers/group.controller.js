@@ -3,6 +3,26 @@ const GroupUser = require("../models/groupUser.model");
 const { API_CODE_SUCCESS, API_CODE_BY_SERVER } = require("../constants");
 const sendMail = require("../utils/mailer");
 
+exports.getGroup = async (req, res) => {
+  const { group_id } = req.params;
+
+  try {
+    const group = await Group.findOne({ _id: group_id });
+
+    return res.json({
+      code: API_CODE_SUCCESS,
+      message: "Success",
+      data: group
+    });
+  } catch (err) {
+    return res.json({
+      code: API_CODE_BY_SERVER,
+      message: err.message,
+      data: null
+    });
+  }
+};
+
 exports.getGroups = async (req, res) => {
   const { page = 1, limit = 10, role } = req.query;
 
