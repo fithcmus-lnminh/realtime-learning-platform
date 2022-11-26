@@ -36,7 +36,7 @@ exports.getGroup = async (req, res) => {
     if (user_id)
       isJoined = (await GroupUser.exists({
         group_id,
-        user_id: user._id
+        user_id
       }))
         ? true
         : false;
