@@ -24,6 +24,14 @@
     font-size: 18px;
   }
 
+  &__error {
+    color: red;
+  }
+
+  &__success {
+    color: #1ca125;
+  }
+
   &__highlight {
     color: #2a518f;
   }

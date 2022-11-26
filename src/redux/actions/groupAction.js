@@ -105,3 +105,23 @@ export const createGroup =
       });
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const joinGroup = (groupId, setLoading, setMessage) => async () => {
+  try {
+    setLoading(true);
+    const res = await $axios.post(`${API_URL}/api/group/${groupId}/join`);
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      setLoading(false);
+      setMessage({ success: false, message: "Join group successfully" });
+    } else {
+      setLoading(false);
+      setMessage({ success: false, message: res.message });
+    }
+  } catch (error) {
+    setLoading(false);
+    setMessage({ success: false, message: "Internal error" });
+  }
+};
