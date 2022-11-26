@@ -115,7 +115,7 @@ export const joinGroup = (groupId, setLoading, setMessage) => async () => {
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
       setLoading(false);
-      setMessage({ success: false, message: "Join group successfully" });
+      setMessage({ success: true, message: "Join group successfully" });
     } else {
       setLoading(false);
       setMessage({ success: false, message: res.message });
