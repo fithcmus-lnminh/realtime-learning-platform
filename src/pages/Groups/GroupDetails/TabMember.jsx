@@ -277,6 +277,9 @@ function TabMember() {
     // thực hiện dispatch kick member ở đây
   };
 
+  console.log("groupUsers:", groupUsers);
+  console.log("userInfo:", userInfo);
+
   return (
     <Box
       sx={{

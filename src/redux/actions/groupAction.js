@@ -105,3 +105,36 @@ export const createGroup =
       });
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const deleteGroup = (groupId, setMessage) => async (dispatch) => {
+  try {
+    console.log("deleteGroup", groupId);
+    const res = await $axios.delete(`${API_URL}/api/group/${groupId}`);
+    console.log("res:", res);
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      setMessage({
+        success: true,
+        data: "Delete group successfully",
+        open: true
+      });
+      dispatch(getAllGroups());
+      window.location.href = "/groups";
+    } else {
+      setMessage({
+        success: false,
+        data: res.message,
+        open: true
+      });
+    }
+  } catch (error) {
+    console.log("error:", error);
+    setMessage({
+      success: false,
+      data: error.message,
+      open: true
+    });
+  }
+};

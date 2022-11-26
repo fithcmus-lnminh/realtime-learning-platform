@@ -8,3 +8,34 @@
 .member__item {
     padding: 12px 0;
 }
+
+.group__detail {
+    &__container {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        border: 2px solid #f0f0f0;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        font-size: 18px;
+
+        & span {
+            width: 150px;
+        }
+    }
+
+    &__text-field {
+        width: 100%;
+    }
+}
+
+.edit {
+    &__label {
+        font-size: 16px;
+    }
+}
