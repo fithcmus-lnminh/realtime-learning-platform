@@ -36,7 +36,8 @@ function App() {
         location.pathname === "/login" ||
         location.pathname === "/register" ||
         location.pathname.startsWith("/verify") ||
-        location.pathname.startsWith("/invite")
+        location.pathname.startsWith("/invite") ||
+        location.pathname === "/google-login"
       )
     )
       dispatch(getCurrentUser());
