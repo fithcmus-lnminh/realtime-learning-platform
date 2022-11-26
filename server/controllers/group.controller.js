@@ -1,5 +1,7 @@
 const Group = require("../models/group.model");
 const GroupUser = require("../models/groupUser.model");
+const User = require("../models/user.model");
+const jwt = require("jsonwebtoken");
 const { API_CODE_SUCCESS, API_CODE_BY_SERVER } = require("../constants");
 const sendMail = require("../utils/mailer");
 
@@ -8,11 +10,42 @@ exports.getGroup = async (req, res) => {
 
   try {
     const group = await Group.findOne({ _id: group_id });
+    const owner = await GroupUser.findOne({
+      group_id,
+      role: "Owner"
+    }).populate("user_id");
+    let isJoined = null;
+
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      const token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id).select("-password");
+
+      if (user.token === token) {
+        isJoined = (await GroupUser.exists({
+          group_id,
+          user_id: user._id
+        }))
+          ? true
+          : false;
+      }
+    }
 
     return res.json({
       code: API_CODE_SUCCESS,
       message: "Success",
-      data: group
+      data: {
+        group,
+        owner: {
+          first_name: owner.user_id.first_name,
+          last_name: owner.user_id.last_name,
+          email: owner.user_id.email
+        },
+        isJoined
+      }
     });
   } catch (err) {
     return res.json({
