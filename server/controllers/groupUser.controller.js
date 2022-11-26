@@ -34,9 +34,9 @@ exports.getGroupUsers = async (req, res) => {
       code: API_CODE_SUCCESS,
       message: "Success",
       data: {
-        groupUsers,
-        totalUsers,
-        totalPages
+        group_users: groupUsers,
+        total_users: totalUsers,
+        total_pages: totalPages
       }
     });
   } catch (err) {

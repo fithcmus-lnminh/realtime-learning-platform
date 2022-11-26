@@ -45,8 +45,8 @@ exports.getGroup = async (req, res) => {
           last_name: owner.user_id.last_name,
           email: owner.user_id.email
         },
-        totalMembers,
-        isJoined
+        total_members: totalMembers,
+        is_joined: isJoined
       }
     });
   } catch (err) {
@@ -62,18 +62,6 @@ exports.getGroups = async (req, res) => {
   const { page = 1, limit = 10, role } = req.query;
 
   try {
-    // const groups = await GroupUser.find(
-    //   {
-    //     user_id: req.user._id,
-    //     role: role ? { $in: role } : { $ne: null }
-    //   },
-    //   { _id: 0, __v: 0, user_id: 0 }
-    // )
-    //   .populate("group_id", "name maximum_members description")
-    //   .skip((page - 1) * limit)
-    //   .limit(limit * 1)
-    //   .countDocuments("group_id");
-
     const groups = await GroupUser.aggregate([
       {
         $match: {
@@ -94,7 +82,7 @@ exports.getGroups = async (req, res) => {
           _id: 0,
           role: 1,
           group_id: 1,
-          totalUsers: { $size: "$group_users" }
+          total_users: { $size: "$group_users" }
         }
       },
       {
@@ -121,8 +109,8 @@ exports.getGroups = async (req, res) => {
       message: "Success",
       data: {
         groups,
-        totalGroups,
-        totalPages
+        total_groups: totalGroups,
+        total_pages: totalPages
       }
     });
   } catch (err) {

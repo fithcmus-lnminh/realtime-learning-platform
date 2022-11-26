@@ -19,8 +19,6 @@ exports.updateAccount = async (req, res, next) => {
       { new: true }
     );
 
-    // console.log(user);
-
     return res.json({
       code: API_CODE_SUCCESS,
       message: "Update account successfully",
