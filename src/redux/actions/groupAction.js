@@ -125,3 +125,14 @@ export const joinGroup = (groupId, setLoading, setMessage) => async () => {
     setMessage({ success: false, message: "Internal error" });
   }
 };
+
+/* eslint-disable import/prefer-default-export */
+export const getGroupByIdNoAuth = (groupId) => async () => {
+  const res = await $axios.get(`${API_URL}/api/group/${groupId}`);
+
+  if (res.code === ApiResposeCodeNumber.Success) {
+    return res.data;
+  }
+
+  return null;
+};

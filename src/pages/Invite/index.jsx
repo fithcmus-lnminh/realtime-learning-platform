@@ -1,8 +1,8 @@
 import { CircularProgress } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { joinGroup } from "../../redux/actions/groupAction";
+import { getGroupByIdNoAuth, joinGroup } from "../../redux/actions/groupAction";
 import {
   resetRedirect,
   updateRedirect
@@ -12,9 +12,9 @@ import "./Invite.scss";
 
 function Invite() {
   const params = useParams();
-  const isJoined = false;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ success: false, message: "" });
+  const [groupInfo, setGroupInfo] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,15 +23,35 @@ function Invite() {
     dispatch(resetRedirect());
   };
 
+  const handleRedirect = () => {
+    if (message.success) window.location.href = `/group/${params.groupId}`;
+    else if (isAuthenticated()) window.location.href = "/";
+    else window.location.href = "/login";
+  };
+
   const joinGroupHandler = () => {
     if (isAuthenticated()) {
       dispatch(joinGroup(params.groupId, setLoading, setMessage));
-      console.log(loading, message);
     } else {
       dispatch(updateRedirect(`/invite/${params.groupId}`));
       navigate("/login");
     }
   };
+
+  const getGroupInfo = async () => {
+    const group = await dispatch(getGroupByIdNoAuth(params.groupId));
+
+    if (group) setGroupInfo(group);
+    else
+      setMessage({
+        success: false,
+        message: "Group does not exist. Please try again!"
+      });
+  };
+
+  useEffect(() => {
+    getGroupInfo();
+  }, []);
 
   return (
     <div className="invite__container">
@@ -49,17 +69,21 @@ function Invite() {
             <button
               type="button"
               className="invite__button"
-              onClick={() => {
-                if (message.success) navigate(`/group/${params.groupId}`);
-                else navigate("/");
-              }}
+              onClick={handleRedirect}
             >
-              {message.success ? "GO TO GROUP" : "BACK TO HOME"}
+              {
+                /* eslint-disable no-nested-ternary */
+                message.success
+                  ? "GO TO GROUP"
+                  : isAuthenticated()
+                  ? "BACK TO HOME"
+                  : "BACK TO LOGIN"
+              }
             </button>
           </div>
         ) : (
           <div>
-            {isJoined ? (
+            {groupInfo?.isJoined ? (
               <p className="invite__text invite__highlight invite__text-bold">
                 You have already joined this group
               </p>
@@ -67,14 +91,15 @@ function Invite() {
               <p className="invite__text ">
                 You are invited to join{" "}
                 <span className="invite__highlight invite__text-bold">
-                  Group Name
+                  {groupInfo?.group?.name}
                 </span>{" "}
-                owned by <span className="invite__highlight">Nhat Minh Le</span>
+                owned by{" "}
+                <span className="invite__highlight">{`${groupInfo?.owner?.firstName} ${groupInfo?.owner?.lastName}`}</span>
                 .
               </p>
             )}
 
-            {isJoined ? (
+            {groupInfo?.isJoined ? (
               <button type="button" className="invite__button">
                 GO TO THE GROUP
               </button>
@@ -93,7 +118,7 @@ function Invite() {
               </button>
             )}
 
-            {!isJoined && (
+            {!groupInfo?.isJoined && (
               <p className="invite__text">
                 or{" "}
                 {isAuthenticated() ? (
