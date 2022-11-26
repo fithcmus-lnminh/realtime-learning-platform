@@ -111,26 +111,16 @@ exports.isGroupOwner = async (req, res, next) => {
   }
 };
 
-exports.isFullMember = async (req, res, next) => {
-  const { group_id } = req.params;
+exports.handleLeaveGroup = async (req, res, next) => {
+  const { groupUser } = req;
 
-  try {
-    group = await Group.findById(group_id);
-
-    if (await group.isFullMember()) {
-      res.status(403).json({
-        code: API_CODE_PERMISSION_DENIED,
-        message: "Group is full",
-        data: null
-      });
-    } else {
-      next();
-    }
-  } catch (err) {
-    res.status(401).json({
+  if (groupUser.role === "Owner") {
+    res.status(403).json({
       code: API_CODE_PERMISSION_DENIED,
-      message: err.message,
+      message: "Please transfer ownership to another member before leaving",
       data: null
     });
+  } else {
+    next();
   }
 };

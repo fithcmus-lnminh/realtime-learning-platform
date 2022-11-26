@@ -14,6 +14,7 @@ exports.getGroup = async (req, res) => {
       group_id,
       role: "Owner"
     }).populate("user_id");
+    const totalMembers = await GroupUser.countDocuments({ group_id });
     let isJoined = null;
 
     if (
@@ -44,6 +45,7 @@ exports.getGroup = async (req, res) => {
           last_name: owner.user_id.last_name,
           email: owner.user_id.email
         },
+        totalMembers,
         isJoined
       }
     });
@@ -169,7 +171,7 @@ exports.updateGroup = async (req, res) => {
   try {
     const group = await Group.findByIdAndUpdate(
       group_id,
-      { name, maximum_members },
+      { name, description, maximum_members },
       { new: true }
     );
 
@@ -179,6 +181,7 @@ exports.updateGroup = async (req, res) => {
       data: {
         _id: group._id,
         name: group.name,
+        description: group.description,
         maximum_members: group.maximum_members
       }
     });
@@ -266,6 +269,30 @@ exports.joinGroup = async (req, res) => {
   } catch (err) {
     res.json({
       code: API_CODE_BY_SERVER,
+      message: err.message,
+      data: null
+    });
+  }
+};
+
+exports.leaveGroup = async (req, res, next) => {
+  const { group_id } = req.params;
+  const { user } = req;
+
+  try {
+    const groupUser = await GroupUser.deleteOne({
+      group_id,
+      user_id: user._id
+    });
+
+    res.json({
+      code: 0,
+      message: "Leave group successfully",
+      data: null
+    });
+  } catch (err) {
+    res.status(403).json({
+      code: API_CODE_PERMISSION_DENIED,
       message: err.message,
       data: null
     });
