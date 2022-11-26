@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { isEqual } from "lodash";
 import { Tab, Box, CircularProgress, Button } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
-import { getGroupUsers } from "../../../redux/actions/groupAction";
+import { getGroup } from "../../../redux/actions/groupAction";
 import Layout from "../../Layout";
 import "./GroupDetails.scss";
 import GroupMember from "./GroupMember/GroupMember";
@@ -13,7 +14,11 @@ import GroupInvited from "../GroupInvited/GroupInvited";
 
 function GroupDetails() {
   const dispatch = useDispatch();
-  const [value, setValue] = React.useState("info");
+  const groupDetail = useSelector(
+    (state) => state.group.groupDetail,
+    (prev, next) => isEqual(prev, next)
+  );
+  const [value, setValue] = useState("info");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -33,8 +38,8 @@ function GroupDetails() {
   };
 
   useEffect(() => {
-    setLoading(false);
-    dispatch(getGroupUsers(groupId, setLoading));
+    setLoading(true);
+    dispatch(getGroup(groupId, setLoading));
   }, [groupId]);
 
   return (
@@ -43,18 +48,27 @@ function GroupDetails() {
         sx={{ width: "100%", typography: "body1" }}
         className="tab__container"
       >
-        <Button
-          className="button__add-group"
-          sx={{ fontSize: 18 }}
-          variant="contained"
-          color="primary"
-          onClick={handleOpen}
-        >
-          Invite Member
-        </Button>
+        {groupDetail?.isJoined && (
+          <Button
+            className="button__add-group"
+            sx={{ fontSize: 18 }}
+            variant="contained"
+            color="primary"
+            onClick={handleOpen}
+          >
+            Invite Member
+          </Button>
+        )}
         <Box sx={{ marginTop: "24px" }}>
           {loading ? (
-            <Box sx={{ width: "100%" }}>
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
               <CircularProgress color="inherit" />
             </Box>
           ) : (

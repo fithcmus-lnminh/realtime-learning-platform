@@ -66,9 +66,9 @@ function GroupUpdate(prop) {
   };
 
   useEffect(() => {
-    setValue("name", groupDetail?.groupId?.name);
-    setValue("description", groupDetail?.groupId?.description);
-    setValue("maximumMembers", groupDetail?.groupId?.maximumMembers);
+    setValue("name", groupDetail?.group?.name);
+    setValue("description", groupDetail?.group?.description);
+    setValue("maximumMembers", groupDetail?.group?.maximumMembers);
   }, [open]);
 
   return (

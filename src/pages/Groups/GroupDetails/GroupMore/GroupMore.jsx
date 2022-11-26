@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Alert, Button, Stack, Snackbar } from "@mui/material";
 import { isEqual } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteGroup } from "../../../../redux/actions/groupAction";
+import { deleteGroup, leaveGroup } from "../../../../redux/actions/groupAction";
 
 function GroupMore(prop) {
   const { groupId } = prop;
@@ -11,18 +11,24 @@ function GroupMore(prop) {
     (state) => state.user.userInfo,
     (prev, next) => isEqual(prev, next)
   );
-  const groupUsers = useSelector(
-    (state) => state.group.groupUsers,
+  const groupDetail = useSelector(
+    (state) => {
+      return state.group.groupDetail;
+    },
     (prev, next) => isEqual(prev, next)
   );
-  const [roleUser, setRoleUser] = useState("Member");
   const [alertStatus, setAlertStatus] = useState({
     success: false,
     message: "",
     open: false
   });
+
   const handleDeleteGroup = () => {
     dispatch(deleteGroup(groupId, setAlertStatus));
+  };
+
+  const handleLeaveGroup = () => {
+    dispatch(leaveGroup(groupId, setAlertStatus));
   };
 
   const handleCloseAlert = () => {
@@ -32,16 +38,9 @@ function GroupMore(prop) {
     });
   };
 
-  useEffect(() => {
-    const userInGroup = groupUsers.find(
-      (user) => user?.userId?.id === userInfo.id
-    );
-    setRoleUser(userInGroup.role);
-  }, [groupUsers]);
-
   return (
     <div className="group__more">
-      {roleUser === "Owner" ? (
+      {groupDetail?.owner?.email === userInfo?.email ? (
         <Button
           className="button__add-group"
           sx={{ fontSize: 18 }}
@@ -57,7 +56,7 @@ function GroupMore(prop) {
           sx={{ fontSize: 18 }}
           variant="contained"
           color="primary"
-          onClick={() => {}}
+          onClick={handleLeaveGroup}
         >
           Leave Group
         </Button>

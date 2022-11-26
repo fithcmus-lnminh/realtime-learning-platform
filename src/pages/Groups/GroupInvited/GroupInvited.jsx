@@ -12,7 +12,7 @@ import * as yup from "yup";
 import "./GroupInvited.scss";
 import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
-// import { inviteGroup } from "../../../redux/actions/groupAction";
+import { inviteGroup } from "../../../redux/actions/groupAction";
 
 const schema = yup
   .object({
@@ -49,12 +49,9 @@ function GroupInvited(prop) {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log("data", data);
-    console.log("groupId", groupId);
-    console.log("dispatch", dispatch);
-    // dispatch(
-    //   inviteGroup(groupId, data, handleClose, setLoading, reset, setMessage)
-    // );
+    dispatch(
+      inviteGroup(groupId, data, handleClose, setLoading, reset, setMessage)
+    );
   };
 
   const handleCloseAlert = () => {

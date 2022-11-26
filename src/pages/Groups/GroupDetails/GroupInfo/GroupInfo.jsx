@@ -1,17 +1,19 @@
 import { Box, Button, Typography } from "@mui/material";
 import { isEqual } from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Alert from "../../../../components/Alert";
 import GroupUpdate from "../../GroupUpdate/GroupUpdate";
 
 function GroupInfo(prop) {
   const { groupId } = prop;
+  const userInfo = useSelector(
+    (state) => state.user.userInfo,
+    (prev, next) => isEqual(prev, next)
+  );
   const groupDetail = useSelector(
     (state) => {
-      /* eslint-disable prefer-destructuring */
-      const groups = state.group.groups;
-      return groups.find((item) => item.groupId.id === groupId) || [];
+      return state.group.groupDetail;
     },
     (prev, next) => isEqual(prev, next)
   );
@@ -46,12 +48,6 @@ function GroupInfo(prop) {
     );
   };
 
-  useEffect(() => {
-    // dispatch lấy detail group ở đây
-    console.log("chạy useEffect groupInfo");
-    console.log(process.env);
-  }, [groupId]);
-
   return (
     <>
       <Alert message={message} onClose={handleCloseAlert} />
@@ -74,7 +70,7 @@ function GroupInfo(prop) {
           >
             Copy Link
           </Button>
-          {groupDetail.role === "Owner" && (
+          {groupDetail?.owner?.email === userInfo?.email && (
             <Button
               className="button__add-group"
               sx={{ fontSize: 16 }}
@@ -89,18 +85,18 @@ function GroupInfo(prop) {
       </Box>
       <Box sx={{ mt: 5, mb: 0 }}>
         <Typography variant="h4" gutterBottom>
-          {groupDetail?.groupId?.name || ""}
+          {groupDetail?.group?.name || ""}
         </Typography>
         <Typography
           variant="body1"
           gutterBottom
           sx={{ opacity: "0.5", marginBottom: "12px" }}
         >
-          1/{groupDetail?.groupId?.maximumMembers || ""}{" "}
-          {groupDetail?.groupId?.maximumMembers > 1 ? "members" : "member"}
+          {groupDetail.totalMembers}/{groupDetail?.group?.maximumMembers || ""}{" "}
+          {groupDetail?.group?.maximumMembers > 1 ? "members" : "member"}
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Description: {groupDetail?.groupId?.description || ""}
+          Description: {groupDetail?.group?.description || ""}
         </Typography>
       </Box>
 

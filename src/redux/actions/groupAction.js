@@ -1,6 +1,7 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_GROUPS_SUCCESS,
+  GET_GROUP_SUCCESS,
   GET_GROUP_USERS_SUCCESS
 } from "../../constants/groupConstants";
 import $axios from "../../utils/axios";
@@ -27,6 +28,31 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
       });
     } else {
       /* eslint-disable no-lonely-if */
+      if (setLoading) {
+        setLoading(false);
+      }
+    }
+  } catch (error) {
+    if (setLoading) {
+      setLoading(false);
+    }
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const getGroup = (groupId, setLoading) => async (dispatch) => {
+  try {
+    const res = await $axios.get(`${API_URL}/api/group/${groupId}`);
+
+    if (res.code === ApiResposeCodeNumber.Success) {
+      if (setLoading) {
+        setLoading(false);
+      }
+      dispatch({
+        type: GET_GROUP_SUCCESS,
+        payload: res.data
+      });
+    } else {
       if (setLoading) {
         setLoading(false);
       }
@@ -79,32 +105,44 @@ export const createGroup =
       if (res.code === ApiResposeCodeNumber.Success) {
         reset();
         handleClose();
-        setLoading(false);
-        setMessage({
-          success: true,
-          data: "Create group successfully",
-          open: true
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Create group successfully",
+            open: true
+          });
+        }
 
         setTimeout(() => {
           dispatch(getAllGroups());
         }, 1000);
       } else {
-        setLoading(false);
-        setMessage({
-          success: false,
-          data: res.message,
-          open: true
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
       }
     } catch (error) {
       console.log("error:", error);
-      setLoading(false);
-      setMessage({
-        success: false,
-        data: error.message,
-        open: true
-      });
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
     }
   };
 
@@ -122,30 +160,42 @@ export const updateGroup =
       if (res.code === ApiResposeCodeNumber.Success) {
         reset();
         handleClose();
-        setLoading(false);
-        setMessage({
-          success: true,
-          data: "Update group successfully",
-          open: true
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Update group successfully",
+            open: true
+          });
+        }
 
-        dispatch(getAllGroups());
+        dispatch(getGroup(groupId));
       } else {
-        setLoading(false);
-        setMessage({
-          success: false,
-          data: res.message,
-          open: true
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
       }
     } catch (error) {
       console.log("error:", error);
-      setLoading(false);
-      setMessage({
-        success: false,
-        data: error.message,
-        open: true
-      });
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
     }
   };
 
@@ -156,29 +206,74 @@ export const deleteGroup = (groupId, setMessage) => async (dispatch) => {
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
-      setMessage({
-        success: true,
-        data: "Delete group successfully",
-        open: true
-      });
+      if (setMessage) {
+        setMessage({
+          success: true,
+          data: "Delete group successfully",
+          open: true
+        });
+      }
       setTimeout(() => {
         dispatch(getAllGroups());
       }, 1000);
       window.location.href = "/groups";
     } else {
-      setMessage({
-        success: false,
-        data: res.message,
-        open: true
-      });
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: res.message,
+          open: true
+        });
+      }
     }
   } catch (error) {
     console.log("error:", error);
-    setMessage({
-      success: false,
-      data: error.message,
-      open: true
-    });
+    if (setMessage) {
+      setMessage({
+        success: false,
+        data: error.message,
+        open: true
+      });
+    }
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const leaveGroup = (groupId, setMessage) => async (dispatch) => {
+  try {
+    const res = await $axios.post(`${API_URL}/api/group/${groupId}/leave`);
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      if (setMessage) {
+        setMessage({
+          success: true,
+          data: "Leave group successfully",
+          open: true
+        });
+      }
+      setTimeout(() => {
+        dispatch(getAllGroups());
+      }, 1000);
+      window.location.href = "/groups";
+    } else {
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: res.message,
+          open: true
+        });
+      }
+    }
+  } catch (error) {
+    console.log("error:", error);
+    if (setMessage) {
+      setMessage({
+        success: false,
+        data: error.message,
+        open: true
+      });
+    }
   }
 };
 
@@ -188,7 +283,7 @@ export const inviteGroup =
   async (dispatch) => {
     try {
       const res = await $axios.post(
-        `${API_URL}/api/group/invite/${groupId}`,
+        `${API_URL}/api/group/${groupId}/invite`,
         toSnake(data)
       );
 
@@ -196,31 +291,45 @@ export const inviteGroup =
       if (res.code === ApiResposeCodeNumber.Success) {
         reset();
         handleClose();
-        setLoading(false);
-        setMessage({
-          success: true,
-          data: "Invite group successfully",
-          open: true
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: `An invitation link to join the group has been sent to ${
+              data?.email || "this email"
+            }`,
+            open: true
+          });
+        }
 
         setTimeout(() => {
           dispatch(getAllGroups());
         }, 1000);
       } else {
-        setLoading(false);
-        setMessage({
-          success: false,
-          data: res.message,
-          open: true
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
       }
     } catch (error) {
       console.log("error:", error);
-      setLoading(false);
-      setMessage({
-        success: false,
-        data: error.message,
-        open: true
-      });
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
     }
   };
