@@ -1,9 +1,6 @@
 import {
-  Alert as MuiAlert,
   FormHelperText,
   Grid,
-  Snackbar,
-  Stack,
   OutlinedInput,
   DialogContent
 } from "@mui/material";
@@ -14,6 +11,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./GroupAddNew.scss";
 import { createGroup } from "../../../redux/actions/groupAction";
+import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
 
 const schema = yup
@@ -37,7 +35,6 @@ function GroupAddNew(prop) {
     data: "",
     open: false
   });
-
   const dispatch = useDispatch();
   const {
     handleSubmit,
@@ -67,22 +64,7 @@ function GroupAddNew(prop) {
 
   return (
     <>
-      <Stack spacing={2} sx={{ width: "100%" }}>
-        <Snackbar
-          open={message.open}
-          autoHideDuration={6000}
-          onClose={handleCloseAlert}
-        >
-          <MuiAlert
-            variant="filled"
-            onClose={handleCloseAlert}
-            severity={message.success ? "success" : "error"}
-            sx={{ width: "100%" }}
-          >
-            {message.data}
-          </MuiAlert>
-        </Snackbar>
-      </Stack>
+      <Alert message={message} onClose={handleCloseAlert} />
 
       <Modal
         title="CREATE A GROUP"
@@ -104,7 +86,8 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Name</p>
                     <OutlinedInput
                       id="name"
-                      sx={{ width: 500, mb: 3, mt: 1 }}
+                      placeholder="Enter a name"
+                      sx={{ width: 500, mb: 1, mt: 1 }}
                       fullWidth
                       error={!!errors.name?.message}
                       /* eslint-disable react/jsx-props-no-spreading */
@@ -128,7 +111,8 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Number of members</p>
                     <OutlinedInput
                       id="maximumMembers"
-                      sx={{ width: 500, mb: 3, mt: 1 }}
+                      placeholder="Enter a number of members"
+                      sx={{ width: 500, mb: 1, mt: 1 }}
                       fullWidth
                       type="number"
                       error={!!errors.maximumMembers?.message}
@@ -153,7 +137,8 @@ function GroupAddNew(prop) {
                     <p className="required form__label">Description</p>
                     <OutlinedInput
                       id="description"
-                      sx={{ width: 500, mb: 3, mt: 1 }}
+                      placeholder="Enter a description"
+                      sx={{ width: 500, mb: 1, mt: 1 }}
                       fullWidth
                       error={!!errors.description?.message}
                       {...field}

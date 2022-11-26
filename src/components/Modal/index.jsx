@@ -4,6 +4,7 @@ import {
   Button,
   CircularProgress,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   IconButton
@@ -75,6 +76,8 @@ function Modal(prop) {
       </BootstrapDialogTitle>
       <DialogContent dividers>
         <Box sx={{ px: 3, py: 1 }}>{children}</Box>
+      </DialogContent>
+      <DialogActions>
         <div className="button__actions">
           {isShowCancelButton && (
             <Button variant="outlined" color="secondary" onClick={onCloseModal}>
@@ -96,7 +99,7 @@ function Modal(prop) {
             </Button>
           )}
         </div>
-      </DialogContent>
+      </DialogActions>
     </BootstrapDialog>
   );
 }

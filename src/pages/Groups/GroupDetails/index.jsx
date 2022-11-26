@@ -6,20 +6,30 @@ import { TabContext, TabPanel, TabList } from "@mui/lab";
 import { getGroupUsers } from "../../../redux/actions/groupAction";
 import Layout from "../../Layout";
 import "./GroupDetails.scss";
-import TabMember from "./TabMember";
-import GroupMore from "./GroupMore";
-import GroupInfo from "./GroupInfo";
+import GroupMember from "./GroupMember/GroupMember";
+import GroupMore from "./GroupMore/GroupMore";
+import GroupInfo from "./GroupInfo/GroupInfo";
+import GroupInvited from "../GroupInvited/GroupInvited";
 
 function GroupDetails() {
   const dispatch = useDispatch();
   const [value, setValue] = React.useState("info");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const params = useParams();
   const groupId = params.id;
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -38,9 +48,8 @@ function GroupDetails() {
           sx={{ fontSize: 18 }}
           variant="contained"
           color="primary"
-          // onClick={handleClickOpen}
+          onClick={handleOpen}
         >
-          {/* <AiOutlineUsergroupAdd /> */}
           Invite Member
         </Button>
         <Box sx={{ marginTop: "24px" }}>
@@ -100,7 +109,7 @@ function GroupDetails() {
                 <GroupInfo groupId={groupId} />
               </TabPanel>
               <TabPanel value="people">
-                <TabMember groupId={groupId} />
+                <GroupMember groupId={groupId} />
               </TabPanel>
               <TabPanel value="more">
                 <GroupMore groupId={groupId} />
@@ -109,6 +118,8 @@ function GroupDetails() {
           )}
         </Box>
       </Box>
+
+      <GroupInvited groupId={groupId} open={open} handleClose={handleClose} />
     </Layout>
   );
 }

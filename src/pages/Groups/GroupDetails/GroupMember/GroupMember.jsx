@@ -19,7 +19,7 @@ import { Delete as DeleteIcon } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
 import { useSelector } from "react-redux";
-import Modal from "../../../components/Modal";
+import Modal from "../../../../components/Modal";
 
 function stringToColor(string) {
   let hash = 0;
@@ -94,7 +94,7 @@ function RenderModalKickMember({
       onCloseModal={() => setOpenModal(false)}
       onActionClick={() => handleKickMember(member?.userId?.id)}
     >
-      <DialogContent dividers>
+      <DialogContent>
         <Typography variant="body2" gutterBottom>
           Are you sure you want to kick{" "}
           <Typography variant="span" sx={{ fontWeight: 600 }}>
@@ -242,7 +242,7 @@ function RenderListMember({
 }
 
 /* eslint-disable react/prop-types */
-function TabMember() {
+function GroupMember() {
   const userInfo = useSelector(
     (state) => state.user.userInfo,
     (prev, next) => isEqual(prev, next)
@@ -276,9 +276,6 @@ function TabMember() {
     console.log("dispatch kick member:", id);
     // thực hiện dispatch kick member ở đây
   };
-
-  console.log("groupUsers:", groupUsers);
-  console.log("userInfo:", userInfo);
 
   return (
     <Box
@@ -315,4 +312,4 @@ function TabMember() {
   );
 }
 
-export default TabMember;
+export default GroupMember;

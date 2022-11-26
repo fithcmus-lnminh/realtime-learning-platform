@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, Stack, Snackbar } from "@mui/material";
 import { isEqual } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteGroup } from "../../../redux/actions/groupAction";
+import { deleteGroup } from "../../../../redux/actions/groupAction";
 
 function GroupMore(prop) {
   const { groupId } = prop;

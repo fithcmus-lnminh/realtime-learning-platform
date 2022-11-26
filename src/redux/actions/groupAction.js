@@ -86,6 +86,49 @@ export const createGroup =
           open: true
         });
 
+        setTimeout(() => {
+          dispatch(getAllGroups());
+        }, 1000);
+      } else {
+        setLoading(false);
+        setMessage({
+          success: false,
+          data: res.message,
+          open: true
+        });
+      }
+    } catch (error) {
+      console.log("error:", error);
+      setLoading(false);
+      setMessage({
+        success: false,
+        data: error.message,
+        open: true
+      });
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const updateGroup =
+  (groupId, data, handleClose, setLoading, reset, setMessage) =>
+  async (dispatch) => {
+    try {
+      const res = await $axios.put(
+        `${API_URL}/api/group/${groupId}`,
+        toSnake(data)
+      );
+
+      /* eslint-disable prefer-destructuring */
+      if (res.code === ApiResposeCodeNumber.Success) {
+        reset();
+        handleClose();
+        setLoading(false);
+        setMessage({
+          success: true,
+          data: "Update group successfully",
+          open: true
+        });
+
         dispatch(getAllGroups());
       } else {
         setLoading(false);
@@ -109,9 +152,7 @@ export const createGroup =
 /* eslint-disable import/prefer-default-export */
 export const deleteGroup = (groupId, setMessage) => async (dispatch) => {
   try {
-    console.log("deleteGroup", groupId);
     const res = await $axios.delete(`${API_URL}/api/group/${groupId}`);
-    console.log("res:", res);
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
@@ -120,7 +161,9 @@ export const deleteGroup = (groupId, setMessage) => async (dispatch) => {
         data: "Delete group successfully",
         open: true
       });
-      dispatch(getAllGroups());
+      setTimeout(() => {
+        dispatch(getAllGroups());
+      }, 1000);
       window.location.href = "/groups";
     } else {
       setMessage({
@@ -138,3 +181,46 @@ export const deleteGroup = (groupId, setMessage) => async (dispatch) => {
     });
   }
 };
+
+/* eslint-disable import/prefer-default-export */
+export const inviteGroup =
+  (groupId, data, handleClose, setLoading, reset, setMessage) =>
+  async (dispatch) => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/group/invite/${groupId}`,
+        toSnake(data)
+      );
+
+      /* eslint-disable prefer-destructuring */
+      if (res.code === ApiResposeCodeNumber.Success) {
+        reset();
+        handleClose();
+        setLoading(false);
+        setMessage({
+          success: true,
+          data: "Invite group successfully",
+          open: true
+        });
+
+        setTimeout(() => {
+          dispatch(getAllGroups());
+        }, 1000);
+      } else {
+        setLoading(false);
+        setMessage({
+          success: false,
+          data: res.message,
+          open: true
+        });
+      }
+    } catch (error) {
+      console.log("error:", error);
+      setLoading(false);
+      setMessage({
+        success: false,
+        data: error.message,
+        open: true
+      });
+    }
+  };

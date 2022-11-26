@@ -1,23 +1,18 @@
 import {
-  Alert,
-  Box,
-  Button,
-  DialogContent,
   FormHelperText,
   Grid,
   OutlinedInput,
-  Snackbar,
-  Stack,
-  TextField
+  DialogContent
 } from "@mui/material";
-import { isEqual } from "lodash";
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { createGroup } from "../../../redux/actions/groupAction";
+import "./GroupUpdate.scss";
+import { updateGroup } from "../../../redux/actions/groupAction";
 import Modal from "../../../components/Modal";
+import Alert from "../../../components/Alert";
 
 const schema = yup
   .object({
@@ -32,19 +27,8 @@ const schema = yup
   })
   .required();
 
-function GroupInfo(prop) {
-  const { groupId } = prop;
-  const groupDetail = useSelector(
-    (state) => {
-      /* eslint-disable prefer-destructuring */
-      const groups = state.group.groups;
-      return groups.find((item) => item.groupId.id === groupId) || [];
-    },
-    (prev, next) => isEqual(prev, next)
-  );
-
-  // const { open, handleClose } = prop;
-  const [open, setOpen] = useState(false);
+function GroupUpdate(prop) {
+  const { groupId, groupDetail, open, handleClose } = prop;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
@@ -56,19 +40,22 @@ function GroupInfo(prop) {
     handleSubmit,
     formState: { errors },
     control,
-    reset
+    reset,
+    setValue
   } = useForm({
     resolver: yupResolver(schema)
   });
 
   const closeModalHandler = () => {
-    setOpen(false);
+    handleClose();
     reset();
   };
 
   const onSubmit = async (data) => {
     setLoading(true);
-    dispatch(createGroup(data, setOpen, setLoading, reset, setMessage));
+    dispatch(
+      updateGroup(groupId, data, handleClose, setLoading, reset, setMessage)
+    );
   };
 
   const handleCloseAlert = () => {
@@ -78,100 +65,15 @@ function GroupInfo(prop) {
     });
   };
 
-  console.log("groupDetail:", groupDetail);
+  useEffect(() => {
+    setValue("name", groupDetail?.groupId?.name);
+    setValue("description", groupDetail?.groupId?.description);
+    setValue("maximumMembers", groupDetail?.groupId?.maximumMembers);
+  }, [open]);
 
   return (
     <>
-      <Box className="group__detail__btn">
-        <Box
-          sx={{
-            margin: "8px 0 24px",
-            display: "flex",
-            alignItems: "center",
-            gap: "20px"
-          }}
-        >
-          <Button
-            className="button__add-group"
-            sx={{ fontSize: 16 }}
-            variant="contained"
-            color="primary"
-            onClick={() => {}}
-          >
-            Copy Link
-          </Button>
-          <Button
-            className="button__add-group"
-            sx={{ fontSize: 16 }}
-            variant="contained"
-            color="primary"
-            onClick={() => setOpen(true)}
-          >
-            Edit
-          </Button>
-        </Box>
-      </Box>
-      <Box className="group__detail__container">
-        <Box className="group__detail__item">
-          <span>Name :</span>
-          <TextField
-            className="group__detail__text-field"
-            variant="standard"
-            value={groupDetail?.groupId?.name || ""}
-            InputProps={{
-              readOnly: true,
-              style: {
-                fontSize: 18
-              }
-            }}
-          />
-        </Box>
-        <Box className="group__detail__item">
-          <span>Description :</span>
-          <TextField
-            className="group__detail__text-field"
-            variant="standard"
-            value={groupDetail?.groupId?.description || ""}
-            InputProps={{
-              readOnly: true,
-              style: {
-                fontSize: 18
-              }
-            }}
-          />
-        </Box>
-        <Box className="group__detail__item">
-          <span>Maximum members :</span>
-          <TextField
-            className="group__detail__text-field"
-            variant="standard"
-            value={groupDetail?.groupId?.maximumMembers || ""}
-            InputProps={{
-              readOnly: true,
-              style: {
-                fontSize: 18
-              }
-            }}
-          />
-        </Box>
-      </Box>
-
-      <Stack spacing={2} sx={{ width: "100%" }}>
-        <Snackbar
-          open={message.open}
-          autoHideDuration={6000}
-          onClose={handleCloseAlert}
-        >
-          <Alert
-            variant="filled"
-            onClose={handleCloseAlert}
-            severity={message.success ? "success" : "error"}
-            sx={{ width: "100%" }}
-          >
-            {message.data}
-          </Alert>
-        </Snackbar>
-      </Stack>
+      <Alert message={message} onClose={handleCloseAlert} />
 
       <Modal
         title="EDIT GROUP"
@@ -193,7 +95,8 @@ function GroupInfo(prop) {
                     <p className="required form__label">Name</p>
                     <OutlinedInput
                       id="name"
-                      sx={{ width: 500, mb: 3, mt: 1 }}
+                      placeholder="Enter a name"
+                      sx={{ width: 500, mb: 1, mt: 1 }}
                       fullWidth
                       error={!!errors.name?.message}
                       /* eslint-disable react/jsx-props-no-spreading */
@@ -217,7 +120,8 @@ function GroupInfo(prop) {
                     <p className="required form__label">Number of members</p>
                     <OutlinedInput
                       id="maximumMembers"
-                      sx={{ width: 500, mb: 3, mt: 1 }}
+                      placeholder="Enter a number of members"
+                      sx={{ width: 500, mb: 1, mt: 1 }}
                       fullWidth
                       type="number"
                       error={!!errors.maximumMembers?.message}
@@ -242,7 +146,8 @@ function GroupInfo(prop) {
                     <p className="required form__label">Description</p>
                     <OutlinedInput
                       id="description"
-                      sx={{ width: 500, mb: 3, mt: 1 }}
+                      placeholder="Enter a description"
+                      sx={{ width: 500, mb: 1, mt: 1 }}
                       fullWidth
                       error={!!errors.description?.message}
                       {...field}
@@ -263,4 +168,4 @@ function GroupInfo(prop) {
   );
 }
 
-export default GroupInfo;
+export default GroupUpdate;
