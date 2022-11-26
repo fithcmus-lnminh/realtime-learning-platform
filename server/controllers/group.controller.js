@@ -16,24 +16,30 @@ exports.getGroup = async (req, res) => {
     }).populate("user_id");
     const totalMembers = await GroupUser.countDocuments({ group_id });
     let isJoined = null;
+    let user_id = null;
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      const token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select("-password");
+    if (req.user) {
+      user_id = req.user._id;
+    } else {
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith("Bearer")
+      ) {
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select("-password");
 
-      if (user.token === token) {
-        isJoined = (await GroupUser.exists({
-          group_id,
-          user_id: user._id
-        }))
-          ? true
-          : false;
+        if (user.token === token) user_id = user._id;
       }
     }
+
+    if (user_id)
+      isJoined = (await GroupUser.exists({
+        group_id,
+        user_id: user._id
+      }))
+        ? true
+        : false;
 
     return res.json({
       code: API_CODE_SUCCESS,
