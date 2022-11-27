@@ -37,6 +37,7 @@ Axios.interceptors.response.use(
       /* eslint-disable no-return-assign */
       return (window.location.href = "/login");
     }
+
     return Promise.reject(error);
   }
 );

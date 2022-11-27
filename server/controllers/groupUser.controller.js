@@ -9,6 +9,12 @@ exports.getGroupUsers = async (req, res) => {
 
   try {
     const group = await Group.findById(group_id);
+
+    const owner = await GroupUser.findOne({
+      group_id,
+      role: "Owner"
+    }).populate("user_id");
+
     const groupUsers = await GroupUser.find(
       {
         group_id,
@@ -45,6 +51,11 @@ exports.getGroupUsers = async (req, res) => {
       message: "Success",
       data: {
         group,
+        owner: {
+          first_name: owner.user_id.first_name,
+          last_name: owner.user_id.last_name,
+          email: owner.user_id.email
+        },
         group_users: groupUsers,
         total_users: totalUsers,
         total_pages: totalPages
