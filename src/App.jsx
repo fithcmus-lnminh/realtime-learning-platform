@@ -11,6 +11,8 @@ import Profile from "./pages/Profile";
 import { getCurrentUser } from "./redux/actions/userAction";
 import { isAuthenticated } from "./utils/isAuthenticated";
 import GroupDetails from "./pages/Groups/GroupDetails";
+import Invite from "./pages/Invite";
+import GoogleLogin from "./pages/GoogleLogin";
 
 function App() {
   const theme = createTheme({
@@ -33,7 +35,9 @@ function App() {
       !(
         location.pathname === "/login" ||
         location.pathname === "/register" ||
-        location.pathname.startsWith("/verify")
+        location.pathname.startsWith("/verify") ||
+        location.pathname.startsWith("/invite") ||
+        location.pathname === "/google-login"
       )
     )
       dispatch(getCurrentUser());
@@ -55,6 +59,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/groups" element={<Groups />} />
         <Route path="/group/:id" element={<GroupDetails />} />
+        <Route path="/invite/:groupId" element={<Invite />} />
+        <Route path="/google-login" element={<GoogleLogin />} />
+        <Route path="/*" element={<Navigate to="/" />} />
       </Routes>
     </ThemeProvider>
   );

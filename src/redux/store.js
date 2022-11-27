@@ -3,10 +3,12 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { userReducer } from "./reducers/userReducer";
 import { groupReducer } from "./reducers/groupReducer";
+import { redirectReducer } from "./reducers/redirectReducer";
 
 const reducer = combineReducers({
   user: userReducer,
-  group: groupReducer
+  group: groupReducer,
+  redirect: redirectReducer
 });
 
 const initialState = {};

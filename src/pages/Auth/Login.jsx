@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -27,6 +27,9 @@ function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ success: true, data: "" });
+
+  const { redirect } = useSelector((state) => state.redirect);
+
   const {
     register,
     handleSubmit,
@@ -37,7 +40,9 @@ function Login() {
   });
   const onSubmit = async (data) => {
     setLoading(true);
-    dispatch(loginUser(data, setLoading, setMessage, reset, navigate));
+    dispatch(
+      loginUser(data, setLoading, setMessage, reset, navigate, redirect)
+    );
   };
 
   useEffect(() => {
@@ -46,7 +51,6 @@ function Login() {
 
   const handleGoogleLogin = () => {
     const clientURL = process.env.REACT_APP_SERVER_URL;
-    console.log(clientURL);
     window.open(`${clientURL}/auth/google`, "_self");
   };
 

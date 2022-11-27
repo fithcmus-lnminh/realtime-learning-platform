@@ -333,3 +333,34 @@ export const inviteGroup =
       }
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const joinGroup = (groupId, setLoading, setMessage) => async () => {
+  try {
+    setLoading(true);
+    const res = await $axios.post(`${API_URL}/api/group/${groupId}/join`);
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      setLoading(false);
+      setMessage({ success: true, message: "Join group successfully" });
+    } else {
+      setLoading(false);
+      setMessage({ success: false, message: res.message });
+    }
+  } catch (error) {
+    setLoading(false);
+    setMessage({ success: false, message: "Internal error" });
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const getGroupByIdNoAuth = (groupId) => async () => {
+  const res = await $axios.get(`${API_URL}/api/group/${groupId}`);
+
+  if (res.code === ApiResposeCodeNumber.Success) {
+    return res.data;
+  }
+
+  return null;
+};
