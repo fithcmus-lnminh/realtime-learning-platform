@@ -276,7 +276,7 @@ exports.leaveGroup = async (req, res, next) => {
   const { user } = req;
 
   try {
-    const groupUser = await GroupUser.deleteOne({
+    await GroupUser.deleteOne({
       group_id,
       user_id: user._id
     });
@@ -287,8 +287,58 @@ exports.leaveGroup = async (req, res, next) => {
       data: null
     });
   } catch (err) {
-    res.status(403).json({
-      code: API_CODE_PERMISSION_DENIED,
+    res.json({
+      code: API_CODE_BY_SERVER,
+      message: err.message,
+      data: null
+    });
+  }
+};
+
+exports.kickUser = async (req, res) => {
+  const { member } = req;
+
+  try {
+    await GroupUser.deleteOne({
+      group_id: member.group_id,
+      user_id: member.user_id
+    });
+
+    res.json({
+      code: API_CODE_SUCCESS,
+      message: "Success",
+      data: null
+    });
+  } catch (err) {
+    res.json({
+      code: API_CODE_BY_SERVER,
+      message: err.message,
+      data: null
+    });
+  }
+};
+
+exports.promoteUser = async (req, res) => {
+  const { member } = req;
+  const { role } = req.body;
+
+  try {
+    const groupUser = await GroupUser.findOneAndUpdate(
+      { group_id: member.group_id, user_id: member.user_id },
+      { role },
+      { new: true }
+    );
+
+    res.json({
+      code: API_CODE_SUCCESS,
+      message: "Success",
+      data: {
+        role: groupUser.role
+      }
+    });
+  } catch (err) {
+    res.json({
+      code: API_CODE_BY_SERVER,
       message: err.message,
       data: null
     });
