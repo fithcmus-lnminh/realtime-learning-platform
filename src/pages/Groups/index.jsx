@@ -67,7 +67,8 @@ function RenderListGroup({ groups, navigateToGroupDetail }) {
               />
               <CardContent>
                 <Typography variant="body2" color="#fff">
-                  27/50 members
+                  {group?.totalUsers || 1}/{group?.groupId?.maximumMembers}{" "}
+                  members
                 </Typography>
               </CardContent>
             </Card>
@@ -109,8 +110,8 @@ function Groups() {
 
   useEffect(() => {
     setLoading(true);
-    dispatch(getAllGroups(setLoading));
-  }, [groups]);
+    dispatch(getAllGroups(value, setLoading));
+  }, [groups, value]);
 
   useEffect(() => {
     document.title = "Group - RLP";
@@ -195,13 +196,27 @@ function Groups() {
                     You don&apos;t have a group yet
                   </Typography>
                 )}
-
-                <GroupAddNew open={open} handleClose={handleClose} />
               </TabPanel>
-              <TabPanel value="join">Item Two</TabPanel>
+              <TabPanel value="join">
+                {groups.length > 0 ? (
+                  <RenderListGroup
+                    groups={groups}
+                    navigateToGroupDetail={navigateToGroupDetail}
+                  />
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    style={{ marginTop: 30 }}
+                  >
+                    You don&apos;t have a group yet
+                  </Typography>
+                )}
+              </TabPanel>
             </TabContext>
           )}
         </Box>
+        <GroupAddNew open={open} handleClose={handleClose} />
       </div>
     </Layout>
   );

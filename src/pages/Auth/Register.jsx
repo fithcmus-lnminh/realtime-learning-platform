@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/actions/userAction";
 
-import kahoot from "../../assets/images/kahoot_logo.svg";
+import kahoot from "../../assets/images/logo.png";
 import google from "../../assets/images/google.svg";
 import "./Auth.scss";
 

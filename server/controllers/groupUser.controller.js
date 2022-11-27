@@ -1,4 +1,5 @@
 const GroupUser = require("../models/groupUser.model");
+const Group = require("../models/group.model");
 const { API_CODE_SUCCESS, API_CODE_BY_SERVER } = require("../constants");
 
 exports.getGroupUsers = async (req, res) => {
@@ -7,6 +8,7 @@ exports.getGroupUsers = async (req, res) => {
   const { role } = req.query;
 
   try {
+    const group = await Group.findById(group_id);
     const groupUsers = await GroupUser.find(
       {
         group_id,
@@ -42,6 +44,7 @@ exports.getGroupUsers = async (req, res) => {
       code: API_CODE_SUCCESS,
       message: "Success",
       data: {
+        group,
         group_users: groupUsers,
         total_users: totalUsers,
         total_pages: totalPages

@@ -10,9 +10,16 @@ import { toSnake } from "../../utils/normalizer";
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
 /* eslint-disable import/prefer-default-export */
-export const getAllGroups = (setLoading) => async (dispatch) => {
+export const getAllGroups = (type, setLoading) => async (dispatch) => {
   try {
-    const res = await $axios.get(`${API_URL}/api/group`);
+    const params =
+      /* eslint-disable no-nested-ternary */
+      type === "own"
+        ? "?role=Owner&role=Co-owner"
+        : type === "join"
+        ? "?role=Member"
+        : "";
+    const res = await $axios.get(`${API_URL}/api/group${params}`);
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
@@ -23,7 +30,9 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
         type: GET_ALL_GROUPS_SUCCESS,
         payload: {
           groups: res.data.groups,
-          totalPages: res.data.totalPages
+          totalPages: res.data.totalPages,
+          total_groups: res.data.total_groups,
+          total_pages: res.data.total_pages
         }
       });
     } else {
@@ -77,8 +86,9 @@ export const getGroupUsers = (groupId, setLoading) => async (dispatch) => {
       dispatch({
         type: GET_GROUP_USERS_SUCCESS,
         payload: {
+          groupDetail: res.data.group,
           groupUsers: res.data.groupUsers,
-          totalPages: res.data.totalPages,
+          totalDetailPages: res.data.totalPages,
           totalUsers: res.data.totalUsers
         }
       });
@@ -117,7 +127,7 @@ export const createGroup =
         }
 
         setTimeout(() => {
-          dispatch(getAllGroups());
+          dispatch(getAllGroups("own"));
         }, 1000);
       } else {
         if (setLoading) {
@@ -214,7 +224,7 @@ export const deleteGroup = (groupId, setMessage) => async (dispatch) => {
         });
       }
       setTimeout(() => {
-        dispatch(getAllGroups());
+        dispatch(getAllGroups("own"));
       }, 1000);
       window.location.href = "/groups";
     } else {
@@ -253,7 +263,7 @@ export const leaveGroup = (groupId, setMessage) => async (dispatch) => {
         });
       }
       setTimeout(() => {
-        dispatch(getAllGroups());
+        dispatch(getAllGroups("own"));
       }, 1000);
       window.location.href = "/groups";
     } else {
@@ -305,7 +315,7 @@ export const inviteGroup =
         }
 
         setTimeout(() => {
-          dispatch(getAllGroups());
+          dispatch(getAllGroups("own"));
         }, 1000);
       } else {
         if (setLoading) {

@@ -13,15 +13,13 @@ import {
   MenuItem,
   Tooltip,
   IconButton,
-  DialogContent,
-  CircularProgress
+  DialogContent
 } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Modal from "../../../../components/Modal";
-import { getGroupUsers } from "../../../../redux/actions/groupAction";
 
 function stringToColor(string) {
   let hash = 0;
@@ -125,21 +123,24 @@ function RenderButtonSelectRole({
       isDisabled = false;
     }
   }
-  return (
-    <FormControl sx={{ minWidth: 120 }} size="small" disabled={isDisabled}>
-      <Select
-        value={member.role}
-        onChange={handleChange}
-        displayEmpty
-        sx={{
-          "&>div": { padding: "6px 10px" }
-        }}
-      >
-        <MenuItem value="Co-Owner">Co-Owner</MenuItem>
-        <MenuItem value="Member">Member</MenuItem>
-      </Select>
-    </FormControl>
-  );
+
+  if (!isDisabled) {
+    return (
+      <FormControl sx={{ minWidth: 120 }} size="small">
+        <Select
+          value={member.role}
+          onChange={handleChange}
+          displayEmpty
+          sx={{
+            "&>div": { padding: "6px 10px" }
+          }}
+        >
+          <MenuItem value="Co-Owner">Co-Owner</MenuItem>
+          <MenuItem value="Member">Member</MenuItem>
+        </Select>
+      </FormControl>
+    );
+  }
 }
 
 /* eslint-disable react/prop-types */
@@ -244,9 +245,8 @@ function RenderListMember({
 }
 
 /* eslint-disable react/prop-types */
-function GroupMember(prop) {
-  const { groupId } = prop;
-  const dispatch = useDispatch();
+function GroupMember() {
+  // const { groupId } = prop;
   const userInfo = useSelector(
     (state) => state.user.userInfo,
     (prev, next) => isEqual(prev, next)
@@ -265,15 +265,9 @@ function GroupMember(prop) {
     },
     (prev, next) => isEqual(prev, next)
   );
-  const [loading, setLoading] = useState(false);
   const [roleUser, setRoleUser] = useState("Member");
   const [openModal, setOpenModal] = useState(false);
   const [memberKick, setMemberKick] = useState({});
-
-  useEffect(() => {
-    setLoading(true);
-    dispatch(getGroupUsers(groupId, setLoading));
-  }, [groupId]);
 
   useEffect(() => {
     const userInGroup = groupUsers.find(
@@ -298,50 +292,37 @@ function GroupMember(prop) {
         margin: "20px auto"
       }}
     >
-      {loading ? (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <CircularProgress color="inherit" />
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            width: "100%",
-            minHeight: 200,
-            maxWidth: 900,
-            margin: "20px auto"
-          }}
-        >
-          <RenderListMember
-            title="Owner"
-            members={groupUsersOwner}
-            roleUser={roleUser}
-            setMemberKick={setMemberKick}
+      <Box
+        sx={{
+          width: "100%",
+          minHeight: 200,
+          maxWidth: 900,
+          margin: "20px auto"
+        }}
+      >
+        <RenderListMember
+          title="Owner"
+          members={groupUsersOwner}
+          roleUser={roleUser}
+          setMemberKick={setMemberKick}
+          setOpenModal={setOpenModal}
+        />
+        <RenderListMember
+          title="Member"
+          members={groupUsersMember}
+          roleUser={roleUser}
+          setMemberKick={setMemberKick}
+          setOpenModal={setOpenModal}
+        />
+        {openModal && (
+          <RenderModalKickMember
+            member={memberKick}
+            openModal={openModal}
             setOpenModal={setOpenModal}
+            handleKickMember={handleKickMember}
           />
-          <RenderListMember
-            title="Member"
-            members={groupUsersMember}
-            roleUser={roleUser}
-            setMemberKick={setMemberKick}
-            setOpenModal={setOpenModal}
-          />
-          {openModal && (
-            <RenderModalKickMember
-              member={memberKick}
-              openModal={openModal}
-              setOpenModal={setOpenModal}
-              handleKickMember={handleKickMember}
-            />
-          )}
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   );
 }
