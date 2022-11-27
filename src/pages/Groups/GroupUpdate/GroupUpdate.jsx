@@ -4,15 +4,15 @@ import {
   OutlinedInput,
   DialogContent
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import "./GroupAddNew.scss";
-import { createGroup } from "../../../redux/actions/groupAction";
-import Alert from "../../../components/Alert";
+import "./GroupUpdate.scss";
+import { updateGroup } from "../../../redux/actions/groupAction";
 import Modal from "../../../components/Modal";
+import Alert from "../../../components/Alert";
 
 const schema = yup
   .object({
@@ -27,8 +27,8 @@ const schema = yup
   })
   .required();
 
-function GroupAddNew(prop) {
-  const { open, handleClose } = prop;
+function GroupUpdate(prop) {
+  const { groupId, groupDetail, open, handleClose } = prop;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
@@ -40,7 +40,8 @@ function GroupAddNew(prop) {
     handleSubmit,
     formState: { errors },
     control,
-    reset
+    reset,
+    setValue
   } = useForm({
     resolver: yupResolver(schema)
   });
@@ -52,7 +53,9 @@ function GroupAddNew(prop) {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
+    dispatch(
+      updateGroup(groupId, data, handleClose, setLoading, reset, setMessage)
+    );
   };
 
   const handleCloseAlert = () => {
@@ -62,15 +65,21 @@ function GroupAddNew(prop) {
     });
   };
 
+  useEffect(() => {
+    setValue("name", groupDetail?.group?.name);
+    setValue("description", groupDetail?.group?.description);
+    setValue("maximumMembers", groupDetail?.group?.maximumMembers);
+  }, [open]);
+
   return (
     <>
       <Alert message={message} onClose={handleCloseAlert} />
 
       <Modal
-        title="CREATE A GROUP"
+        title="EDIT GROUP"
         loading={loading}
         actions={["Cancel", "OK"]}
-        actionText="Create"
+        actionText="Save"
         show={open}
         onCloseModal={closeModalHandler}
         onActionClick={handleSubmit(onSubmit)}
@@ -159,4 +168,4 @@ function GroupAddNew(prop) {
   );
 }
 
-export default GroupAddNew;
+export default GroupUpdate;

@@ -1,5 +1,6 @@
 import {
   GET_ALL_GROUPS_SUCCESS,
+  GET_GROUP_SUCCESS,
   GET_GROUP_USERS_SUCCESS
 } from "../../constants/groupConstants";
 
@@ -19,6 +20,11 @@ export const groupReducer = (state = initialState, action = {}) => {
       return {
         ...state,
         ...action.payload
+      };
+    case GET_GROUP_SUCCESS:
+      return {
+        ...state,
+        groupDetail: action.payload
       };
     case GET_GROUP_USERS_SUCCESS:
       return {
