@@ -72,7 +72,9 @@ exports.getGroups = async (req, res) => {
       {
         $match: {
           user_id: req.user._id,
-          role: role ? { $in: role } : { $ne: null }
+          role: role
+            ? { $in: Array.isArray(role) ? role : [role] }
+            : { $ne: null }
         }
       },
       {

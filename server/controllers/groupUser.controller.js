@@ -8,7 +8,12 @@ exports.getGroupUsers = async (req, res) => {
 
   try {
     const groupUsers = await GroupUser.find(
-      { group_id, role: role ? { $in: role } : { $ne: null } },
+      {
+        group_id,
+        role: role
+          ? { $in: Array.isArray(role) ? role : [role] }
+          : { $ne: null }
+      },
       { _id: 0, __v: 0, group_id: 0 }
     )
       .populate({
@@ -27,7 +32,10 @@ exports.getGroupUsers = async (req, res) => {
       return 0;
     });
 
-    const totalUsers = await GroupUser.countDocuments({ group_id });
+    const totalUsers = await GroupUser.countDocuments({
+      group_id,
+      role: role ? { $in: Array.isArray(role) ? role : [role] } : { $ne: null }
+    });
     const totalPages = Math.ceil(totalUsers / limit);
 
     res.json({
