@@ -5,7 +5,7 @@ import { AiOutlineHome, AiOutlineTeam } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { CiLogout } from "react-icons/ci";
 import { useDispatch } from "react-redux";
-import kahoot from "../../assets/images/kahoot_logo.svg";
+import kahoot from "../../assets/images/logo.png";
 import { logoutUser } from "../../redux/actions/userAction";
 
 function Sidebar(prop) {

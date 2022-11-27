@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./Auth.scss";
-import kahoot from "../../assets/images/kahoot_logo.svg";
+import kahoot from "../../assets/images/logo.png";
 import google from "../../assets/images/google.svg";
 import { loginUser } from "../../redux/actions/userAction";
 
