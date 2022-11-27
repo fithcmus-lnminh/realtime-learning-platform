@@ -125,21 +125,24 @@ function RenderButtonSelectRole({
       isDisabled = false;
     }
   }
-  return (
-    <FormControl sx={{ minWidth: 120 }} size="small" disabled={isDisabled}>
-      <Select
-        value={member.role}
-        onChange={handleChange}
-        displayEmpty
-        sx={{
-          "&>div": { padding: "6px 10px" }
-        }}
-      >
-        <MenuItem value="Co-Owner">Co-Owner</MenuItem>
-        <MenuItem value="Member">Member</MenuItem>
-      </Select>
-    </FormControl>
-  );
+
+  if (!isDisabled) {
+    return (
+      <FormControl sx={{ minWidth: 120 }} size="small">
+        <Select
+          value={member.role}
+          onChange={handleChange}
+          displayEmpty
+          sx={{
+            "&>div": { padding: "6px 10px" }
+          }}
+        >
+          <MenuItem value="Co-Owner">Co-Owner</MenuItem>
+          <MenuItem value="Member">Member</MenuItem>
+        </Select>
+      </FormControl>
+    );
+  }
 }
 
 /* eslint-disable react/prop-types */

@@ -45,10 +45,10 @@ function GroupDetails() {
   return (
     <Layout itemId={2}>
       <Box
-        sx={{ width: "100%", typography: "body1" }}
+        sx={{ width: "100%", minHeight: "70vh", typography: "body1" }}
         className="tab__container"
       >
-        {groupDetail?.isJoined && (
+        {!loading && groupDetail?.isJoined && (
           <Button
             className="button__add-group"
             sx={{ fontSize: 18 }}
@@ -120,7 +120,7 @@ function GroupDetails() {
                 </TabList>
               </Box>
               <TabPanel value="info">
-                <GroupInfo groupId={groupId} />
+                <GroupInfo groupId={groupId} value={value} />
               </TabPanel>
               <TabPanel value="people">
                 <GroupMember groupId={groupId} />

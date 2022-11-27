@@ -8,7 +8,8 @@ const initialState = {
   groups: [],
   groupDetail: {},
   groupUsers: [],
-  totalPages: 1,
+  total_pages: 1,
+  total_groups: 1,
   totalDetailPages: 1,
   totalUsers: 1
 };

@@ -10,9 +10,16 @@ import { toSnake } from "../../utils/normalizer";
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
 /* eslint-disable import/prefer-default-export */
-export const getAllGroups = (setLoading) => async (dispatch) => {
+export const getAllGroups = (type, setLoading) => async (dispatch) => {
   try {
-    const res = await $axios.get(`${API_URL}/api/group`);
+    const params =
+      /* eslint-disable no-nested-ternary */
+      type === "own"
+        ? "?role=Owner&role=Co-owner"
+        : type === "join"
+        ? "?role=Member"
+        : "";
+    const res = await $axios.get(`${API_URL}/api/group${params}`);
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
@@ -23,7 +30,9 @@ export const getAllGroups = (setLoading) => async (dispatch) => {
         type: GET_ALL_GROUPS_SUCCESS,
         payload: {
           groups: res.data.groups,
-          totalPages: res.data.totalPages
+          totalPages: res.data.totalPages,
+          total_groups: res.data.total_groups,
+          total_pages: res.data.total_pages
         }
       });
     } else {
