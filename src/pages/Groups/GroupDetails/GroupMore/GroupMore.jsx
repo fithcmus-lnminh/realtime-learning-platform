@@ -11,9 +11,9 @@ function GroupMore(prop) {
     (state) => state.user.userInfo,
     (prev, next) => isEqual(prev, next)
   );
-  const groupDetail = useSelector(
+  const groupOwner = useSelector(
     (state) => {
-      return state.group.groupDetail;
+      return state.group.owner;
     },
     (prev, next) => isEqual(prev, next)
   );
@@ -40,7 +40,7 @@ function GroupMore(prop) {
 
   return (
     <div className="group__more">
-      {groupDetail?.owner?.email === userInfo?.email ? (
+      {groupOwner?.email === userInfo?.email ? (
         <Button
           className="button__add-group"
           sx={{ fontSize: 18 }}

@@ -86,10 +86,11 @@ export const getGroupUsers = (groupId, setLoading) => async (dispatch) => {
       dispatch({
         type: GET_GROUP_USERS_SUCCESS,
         payload: {
+          owner: res.data.owner,
           groupDetail: res.data.group,
           groupUsers: res.data.groupUsers,
-          totalDetailPages: res.data.totalPages,
-          totalUsers: res.data.totalUsers
+          total_detail_pages: res.data.totalPages,
+          total_users: res.data.totalUsers
         }
       });
     } else {
@@ -181,7 +182,7 @@ export const updateGroup =
           });
         }
 
-        dispatch(getGroup(groupId));
+        dispatch(getGroupUsers(groupId));
       } else {
         if (setLoading) {
           setLoading(false);

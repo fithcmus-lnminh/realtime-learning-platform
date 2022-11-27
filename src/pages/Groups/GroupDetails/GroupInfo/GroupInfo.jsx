@@ -7,13 +7,17 @@ import GroupUpdate from "../../GroupUpdate/GroupUpdate";
 
 function GroupInfo(prop) {
   const { groupId } = prop;
-  // const userInfo = useSelector(
-  //   (state) => state.user.userInfo,
-  //   (prev, next) => isEqual(prev, next)
-  // );
-  const groupDetail = useSelector(
+  const userInfo = useSelector(
+    (state) => state.user.userInfo,
+    (prev, next) => isEqual(prev, next)
+  );
+  const {
+    groupDetail,
+    owner: groupOwner,
+    total_users
+  } = useSelector(
     (state) => {
-      return state.group.groupDetail;
+      return state.group;
     },
     (prev, next) => isEqual(prev, next)
   );
@@ -76,17 +80,17 @@ function GroupInfo(prop) {
           >
             Copy Link
           </Button>
-          {/* {groupDetail?.owner?.email === userInfo?.email && ( */}
-          <Button
-            className="button__add-group"
-            sx={{ fontSize: 16 }}
-            variant="contained"
-            color="primary"
-            onClick={() => setOpen(true)}
-          >
-            Edit
-          </Button>
-          {/* )} */}
+          {groupOwner?.email === userInfo?.email && (
+            <Button
+              className="button__add-group"
+              sx={{ fontSize: 16 }}
+              variant="contained"
+              color="primary"
+              onClick={() => setOpen(true)}
+            >
+              Edit
+            </Button>
+          )}
         </Box>
       </Box>
       <Box sx={{ mt: 5, mb: 0 }}>
@@ -98,7 +102,7 @@ function GroupInfo(prop) {
           gutterBottom
           sx={{ opacity: "0.5", marginBottom: "12px" }}
         >
-          1/{groupDetail?.maximumMembers || ""}{" "}
+          {total_users}/{groupDetail?.maximumMembers || ""}{" "}
           {groupDetail?.maximumMembers > 1 ? "members" : "member"}
         </Typography>
         <Typography variant="body1" gutterBottom>

@@ -8,10 +8,11 @@ const initialState = {
   groups: [],
   groupDetail: {},
   groupUsers: [],
+  owner: {},
   total_pages: 1,
   total_groups: 1,
-  totalDetailPages: 1,
-  totalUsers: 1
+  total_detail_pages: 1,
+  total_users: 1
 };
 
 /* eslint-disable import/prefer-default-export */
