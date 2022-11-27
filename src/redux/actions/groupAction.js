@@ -355,8 +355,10 @@ export const joinGroup = (groupId, setLoading, setMessage) => async () => {
 };
 
 /* eslint-disable import/prefer-default-export */
-export const getGroupByIdNoAuth = (groupId) => async () => {
+export const getGroupByIdNoAuth = (groupId, setLoading) => async () => {
+  setLoading(true);
   const res = await $axios.get(`${API_URL}/api/group/${groupId}`);
+  setLoading(false);
 
   if (res.code === ApiResposeCodeNumber.Success) {
     return res.data;

@@ -13,6 +13,7 @@ import "./Invite.scss";
 function Invite() {
   const params = useParams();
   const [loading, setLoading] = useState(false);
+  const [loadingInfo, setLoadingInfo] = useState(false);
   const [message, setMessage] = useState({ success: false, message: "" });
   const [groupInfo, setGroupInfo] = useState(null);
 
@@ -39,7 +40,9 @@ function Invite() {
   };
 
   const getGroupInfo = async () => {
-    const group = await dispatch(getGroupByIdNoAuth(params.groupId));
+    const group = await dispatch(
+      getGroupByIdNoAuth(params.groupId, setLoadingInfo)
+    );
 
     if (group) setGroupInfo(group);
     else
@@ -57,85 +60,100 @@ function Invite() {
     <div className="invite__container">
       <div className="invite__card">
         <h2 className="invite__title">INVITATION TO JOIN THE GROUP</h2>
-        {message.message ? (
-          <div>
-            <p
-              className={`invite__text invite__text-bold ${
-                message.success ? "invite__success" : "invite__error"
-              }`}
-            >
-              {message.message}
-            </p>
-            <button
-              type="button"
-              className="invite__button"
-              onClick={handleRedirect}
-            >
-              {
-                /* eslint-disable no-nested-ternary */
-                message.success
-                  ? "GO TO GROUP"
-                  : isAuthenticated()
-                  ? "BACK TO HOME"
-                  : "BACK TO LOGIN"
-              }
-            </button>
-          </div>
+        {loadingInfo ? (
+          <CircularProgress />
         ) : (
           <div>
-            {groupInfo?.isJoined ? (
-              <p className="invite__text invite__highlight invite__text-bold">
-                You have already joined this group
-              </p>
+            {message.message ? (
+              <div>
+                <p
+                  className={`invite__text invite__text-bold ${
+                    message.success ? "invite__success" : "invite__error"
+                  }`}
+                >
+                  {message.message}
+                </p>
+                <button
+                  type="button"
+                  className="invite__button"
+                  onClick={handleRedirect}
+                >
+                  {
+                    /* eslint-disable no-nested-ternary */
+                    message.success
+                      ? "GO TO GROUP"
+                      : isAuthenticated()
+                      ? "BACK TO HOME"
+                      : "BACK TO LOGIN"
+                  }
+                </button>
+              </div>
             ) : (
-              <p className="invite__text ">
-                You are invited to join{" "}
-                <span className="invite__highlight invite__text-bold">
-                  {groupInfo?.group?.name}
-                </span>{" "}
-                owned by{" "}
-                <span className="invite__highlight">{`${groupInfo?.owner?.firstName} ${groupInfo?.owner?.lastName}`}</span>
-                .
-              </p>
-            )}
-
-            {groupInfo?.isJoined ? (
-              <button type="button" className="invite__button">
-                GO TO THE GROUP
-              </button>
-            ) : (
-              <button
-                type="button"
-                disabled={loading}
-                className="invite__button"
-                onClick={joinGroupHandler}
-              >
-                {loading ? (
-                  <CircularProgress color="inherit" size={22} />
+              <div>
+                {groupInfo?.isJoined ? (
+                  <p className="invite__text invite__highlight invite__text-bold">
+                    You have already joined this group
+                  </p>
                 ) : (
-                  "Join now"
+                  <p className="invite__text ">
+                    You are invited to join{" "}
+                    <span className="invite__highlight invite__text-bold">
+                      {groupInfo?.group?.name}
+                    </span>{" "}
+                    owned by{" "}
+                    <span className="invite__highlight">{`${groupInfo?.owner?.firstName} ${groupInfo?.owner?.lastName}`}</span>
+                    .
+                  </p>
                 )}
-              </button>
-            )}
 
-            {!groupInfo?.isJoined && (
-              <p className="invite__text">
-                or{" "}
-                {isAuthenticated() ? (
-                  <a href="/" className="invite__back-link invite__highlight">
-                    back to home
-                  </a>
-                ) : (
-                  <a
-                    href="/login"
-                    className="invite__back-link invite__highlight"
-                    onClick={resetRedirectHandler}
+                {groupInfo?.isJoined ? (
+                  <button
+                    type="button"
+                    className="invite__button"
+                    onClick={() => {
+                      window.location.href = `/group/${params.groupId}`;
+                    }}
                   >
-                    back to login page
-                  </a>
-                )}{" "}
-                if you don&#39;t want to join this group.
-              </p>
+                    GO TO THE GROUP
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={loading}
+                    className="invite__button"
+                    onClick={joinGroupHandler}
+                  >
+                    {loading ? (
+                      <CircularProgress color="inherit" size={22} />
+                    ) : (
+                      "Join now"
+                    )}
+                  </button>
+                )}
+
+                {!groupInfo?.isJoined && (
+                  <p className="invite__text">
+                    or{" "}
+                    {isAuthenticated() ? (
+                      <a
+                        href="/"
+                        className="invite__back-link invite__highlight"
+                      >
+                        back to home
+                      </a>
+                    ) : (
+                      <a
+                        href="/login"
+                        className="invite__back-link invite__highlight"
+                        onClick={resetRedirectHandler}
+                      >
+                        back to login page
+                      </a>
+                    )}{" "}
+                    if you don&#39;t want to join this group.
+                  </p>
+                )}
+              </div>
             )}
           </div>
         )}

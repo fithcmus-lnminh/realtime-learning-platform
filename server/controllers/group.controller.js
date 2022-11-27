@@ -213,7 +213,7 @@ exports.inviteUser = async (req, res) => {
   const { group_id } = req.params;
   const { email } = req.body;
   const { user, group } = req;
-  const inviteLink = `${process.env.CLIENT_URL}/group/${group_id}/join`;
+  const inviteLink = `${process.env.CLIENT_URL}/invite/${group_id}`;
 
   try {
     await sendMail(
