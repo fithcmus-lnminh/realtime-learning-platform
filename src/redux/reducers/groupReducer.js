@@ -30,9 +30,7 @@ export const groupReducer = (state = initialState, action = {}) => {
     case GET_GROUP_USERS_SUCCESS:
       return {
         ...state,
-        groupUsers: action.payload.groupUsers,
-        totalUsers: action.payload.totalUsers,
-        totalDetailPages: action.payload.totalPages
+        ...action.payload
       };
     default:
       return state;

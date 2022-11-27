@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { isEqual } from "lodash";
 import { Tab, Box, CircularProgress, Button } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
-import { getGroup } from "../../../redux/actions/groupAction";
+import { getGroupUsers } from "../../../redux/actions/groupAction";
 import Layout from "../../Layout";
 import "./GroupDetails.scss";
 import GroupMember from "./GroupMember/GroupMember";
@@ -14,14 +13,9 @@ import GroupInvited from "../GroupInvited/GroupInvited";
 
 function GroupDetails() {
   const dispatch = useDispatch();
-  const groupDetail = useSelector(
-    (state) => state.group.groupDetail,
-    (prev, next) => isEqual(prev, next)
-  );
   const [value, setValue] = useState("info");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-
   const params = useParams();
   const groupId = params.id;
 
@@ -39,7 +33,7 @@ function GroupDetails() {
 
   useEffect(() => {
     setLoading(true);
-    dispatch(getGroup(groupId, setLoading));
+    dispatch(getGroupUsers(groupId, setLoading));
   }, [groupId]);
 
   return (
@@ -48,7 +42,7 @@ function GroupDetails() {
         sx={{ width: "100%", minHeight: "70vh", typography: "body1" }}
         className="tab__container"
       >
-        {!loading && groupDetail?.isJoined && (
+        {!loading && (
           <Button
             className="button__add-group"
             sx={{ fontSize: 18 }}
@@ -120,7 +114,7 @@ function GroupDetails() {
                 </TabList>
               </Box>
               <TabPanel value="info">
-                <GroupInfo groupId={groupId} value={value} />
+                <GroupInfo groupId={groupId} />
               </TabPanel>
               <TabPanel value="people">
                 <GroupMember groupId={groupId} />
