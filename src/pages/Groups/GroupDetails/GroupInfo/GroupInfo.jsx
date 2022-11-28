@@ -48,7 +48,7 @@ function GroupInfo(prop) {
     });
 
     navigator.clipboard.writeText(
-      `${process.env.REACT_APP_CLIENT_URL}/invite/${groupId}`
+      `${window.location.origin}/invite/${groupId}`
     );
   };
 
