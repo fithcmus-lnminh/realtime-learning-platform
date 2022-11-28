@@ -8,7 +8,7 @@ function Home() {
     <Layout itemId={1}>
       <div className="home__container">
         <span className="home__news-title">
-          <BiNews />
+          <BiNews className="home__news-icon" />
           NEWS
         </span>
         <hr className="home__hr" />
