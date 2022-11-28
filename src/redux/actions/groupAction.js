@@ -366,6 +366,101 @@ export const joinGroup = (groupId, setLoading, setMessage) => async () => {
 };
 
 /* eslint-disable import/prefer-default-export */
+export const kickUser =
+  (groupId, data, setLoading, setMessage, setOpenModal) => async (dispatch) => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/group/${groupId}/kick`,
+        toSnake(data)
+      );
+
+      /* eslint-disable prefer-destructuring */
+      if (res.code === ApiResposeCodeNumber.Success) {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Kick user successfully",
+            open: true
+          });
+        }
+        if (setOpenModal) {
+          setOpenModal(false);
+        }
+        dispatch(getGroupUsers(groupId));
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
+        if (setOpenModal) {
+          setOpenModal(false);
+        }
+      }
+    } catch (error) {
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: "Internal error",
+          open: true
+        });
+      }
+      if (setOpenModal) {
+        setOpenModal(false);
+      }
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const promoteUser = (groupId, data, setMessage) => async (dispatch) => {
+  try {
+    const res = await $axios.post(
+      `${API_URL}/api/group/${groupId}/promote`,
+      toSnake(data)
+    );
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      if (setMessage) {
+        setMessage({
+          success: true,
+          data: "Change user role successfully",
+          open: true
+        });
+      }
+      dispatch(getGroupUsers(groupId));
+    } else {
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: res.message,
+          open: true
+        });
+      }
+    }
+  } catch (error) {
+    if (setMessage) {
+      setMessage({
+        success: false,
+        data: "Internal error",
+        open: true
+      });
+    }
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
 export const getGroupByIdNoAuth = (groupId, setLoading) => async () => {
   setLoading(true);
   const res = await $axios.get(`${API_URL}/api/group/${groupId}`);

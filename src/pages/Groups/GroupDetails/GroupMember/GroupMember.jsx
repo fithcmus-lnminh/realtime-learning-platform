@@ -18,8 +18,10 @@ import {
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Modal from "../../../../components/Modal";
+import { kickUser, promoteUser } from "../../../../redux/actions/groupAction";
+import Alert from "../../../../components/Alert";
 
 function stringToColor(string) {
   let hash = 0;
@@ -82,12 +84,14 @@ function RenderButtonDelete({
 function RenderModalKickMember({
   member,
   openModal,
+  loading,
   setOpenModal = () => {},
   handleKickMember = () => {}
 }) {
   return (
     <Modal
       title="Kick member?"
+      loading={loading}
       actions={["Cancel", "OK"]}
       actionText="Kick"
       show={openModal}
@@ -113,22 +117,17 @@ function RenderButtonSelectRole({
   roleUser = "",
   handleChange = () => {}
 }) {
-  let isDisabled = true;
+  let isShow = true;
 
   if (roleUser === "Owner") {
-    isDisabled = false;
-    /* eslint-disable no-else-return */
-  } else if (roleUser === "Co-Owner") {
-    if (member.role === "Member") {
-      isDisabled = false;
-    }
+    isShow = false;
   }
 
-  if (!isDisabled) {
+  if (!isShow) {
     return (
       <FormControl sx={{ minWidth: 120 }} size="small">
         <Select
-          value={member.role}
+          value={member?.role}
           onChange={handleChange}
           displayEmpty
           sx={{
@@ -149,7 +148,8 @@ function RenderListMember({
   members = {},
   roleUser = "",
   setMemberKick = () => {},
-  setOpenModal = () => {}
+  setOpenModal = () => {},
+  handleChangeRoleMember = () => {}
 }) {
   const handleClickDelete = (member) => {
     setOpenModal(true);
@@ -193,8 +193,12 @@ function RenderListMember({
       >
         {members.map((member, index) => {
           const handleChangeRole = (event) => {
-            console.log(event.target.value);
-            // thực hiện dispatch change role ở đây
+            if (member.role !== event.target.value) {
+              handleChangeRoleMember({
+                userId: member?.userId?.id,
+                role: event.target.value
+              });
+            }
           };
 
           return (
@@ -205,15 +209,15 @@ function RenderListMember({
                 <div className="member__action">
                   {title !== "Owner" ? (
                     <>
-                      <RenderButtonDelete
-                        member={member}
-                        roleUser={roleUser}
-                        handleClickDelete={() => handleClickDelete(member)}
-                      />
                       <RenderButtonSelectRole
                         member={member}
                         roleUser={roleUser}
                         handleChange={handleChangeRole}
+                      />
+                      <RenderButtonDelete
+                        member={member}
+                        roleUser={roleUser}
+                        handleClickDelete={() => handleClickDelete(member)}
                       />
                     </>
                   ) : null}
@@ -245,8 +249,9 @@ function RenderListMember({
 }
 
 /* eslint-disable react/prop-types */
-function GroupMember() {
-  // const { groupId } = prop;
+function GroupMember(prop) {
+  const { groupId } = prop;
+  const dispatch = useDispatch();
   const userInfo = useSelector(
     (state) => state.user.userInfo,
     (prev, next) => isEqual(prev, next)
@@ -267,7 +272,13 @@ function GroupMember() {
   );
   const [roleUser, setRoleUser] = useState("Member");
   const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [memberKick, setMemberKick] = useState({});
+  const [message, setMessage] = useState({
+    success: true,
+    data: "",
+    open: false
+  });
 
   useEffect(() => {
     const userInGroup = groupUsers.find(
@@ -278,9 +289,23 @@ function GroupMember() {
     }
   }, [groupUsers]);
 
+  const handleCloseAlert = () => {
+    setMessage({
+      ...message,
+      success: true,
+      data: "",
+      open: false
+    });
+  };
+
   const handleKickMember = (id) => {
-    console.log("dispatch kick member:", id);
-    // thực hiện dispatch kick member ở đây
+    dispatch(
+      kickUser(groupId, { userId: id }, setLoading, setMessage, setOpenModal)
+    );
+  };
+
+  const handleChangeRoleMember = (data) => {
+    dispatch(promoteUser(groupId, data, setMessage));
   };
 
   return (
@@ -292,6 +317,8 @@ function GroupMember() {
         margin: "20px auto"
       }}
     >
+      <Alert message={message} onClose={handleCloseAlert} />
+
       <Box
         sx={{
           width: "100%",
@@ -306,6 +333,7 @@ function GroupMember() {
           roleUser={roleUser}
           setMemberKick={setMemberKick}
           setOpenModal={setOpenModal}
+          handleChangeRoleMember={handleChangeRoleMember}
         />
         <RenderListMember
           title="Member"
@@ -313,11 +341,13 @@ function GroupMember() {
           roleUser={roleUser}
           setMemberKick={setMemberKick}
           setOpenModal={setOpenModal}
+          handleChangeRoleMember={handleChangeRoleMember}
         />
         {openModal && (
           <RenderModalKickMember
             member={memberKick}
             openModal={openModal}
+            loading={loading}
             setOpenModal={setOpenModal}
             handleKickMember={handleKickMember}
           />
