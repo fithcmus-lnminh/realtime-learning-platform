@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Alert, Button, Stack, Snackbar } from "@mui/material";
 import { isEqual } from "lodash";
+import { red } from "@mui/material/colors";
+import { ImExit } from "react-icons/im";
+import { AiOutlineDelete } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteGroup, leaveGroup } from "../../../../redux/actions/groupAction";
 
@@ -43,22 +46,25 @@ function GroupMore(prop) {
       {groupOwner?.email === userInfo?.email ? (
         <Button
           className="button__add-group"
-          sx={{ fontSize: 18 }}
+          sx={{ fontSize: 18, backgroundColor: red[400] }}
           variant="contained"
-          color="primary"
           onClick={handleDeleteGroup}
         >
-          Delete Group
+          <AiOutlineDelete /> Delete Group
         </Button>
       ) : (
         <Button
           className="button__add-group"
-          sx={{ fontSize: 18 }}
+          sx={{
+            fontSize: 18,
+            backgroundColor: red[400],
+            "&:hover": { backgroundColor: red[700] }
+          }}
           variant="contained"
           color="primary"
           onClick={handleLeaveGroup}
         >
-          Leave Group
+          <ImExit /> Leave Group
         </Button>
       )}
       <Stack spacing={2} sx={{ width: "100%" }}>

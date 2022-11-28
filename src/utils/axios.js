@@ -37,6 +37,10 @@ Axios.interceptors.response.use(
       /* eslint-disable no-return-assign */
       return (window.location.href = "/login");
     }
+    if (error.response?.status === 403) {
+      /* eslint-disable no-return-assign */
+      return (window.location.href = "/403");
+    }
 
     return Promise.reject(error);
   }

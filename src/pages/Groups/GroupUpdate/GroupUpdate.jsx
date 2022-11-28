@@ -22,7 +22,10 @@ const schema = yup
       .number("Please enter number of group members")
       .typeError("Please enter number of group members")
       .min(1, "The number of group members must be greater than 0")
-      .max(30, "The number of group members must be less than 30")
+      .max(
+        1000,
+        "The number of group members must be less than or equal to 1000"
+      )
       .required("Please enter number of group members")
   })
   .required();
@@ -38,7 +41,7 @@ function GroupUpdate(prop) {
   const dispatch = useDispatch();
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     control,
     reset,
     setValue
@@ -78,6 +81,7 @@ function GroupUpdate(prop) {
       <Modal
         title="EDIT GROUP"
         loading={loading}
+        disableAction={!isDirty}
         actions={["Cancel", "OK"]}
         actionText="Save"
         show={open}
@@ -103,7 +107,11 @@ function GroupUpdate(prop) {
                       {...field}
                     />
                     {errors.name?.message && (
-                      <FormHelperText id="component-error-text" error>
+                      <FormHelperText
+                        sx={{ mb: 2, mt: 0 }}
+                        id="component-error-text"
+                        error
+                      >
                         {errors.name.message}
                       </FormHelperText>
                     )}
@@ -129,7 +137,11 @@ function GroupUpdate(prop) {
                       {...field}
                     />
                     {errors.maximumMembers?.message && (
-                      <FormHelperText id="component-error-text" error>
+                      <FormHelperText
+                        sx={{ mb: 2, mt: 0 }}
+                        id="component-error-text"
+                        error
+                      >
                         {errors.maximumMembers.message}
                       </FormHelperText>
                     )}
@@ -153,7 +165,11 @@ function GroupUpdate(prop) {
                       {...field}
                     />
                     {errors.description?.message && (
-                      <FormHelperText id="component-error-text" error>
+                      <FormHelperText
+                        sx={{ mb: 2, mt: 0 }}
+                        id="component-error-text"
+                        error
+                      >
                         {errors.description.message}
                       </FormHelperText>
                     )}

@@ -1,41 +1,51 @@
 .member__action {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
 .member__item {
-    padding: 12px 0;
+  padding: 12px 0;
 }
 
 .group__detail {
-    &__container {
-        background-color: #fff;
-        border-radius: 8px;
-        padding: 16px;
-        border: 2px solid #f0f0f0;
-    }
+  &__container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    border: 2px solid #f0f0f0;
+  }
 
-    &__item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 24px;
-        font-size: 18px;
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    font-size: 18px;
 
-        & span {
-            width: 150px;
-        }
+    & span {
+      width: 150px;
     }
+  }
 
-    &__text-field {
-        width: 100%;
+  &__text-field {
+    width: 100%;
+  }
+
+  &__header {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    &-icon {
+      font-size: 20px;
+      cursor: pointer;
     }
+  }
 }
 
 .edit {
-    &__label {
-        font-size: 16px;
-    }
+  &__label {
+    font-size: 16px;
+  }
 }

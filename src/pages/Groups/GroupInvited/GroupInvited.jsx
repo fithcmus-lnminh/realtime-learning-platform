@@ -35,7 +35,7 @@ function GroupInvited(prop) {
   const dispatch = useDispatch();
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     control,
     reset
   } = useForm({
@@ -65,8 +65,9 @@ function GroupInvited(prop) {
     <>
       <Alert message={message} onClose={handleCloseAlert} />
       <Modal
-        title="Invite members"
+        title="INVITE A MEMBER"
         loading={loading}
+        disableAction={!isDirty}
         actions={["Cancel", "OK"]}
         actionText="Invite"
         show={open}

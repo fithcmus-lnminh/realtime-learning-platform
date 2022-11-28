@@ -120,18 +120,16 @@ function Groups() {
   return (
     <Layout itemId={2}>
       <div className="group">
-        {!loading && (
-          <Button
-            className="button__add-group"
-            sx={{ fontSize: 18 }}
-            variant="contained"
-            color="primary"
-            onClick={handleClickOpen}
-          >
-            <AiOutlineUsergroupAdd />
-            Create Group
-          </Button>
-        )}
+        <Button
+          className="button__add-group"
+          sx={{ fontSize: 18 }}
+          variant="contained"
+          color="primary"
+          onClick={handleClickOpen}
+        >
+          <AiOutlineUsergroupAdd />
+          Create Group
+        </Button>
         <Box
           sx={{
             width: "100%",
@@ -141,80 +139,88 @@ function Groups() {
           }}
           className="tab__container"
         >
-          {loading ? (
-            <Box className="tab__loading">
-              <CircularProgress color="inherit" />
-            </Box>
-          ) : (
-            <TabContext value={value}>
-              <Box
-                sx={{ borderBottom: 1, borderColor: "divider", fontSize: 18 }}
+          <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider", fontSize: 18 }}>
+              <TabList
+                textColor="secondary"
+                indicatorColor="secondary"
+                onChange={handleChange}
               >
-                <TabList
-                  textColor="secondary"
-                  indicatorColor="secondary"
-                  onChange={handleChange}
-                >
-                  <Tab
-                    label={
-                      <span
-                        className={`tab__label ${
-                          value === "own" ? "tab__active" : ""
-                        }`}
-                      >
-                        Group I Manage
-                      </span>
-                    }
-                    value="own"
-                  />
-                  <Tab
-                    label={
-                      <span
-                        className={`tab__label ${
-                          value === "join" ? "tab__active" : ""
-                        }`}
-                      >
-                        Group I&#39;ve Joined
-                      </span>
-                    }
-                    value="join"
-                  />
-                </TabList>
-              </Box>
-              <TabPanel value="own">
-                {groups.length > 0 ? (
-                  <RenderListGroup
-                    groups={groups}
-                    navigateToGroupDetail={navigateToGroupDetail}
-                  />
-                ) : (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    style={{ marginTop: 30 }}
-                  >
-                    You don&apos;t have a group yet
-                  </Typography>
-                )}
-              </TabPanel>
-              <TabPanel value="join">
-                {groups.length > 0 ? (
-                  <RenderListGroup
-                    groups={groups}
-                    navigateToGroupDetail={navigateToGroupDetail}
-                  />
-                ) : (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    style={{ marginTop: 30 }}
-                  >
-                    You don&apos;t have a group yet
-                  </Typography>
-                )}
-              </TabPanel>
-            </TabContext>
-          )}
+                <Tab
+                  label={
+                    <span
+                      className={`tab__label ${
+                        value === "own" ? "tab__active" : ""
+                      }`}
+                    >
+                      Group I Manage
+                    </span>
+                  }
+                  value="own"
+                />
+                <Tab
+                  label={
+                    <span
+                      className={`tab__label ${
+                        value === "join" ? "tab__active" : ""
+                      }`}
+                    >
+                      Group I&#39;ve Joined
+                    </span>
+                  }
+                  value="join"
+                />
+              </TabList>
+            </Box>
+            <TabPanel value="own">
+              {loading ? (
+                <Box className="tab__loading">
+                  <CircularProgress color="inherit" />
+                </Box>
+              ) : (
+                <div>
+                  {groups.length > 0 ? (
+                    <RenderListGroup
+                      groups={groups}
+                      navigateToGroupDetail={navigateToGroupDetail}
+                    />
+                  ) : (
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
+                    >
+                      You don&apos;t have any group.
+                    </Typography>
+                  )}
+                </div>
+              )}
+            </TabPanel>
+            <TabPanel value="join">
+              {loading ? (
+                <Box className="tab__loading">
+                  <CircularProgress color="inherit" />
+                </Box>
+              ) : (
+                <div>
+                  {groups.length > 0 ? (
+                    <RenderListGroup
+                      groups={groups}
+                      navigateToGroupDetail={navigateToGroupDetail}
+                    />
+                  ) : (
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
+                    >
+                      You haven&apos;t joined any group yet.
+                    </Typography>
+                  )}
+                </div>
+              )}
+            </TabPanel>
+          </TabContext>
         </Box>
         <GroupAddNew open={open} handleClose={handleClose} />
       </div>
