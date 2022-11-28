@@ -13,7 +13,8 @@ import {
   MenuItem,
   Tooltip,
   IconButton,
-  DialogContent
+  DialogContent,
+  CircularProgress
 } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
@@ -299,13 +300,15 @@ function GroupMember(prop) {
   };
 
   const handleKickMember = (id) => {
+    setLoading(true);
     dispatch(
       kickUser(groupId, { userId: id }, setLoading, setMessage, setOpenModal)
     );
   };
 
   const handleChangeRoleMember = (data) => {
-    dispatch(promoteUser(groupId, data, setMessage));
+    setLoading(true);
+    dispatch(promoteUser(groupId, data, setLoading, setMessage));
   };
 
   return (
@@ -314,45 +317,59 @@ function GroupMember(prop) {
         width: "100%",
         minHeight: 200,
         maxWidth: 900,
-        margin: "20px auto"
+        margin: "20px auto",
+        position: "relative"
       }}
     >
       <Alert message={message} onClose={handleCloseAlert} />
 
-      <Box
-        sx={{
-          width: "100%",
-          minHeight: 200,
-          maxWidth: 900,
-          margin: "20px auto"
-        }}
-      >
-        <RenderListMember
-          title="Owner"
-          members={groupUsersOwner}
-          roleUser={roleUser}
-          setMemberKick={setMemberKick}
-          setOpenModal={setOpenModal}
-          handleChangeRoleMember={handleChangeRoleMember}
-        />
-        <RenderListMember
-          title="Member"
-          members={groupUsersMember}
-          roleUser={roleUser}
-          setMemberKick={setMemberKick}
-          setOpenModal={setOpenModal}
-          handleChangeRoleMember={handleChangeRoleMember}
-        />
-        {openModal && (
-          <RenderModalKickMember
-            member={memberKick}
-            openModal={openModal}
-            loading={loading}
+      {loading ? (
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            left: "50%"
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            minHeight: 200,
+            maxWidth: 900,
+            margin: "20px auto"
+          }}
+        >
+          <RenderListMember
+            title="Owner"
+            members={groupUsersOwner}
+            roleUser={roleUser}
+            setMemberKick={setMemberKick}
             setOpenModal={setOpenModal}
-            handleKickMember={handleKickMember}
+            handleChangeRoleMember={handleChangeRoleMember}
           />
-        )}
-      </Box>
+          <RenderListMember
+            title="Member"
+            members={groupUsersMember}
+            roleUser={roleUser}
+            setMemberKick={setMemberKick}
+            setOpenModal={setOpenModal}
+            handleChangeRoleMember={handleChangeRoleMember}
+          />
+          {openModal && (
+            <RenderModalKickMember
+              member={memberKick}
+              openModal={openModal}
+              loading={loading}
+              setOpenModal={setOpenModal}
+              handleKickMember={handleKickMember}
+            />
+          )}
+        </Box>
+      )}
     </Box>
   );
 }

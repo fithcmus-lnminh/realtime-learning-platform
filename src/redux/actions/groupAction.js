@@ -171,9 +171,6 @@ export const updateGroup =
       if (res.code === ApiResposeCodeNumber.Success) {
         reset();
         handleClose();
-        if (setLoading) {
-          setLoading(false);
-        }
         if (setMessage) {
           setMessage({
             success: true,
@@ -181,8 +178,7 @@ export const updateGroup =
             open: true
           });
         }
-
-        dispatch(getGroupUsers(groupId));
+        dispatch(getGroupUsers(groupId, setLoading));
       } else {
         if (setLoading) {
           setLoading(false);
@@ -376,9 +372,6 @@ export const kickUser =
 
       /* eslint-disable prefer-destructuring */
       if (res.code === ApiResposeCodeNumber.Success) {
-        if (setLoading) {
-          setLoading(false);
-        }
         if (setMessage) {
           setMessage({
             success: true,
@@ -389,7 +382,7 @@ export const kickUser =
         if (setOpenModal) {
           setOpenModal(false);
         }
-        dispatch(getGroupUsers(groupId));
+        dispatch(getGroupUsers(groupId, setLoading));
       } else {
         if (setLoading) {
           setLoading(false);
@@ -423,42 +416,49 @@ export const kickUser =
   };
 
 /* eslint-disable import/prefer-default-export */
-export const promoteUser = (groupId, data, setMessage) => async (dispatch) => {
-  try {
-    const res = await $axios.post(
-      `${API_URL}/api/group/${groupId}/promote`,
-      toSnake(data)
-    );
+export const promoteUser =
+  (groupId, data, setLoading, setMessage) => async (dispatch) => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/group/${groupId}/promote`,
+        toSnake(data)
+      );
 
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      if (setMessage) {
-        setMessage({
-          success: true,
-          data: "Change user role successfully",
-          open: true
-        });
+      /* eslint-disable prefer-destructuring */
+      if (res.code === ApiResposeCodeNumber.Success) {
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Change user role successfully",
+            open: true
+          });
+        }
+        dispatch(getGroupUsers(groupId, setLoading));
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
       }
-      dispatch(getGroupUsers(groupId));
-    } else {
+    } catch (error) {
+      if (setLoading) {
+        setLoading(false);
+      }
       if (setMessage) {
         setMessage({
           success: false,
-          data: res.message,
+          data: "Internal error",
           open: true
         });
       }
     }
-  } catch (error) {
-    if (setMessage) {
-      setMessage({
-        success: false,
-        data: "Internal error",
-        open: true
-      });
-    }
-  }
-};
+  };
 
 /* eslint-disable import/prefer-default-export */
 export const getGroupByIdNoAuth = (groupId, setLoading) => async () => {

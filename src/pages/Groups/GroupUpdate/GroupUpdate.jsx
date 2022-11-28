@@ -31,8 +31,7 @@ const schema = yup
   .required();
 
 function GroupUpdate(prop) {
-  const { groupId, groupDetail, open, handleClose } = prop;
-  const [loading, setLoading] = useState(false);
+  const { groupId, groupDetail, open, loading, setLoading, handleClose } = prop;
   const [message, setMessage] = useState({
     success: true,
     data: "",
