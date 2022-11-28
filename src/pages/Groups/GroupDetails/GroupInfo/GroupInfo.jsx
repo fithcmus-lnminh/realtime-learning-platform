@@ -8,8 +8,15 @@ import GroupUpdate from "../../GroupUpdate/GroupUpdate";
 
 function GroupInfo(prop) {
   const { groupId } = prop;
-
-  const { groupDetail } = useSelector(
+  const userInfo = useSelector(
+    (state) => state.user.userInfo,
+    (prev, next) => isEqual(prev, next)
+  );
+  const {
+    groupDetail,
+    owner: groupOwner,
+    total_users
+  } = useSelector(
     (state) => {
       return state.group;
     },
@@ -66,6 +73,7 @@ function GroupInfo(prop) {
             gutterBottom
             sx={{ opacity: "0.5", marginBottom: "12px" }}
           >
+            {total_users}/{groupDetail?.maximumMembers || ""}{" "}
             {groupDetail?.maximumMembers > 1 ? "members" : "member"}
           </Typography>
           <Typography variant="body1" gutterBottom>
@@ -91,17 +99,17 @@ function GroupInfo(prop) {
             >
               <BiCopy /> Copy Link Invite
             </Button>
-            {/* {groupDetail?.owner?.email === userInfo?.email && ( */}
-            <Button
-              className="button__add-group"
-              sx={{ fontSize: 16 }}
-              variant="contained"
-              color="primary"
-              onClick={() => setOpen(true)}
-            >
-              <BiEditAlt /> Edit
-            </Button>
-            {/* )} */}
+            {groupOwner?.email === userInfo?.email && (
+              <Button
+                className="button__add-group"
+                sx={{ fontSize: 16 }}
+                variant="contained"
+                color="primary"
+                onClick={() => setOpen(true)}
+              >
+                <BiEditAlt /> Edit
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>
