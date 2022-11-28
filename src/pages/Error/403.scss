@@ -1,0 +1,17 @@
+.error {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
+    color: #05a3e8;
+  }
+  &__code {
+    font-size: 90px;
+  }
+  &__message {
+    margin-top: 20px;
+    font-size: 22px;
+  }
+}
