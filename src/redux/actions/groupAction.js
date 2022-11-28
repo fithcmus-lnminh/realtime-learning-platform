@@ -15,7 +15,7 @@ export const getAllGroups = (type, setLoading) => async (dispatch) => {
     const params =
       /* eslint-disable no-nested-ternary */
       type === "own"
-        ? "?role=Owner&role=Co-owner"
+        ? "?role=Owner&role=Co-Owner"
         : type === "join"
         ? "?role=Member"
         : "";
