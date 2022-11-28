@@ -117,10 +117,71 @@ exports.handleLeaveGroup = async (req, res, next) => {
   if (groupUser.role === "Owner") {
     res.status(403).json({
       code: API_CODE_PERMISSION_DENIED,
-      message: "Please transfer ownership to another member before leaving",
+      message: "Owner cannot leave group",
       data: null
     });
   } else {
     next();
+  }
+};
+
+exports.isInGroupUser = async (req, res, next) => {
+  const { user_id } = req.body;
+  const { group_id } = req.params;
+
+  try {
+    const member = await GroupUser.findOne({ group_id, user_id });
+
+    if (member) {
+      req.member = member;
+      next();
+    } else {
+      res.status(404).json({
+        code: API_CODE_NOTFOUND,
+        message: "User does not exist in this group",
+        data: null
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      code: API_CODE_BY_SERVER,
+      message: err.message,
+      data: null
+    });
+  }
+};
+
+exports.handleKickUser = async (req, res, next) => {
+  const { groupUser, member } = req;
+
+  if (
+    (groupUser.role === "Owner" && member.role !== "Owner") ||
+    (groupUser.role === "Co-Owner" && member.role === "Member")
+  ) {
+    next();
+  } else {
+    res.status(403).json({
+      code: API_CODE_PERMISSION_DENIED,
+      message: "You cannot kick this user",
+      data: null
+    });
+  }
+};
+
+exports.handlePromoteUser = async (req, res, next) => {
+  const { groupUser } = req;
+  const { role } = req.body;
+
+  if (
+    groupUser.role === "Owner" &&
+    (role === "Co-Owner" || role === "Member")
+  ) {
+    next();
+  } else {
+    return res.status(403).json({
+      code: API_CODE_PERMISSION_DENIED,
+      message: "You cannot promote this user",
+      data: null
+    });
   }
 };
