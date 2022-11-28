@@ -46,7 +46,11 @@ function GroupMore(prop) {
       {groupOwner?.email === userInfo?.email ? (
         <Button
           className="button__add-group"
-          sx={{ fontSize: 18, backgroundColor: red[400] }}
+          sx={{
+            fontSize: 18,
+            backgroundColor: red[400],
+            "&:hover": { backgroundColor: red[700] }
+          }}
           variant="contained"
           onClick={handleDeleteGroup}
         >

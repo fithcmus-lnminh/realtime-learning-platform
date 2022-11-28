@@ -42,6 +42,7 @@ function Register() {
   } = useForm({
     resolver: yupResolver(schema)
   });
+
   const onSubmit = async (data) => {
     setLoading(true);
     const { email, password, first_name, last_name } = data;
@@ -53,6 +54,11 @@ function Register() {
         reset
       )
     );
+  };
+
+  const handleGoogleLogin = () => {
+    const clientURL = process.env.REACT_APP_SERVER_URL;
+    window.open(`${clientURL}/auth/google`, "_self");
   };
 
   useEffect(() => {
@@ -174,7 +180,11 @@ function Register() {
                 <span className="auth__line-text">Or</span>
               </div>
               <div className="auth__btn_other">
-                <button type="button" className="auth__btn_social">
+                <button
+                  type="button"
+                  className="auth__btn_social"
+                  onClick={handleGoogleLogin}
+                >
                   <img src={google} alt="" />
                   <div className="auth__btn-text">Continue with Google</div>
                 </button>

@@ -123,13 +123,13 @@ export const logoutUser = () => async (dispatch) => {
     const res = await $axios.post(`${API_URL}/api/auth/logout`);
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
+      window.location.href = "/login";
       dispatch({
         type: LOGOUT_SUCCESS
       });
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
       localStorage.removeItem("redirect");
-      window.location.href = "/login";
     }
   } catch (error) {
     console.log(error);

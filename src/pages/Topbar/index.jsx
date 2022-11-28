@@ -10,9 +10,11 @@ function Topbar() {
     <div className="topbar__container">
       <div className="topbar__content">
         <BsPerson className="topbar__icon" />
-        <span>{`${userInfo?.firstName} ${userInfo?.lastName}`}</span>
+        <span>{`${userInfo?.firstName || ""} ${
+          userInfo?.lastName || ""
+        }`}</span>
         <span style={{ color: "#ccc" }}> | </span>
-        <span>{`${userInfo?.email}`}</span>
+        <span>{`${userInfo?.email || ""}`}</span>
       </div>
       <div className="topbar__content">
         <BsPerson className="topbar__icon" />
