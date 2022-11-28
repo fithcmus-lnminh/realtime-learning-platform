@@ -188,9 +188,9 @@ function Groups() {
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      style={{ marginTop: 30 }}
+                      style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
                     >
-                      You don&apos;t have a group yet
+                      You don&apos;t have any group.
                     </Typography>
                   )}
                 </div>
@@ -212,9 +212,9 @@ function Groups() {
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      style={{ marginTop: 30 }}
+                      style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
                     >
-                      You don&apos;t have a group yet
+                      You haven&apos;t joined any group yet.
                     </Typography>
                   )}
                 </div>

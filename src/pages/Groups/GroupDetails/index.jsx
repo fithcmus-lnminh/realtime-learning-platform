@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Tab, Box, CircularProgress, Button } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
+import { BiMailSend, BiArrowBack } from "react-icons/bi";
 import { getGroupUsers } from "../../../redux/actions/groupAction";
 import Layout from "../../Layout";
 import "./GroupDetails.scss";
@@ -12,12 +13,13 @@ import GroupInfo from "./GroupInfo/GroupInfo";
 import GroupInvited from "../GroupInvited/GroupInvited";
 
 function GroupDetails() {
-  const dispatch = useDispatch();
   const [value, setValue] = useState("info");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const params = useParams();
   const groupId = params.id;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -29,6 +31,10 @@ function GroupDetails() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const navigateBackToGroups = () => {
+    navigate("/groups");
   };
 
   useEffect(() => {
@@ -43,15 +49,22 @@ function GroupDetails() {
         className="tab__container"
       >
         {!loading && (
-          <Button
-            className="button__add-group"
-            sx={{ fontSize: 18 }}
-            variant="contained"
-            color="primary"
-            onClick={handleOpen}
-          >
-            Invite Member
-          </Button>
+          <div className="group__detail__header">
+            <BiArrowBack
+              className="group__detail__header-icon"
+              onClick={navigateBackToGroups}
+            />
+            <Button
+              className="button__add-group"
+              sx={{ fontSize: 18 }}
+              variant="contained"
+              color="primary"
+              onClick={handleOpen}
+            >
+              <BiMailSend />
+              Invite Member
+            </Button>
+          </div>
         )}
         <Box sx={{ marginTop: "24px" }}>
           {loading ? (
@@ -113,7 +126,7 @@ function GroupDetails() {
                   />
                 </TabList>
               </Box>
-              <TabPanel value="info">
+              <TabPanel sx={{ pt: 1 }} value="info">
                 <GroupInfo groupId={groupId} />
               </TabPanel>
               <TabPanel value="people">

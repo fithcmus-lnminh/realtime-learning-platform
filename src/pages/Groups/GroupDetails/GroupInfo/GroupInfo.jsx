@@ -2,20 +2,14 @@ import { Box, Button, Typography } from "@mui/material";
 import { isEqual } from "lodash";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { BiCopy, BiEditAlt } from "react-icons/bi";
 import Alert from "../../../../components/Alert";
 import GroupUpdate from "../../GroupUpdate/GroupUpdate";
 
 function GroupInfo(prop) {
   const { groupId } = prop;
-  const userInfo = useSelector(
-    (state) => state.user.userInfo,
-    (prev, next) => isEqual(prev, next)
-  );
-  const {
-    groupDetail,
-    owner: groupOwner,
-    total_users
-  } = useSelector(
+
+  const { groupDetail } = useSelector(
     (state) => {
       return state.group;
     },
@@ -62,25 +56,42 @@ function GroupInfo(prop) {
     >
       <Alert message={message} onClose={handleCloseAlert} />
 
-      <Box className="group__detail__btn">
-        <Box
-          sx={{
-            margin: "8px 0 24px",
-            display: "flex",
-            alignItems: "center",
-            gap: "20px"
-          }}
-        >
-          <Button
-            className="button__add-group"
-            sx={{ fontSize: 16 }}
-            variant="contained"
-            color="primary"
-            onClick={handleCopyLink}
+      <Box sx={{ mb: 0, display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <Typography variant="h4" gutterBottom>
+            {groupDetail?.name || ""}
+          </Typography>
+          <Typography
+            variant="body1"
+            gutterBottom
+            sx={{ opacity: "0.5", marginBottom: "12px" }}
           >
-            Copy Link
-          </Button>
-          {groupOwner?.email === userInfo?.email && (
+            {groupDetail?.maximumMembers > 1 ? "members" : "member"}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            {groupDetail?.description || ""}
+          </Typography>
+        </div>
+
+        <Box className="group__detail__btn">
+          <Box
+            sx={{
+              margin: "8px 0 24px",
+              display: "flex",
+              alignItems: "center",
+              gap: "20px"
+            }}
+          >
+            <Button
+              className="button__add-group"
+              sx={{ fontSize: 16 }}
+              variant="outlined"
+              color="primary"
+              onClick={handleCopyLink}
+            >
+              <BiCopy /> Copy Link Invite
+            </Button>
+            {/* {groupDetail?.owner?.email === userInfo?.email && ( */}
             <Button
               className="button__add-group"
               sx={{ fontSize: 16 }}
@@ -88,26 +99,11 @@ function GroupInfo(prop) {
               color="primary"
               onClick={() => setOpen(true)}
             >
-              Edit
+              <BiEditAlt /> Edit
             </Button>
-          )}
+            {/* )} */}
+          </Box>
         </Box>
-      </Box>
-      <Box sx={{ mt: 5, mb: 0 }}>
-        <Typography variant="h4" gutterBottom>
-          {groupDetail?.name || ""}
-        </Typography>
-        <Typography
-          variant="body1"
-          gutterBottom
-          sx={{ opacity: "0.5", marginBottom: "12px" }}
-        >
-          {total_users}/{groupDetail?.maximumMembers || ""}{" "}
-          {groupDetail?.maximumMembers > 1 ? "members" : "member"}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Description: {groupDetail?.description || ""}
-        </Typography>
       </Box>
 
       <GroupUpdate
