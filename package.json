@@ -49,9 +49,7 @@
   "scripts": {
     "client": "react-scripts start",
     "client-build": "react-scripts build",
-    "server": "nodemon server/index",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "react-scripts start",
     "_lint": "eslint --config ./.eslintrc.json --ext js --ext jsx --ext tsx --ext ts",
     "lint": "npm run _lint -- ./src/",
     "lint:fix": "npm run _lint -- --fix ./src/",
