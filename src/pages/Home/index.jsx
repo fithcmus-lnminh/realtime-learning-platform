@@ -1,14 +1,15 @@
 import React from "react";
 import { BiNews } from "react-icons/bi";
-import Layout from "../Layout";
 import "./Home.scss";
-import { isAuthenticated } from "../../utils/isAuthenticated";
+import { useSelector } from "react-redux";
+import Layout from "../Layout";
 
 function Home() {
-  const isLoggedIn = isAuthenticated();
+  const { userInfo } = useSelector((state) => state.user);
+
   return (
     <div>
-      {isLoggedIn && (
+      {userInfo && (
         <Layout itemId={1}>
           <div className="home__container">
             <span className="home__news-title">
