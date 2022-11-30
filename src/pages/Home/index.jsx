@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BiNews } from "react-icons/bi";
 import "./Home.scss";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Layout from "../Layout";
+import { isAuthenticated } from "../../utils/isAuthenticated";
 
 function Home() {
   const { userInfo } = useSelector((state) => state.user);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <div>
