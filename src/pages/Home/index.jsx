@@ -7,7 +7,7 @@ import { isAuthenticated } from "../../utils/isAuthenticated";
 function Home() {
   const isLoggedIn = isAuthenticated();
   return (
-    <>
+    <div>
       {isLoggedIn && (
         <Layout itemId={1}>
           <div className="home__container">
@@ -216,7 +216,7 @@ function Home() {
           </div>
         </Layout>
       )}
-    </>
+    </div>
   );
 }
 
