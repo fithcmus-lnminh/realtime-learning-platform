@@ -33,7 +33,6 @@ Axios.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
       /* eslint-disable no-return-assign */
       return (window.location.href = "/login");
     }

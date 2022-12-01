@@ -1,7 +1,8 @@
 import {
   GET_ALL_GROUPS_SUCCESS,
   GET_GROUP_SUCCESS,
-  GET_GROUP_USERS_SUCCESS
+  GET_GROUP_USERS_SUCCESS,
+  RESET_GROUP
 } from "../../constants/groupConstants";
 
 const initialState = {
@@ -33,6 +34,8 @@ export const groupReducer = (state = initialState, action = {}) => {
         ...state,
         ...action.payload
       };
+    case RESET_GROUP:
+      return { ...state, ...initialState };
     default:
       return state;
   }

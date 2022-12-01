@@ -1,10 +1,6 @@
 import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../../constants/userConstants";
 
-const initialState = {
-  userInfo: localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user"))
-    : {}
-};
+const initialState = {};
 
 /* eslint-disable import/prefer-default-export */
 export const userReducer = (state = initialState, action = {}) => {

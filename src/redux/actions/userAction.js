@@ -1,4 +1,6 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
+import { RESET_REDIRECT_ROUTE } from "../../constants/common";
+import { RESET_GROUP } from "../../constants/groupConstants";
 import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../../constants/userConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
@@ -54,7 +56,6 @@ export const loginUser =
           payload: res.data
         });
         localStorage.setItem("accessToken", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data));
         window.location.href = redirect ?? "/";
       } else {
         setLoading(false);
@@ -100,6 +101,30 @@ export const verifyUser = (token, setLoading, setMessage) => async () => {
 };
 
 /* eslint-disable import/prefer-default-export */
+export const logoutUser = () => async (dispatch) => {
+  try {
+    const res = await $axios.post(`${API_URL}/api/auth/logout`);
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      window.location.href = "/login";
+      dispatch({
+        type: LOGOUT_SUCCESS
+      });
+      dispatch({
+        type: RESET_REDIRECT_ROUTE
+      });
+      dispatch({
+        type: RESET_GROUP
+      });
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("redirect");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
 export const getCurrentUser = () => async (dispatch) => {
   try {
     const res = await $axios.get(`${API_URL}/api/user/current_user`);
@@ -110,26 +135,6 @@ export const getCurrentUser = () => async (dispatch) => {
         type: LOGIN_SUCCESS,
         payload: res.data
       });
-      localStorage.setItem("user", JSON.stringify(res.data));
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-/* eslint-disable import/prefer-default-export */
-export const logoutUser = () => async (dispatch) => {
-  try {
-    const res = await $axios.post(`${API_URL}/api/auth/logout`);
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      window.location.href = "/login";
-      dispatch({
-        type: LOGOUT_SUCCESS
-      });
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
-      localStorage.removeItem("redirect");
     }
   } catch (error) {
     console.log(error);
@@ -180,7 +185,6 @@ export const changeUserPassword =
       setShowPopup(false);
 
       localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
 
       setTimeout(() => {
         dispatch(logoutUser());
