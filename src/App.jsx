@@ -14,7 +14,11 @@ import GroupDetails from "./pages/Groups/GroupDetails";
 import Invite from "./pages/Invite";
 import GoogleLogin from "./pages/GoogleLogin";
 import PermissionDeniedPage from "./pages/Error/403";
+<<<<<<< HEAD
 import Presentations from "./pages/Presentations";
+=======
+import PresentationTeacher from "./pages/PresentationTeacher";
+>>>>>>> 1547c53 (add header and actions for presentation screens)
 
 function App() {
   const theme = createTheme({
@@ -64,6 +68,7 @@ function App() {
         <Route path="/presentations" element={<Presentations />} />
         <Route path="/invite/:groupId" element={<Invite />} />
         <Route path="/google-login" element={<GoogleLogin />} />
+        <Route path="/presentation/:id" element={<PresentationTeacher />} />
         <Route path="/403" element={<PermissionDeniedPage />} />
         <Route path="/*" element={<Navigate to="/" />} />
       </Routes>

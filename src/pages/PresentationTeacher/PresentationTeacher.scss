@@ -1,0 +1,64 @@
+.presentation {
+  &__header {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    font-size: 20px;
+    padding: 8px 20px;
+    align-items: center;
+    justify-content: space-between;
+
+    &-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    &-title {
+      display: flex;
+      flex-direction: column;
+
+      & span:first-child {
+        font-weight: bold;
+      }
+
+      & span:last-child {
+        color: #bebebe;
+        font-size: 14px;
+      }
+    }
+  }
+
+  &__actions {
+    background-color: #fff;
+    padding: 12px 20px;
+  }
+}
+
+.button {
+  &__header {
+    display: flex;
+    gap: 12px;
+    font-size: 18px;
+  }
+  &__share {
+    background-color: rgb(219, 220, 225);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+  }
+
+  &__primary {
+    background-color: #2a518f;
+    color: #fff;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+  }
+}
