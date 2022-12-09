@@ -8,15 +8,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography
 } from "@mui/material";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
-import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { BiCommentAdd } from "react-icons/bi";
+import { MdModeEditOutline, MdDelete } from "react-icons/md";
 import moment from "moment";
 import Alert from "../../components/Alert";
 import "./Presentation.scss";
+import PresentationAddNew from "./PresentationAddNew";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -32,229 +36,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0
   }
 }));
-
-// function createData(name, code, population, size) {
-//   const density = population / size;
-//   return { name, code, population, size, density };
-// }
-
-// const rows = [
-//   createData("India", "IN", 1324171354, 3287263),
-//   createData("China", "CN", 1403500365, 9596961),
-//   createData("Italy", "IT", 60483973, 301340),
-//   createData("United States", "US", 327167434, 9833520),
-//   createData("Canada", "CA", 37602103, 9984670),
-//   createData("Australia", "AU", 25475400, 7692024),
-//   createData("Germany", "DE", 83019200, 357578),
-//   createData("Ireland", "IE", 4857000, 70273),
-//   createData("Mexico", "MX", 126577691, 1972550),
-//   createData("Japan", "JP", 126317000, 377973),
-//   createData("France", "FR", 67022000, 640679),
-//   createData("United Kingdom", "GB", 67545757, 242495),
-//   createData("Russia", "RU", 146793744, 17098246),
-//   createData("Nigeria", "NG", 200962417, 923768),
-//   createData("Brazil", "BR", 210147125, 8515767)
-// ];
-
-// const columns = [
-//   { id: "name", label: "Name", minWidth: 170 },
-//   { id: "code", label: "ISO\u00a0Code", minWidth: 100 },
-//   {
-//     id: "population",
-//     label: "Population",
-//     minWidth: 170,
-//     align: "right",
-//     format: (value) => value.toLocaleString("en-US")
-//   },
-//   {
-//     id: "size",
-//     label: "Size\u00a0(km\u00b2)",
-//     minWidth: 170,
-//     align: "right",
-//     format: (value) => value.toLocaleString("en-US")
-//   },
-//   {
-//     id: "density",
-//     label: "Density",
-//     minWidth: 170,
-//     align: "right",
-//     format: (value) => value.toFixed(2)
-//   }
-// ];
-
-function betweenDate(start, end) {
-  // console.log("start:", start);
-  // console.log("end:", end);
-
-  const startDate = moment(start);
-  const endDate = moment(end);
-  const diff = endDate.diff(startDate);
-  const diffDuration = moment.duration(diff);
-  const years = diffDuration.years();
-  const months = diffDuration.months();
-  const weeks = diffDuration.weeks();
-  const days = diffDuration.days();
-  const hours = diffDuration.hours();
-  const minutes = diffDuration.minutes();
-  const seconds = diffDuration.seconds();
-  // console.log("Years:", diffDuration.years());
-  // console.log("Months:", diffDuration.months());
-  // console.log("Weeks:", diffDuration.weeks());
-  // console.log("Days:", diffDuration.days());
-  // console.log("Hours:", diffDuration.hours());
-  // console.log("Minutes:", diffDuration.minutes());
-  // console.log("Seconds:", diffDuration.seconds());
-
-  let result = "";
-
-  if (years > 0) result = years > 1 ? `${years} years ago` : "A year ago";
-  else if (months > 0)
-    result = months > 1 ? `${months} months ago` : "A month ago";
-  else if (weeks > 0) result = weeks > 1 ? `${weeks} weeks ago` : "A week ago";
-  else if (days > 0) result = days > 1 ? `${days} days ago` : "A day ago";
-  else if (hours > 0) result = hours > 1 ? `${hours} hours ago` : "A hour ago";
-  else if (minutes > 0)
-    result = minutes > 1 ? `${minutes} minutes ago` : "A minute ago";
-  else result = seconds > 1 ? `${seconds} seconds ago` : "A second ago";
-
-  return result;
-}
-
-const columns = [
-  {
-    id: "name",
-    label: "Name",
-    minWidth: 180,
-    render: (record) => {
-      return (
-        <Box className="pres__column">{record.name ? record.name : ""}</Box>
-      );
-    }
-  },
-  {
-    id: "owner",
-    label: "Owner",
-    minWidth: 90,
-    render: (record) => {
-      return (
-        <Box className="pres__column">{record.owner ? record.owner : ""}</Box>
-      );
-    }
-  },
-  {
-    id: "modified",
-    label: "Modified",
-    minWidth: 90,
-    render: (record) => {
-      return (
-        <Box className="presentation__column">
-          {record.modified ? betweenDate(record.modified, Date.now()) : ""}
-        </Box>
-      );
-    }
-  },
-  {
-    id: "created",
-    label: "Created",
-    minWidth: 90,
-    render: (record) => {
-      return (
-        <Box className="pres__column">
-          {record.created ? betweenDate(record.created, Date.now()) : ""}
-        </Box>
-      );
-    }
-  },
-  {
-    id: "action",
-    label: "Action",
-    minWidth: 180,
-    align: "right",
-    render: (record) => {
-      console.log("record:", record);
-      return (
-        <Box className="actionTable">
-          <Button
-            className="button__add-group"
-            sx={{ fontSize: 13 }}
-            variant="contained"
-            color="primary"
-          >
-            Edit
-          </Button>
-        </Box>
-      );
-    }
-  }
-];
-
-function createData(id, name, owner, created, modified) {
-  return { id, name, owner, created, modified };
-}
-
-const rows = [
-  createData(
-    "id01",
-    "Presentation 1",
-    "User 1",
-    "2022-11-26T06:58:35.493Z",
-    "2022-12-09T10:10:14.763Z"
-  ),
-  createData(
-    "id02",
-    "Presentation 2",
-    "User 2",
-    "2022-11-26T06:58:35.493Z",
-    "2015-12-16T17:10:14.763Z"
-  ),
-  createData(
-    "id03",
-    "Presentation 3",
-    "User 3",
-    "2022-11-26T06:58:35.493Z",
-    "2022-12-09T14:54:29.648Z"
-  ),
-  createData(
-    "id04",
-    "Presentation 4",
-    "User 4",
-    "2022-11-26T06:58:35.493Z",
-    "2022-12-07T17:10:14.763Z"
-  ),
-  createData(
-    "id05",
-    "Presentation 5",
-    "User 5",
-    "2022-11-26T06:58:35.493Z",
-    "2022-12-06T17:10:14.763Z"
-  ),
-  createData(
-    "id06",
-    "Presentation 6",
-    "User 6",
-    "2022-11-26T06:58:35.493Z",
-    "2022-11-28T17:10:14.763Z"
-  ),
-  createData(
-    "id07",
-    "Presentation 7",
-    "User 7",
-    "2022-11-26T06:58:35.493Z",
-    "2022-11-28T17:10:14.763Z"
-  ),
-  createData(
-    "id08",
-    "Presentation 8",
-    "User 8",
-    "2022-11-26T06:58:35.493Z",
-    "2022-11-28T17:10:14.763Z"
-  )
-];
 
 function Presentation() {
   const [presentation] = useState([
@@ -286,6 +71,7 @@ function Presentation() {
     data: "",
     open: false
   });
+  const [open, setOpen] = useState(false);
 
   const handleCloseAlert = () => {
     setMessage({
@@ -294,9 +80,228 @@ function Presentation() {
     });
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  function betweenDate(start, end) {
+    const startDate = moment(start);
+    const endDate = moment(end);
+    const diff = endDate.diff(startDate);
+    const diffDuration = moment.duration(diff);
+    const years = diffDuration.years();
+    const months = diffDuration.months();
+    const weeks = diffDuration.weeks();
+    const days = diffDuration.days();
+    const hours = diffDuration.hours();
+    const minutes = diffDuration.minutes();
+    const seconds = diffDuration.seconds();
+
+    let result = "";
+
+    if (years > 0) result = years > 1 ? `${years} years ago` : "A year ago";
+    else if (months > 0)
+      result = months > 1 ? `${months} months ago` : "A month ago";
+    else if (weeks > 0)
+      result = weeks > 1 ? `${weeks} weeks ago` : "A week ago";
+    else if (days > 0) result = days > 1 ? `${days} days ago` : "A day ago";
+    else if (hours > 0)
+      result = hours > 1 ? `${hours} hours ago` : "A hour ago";
+    else if (minutes > 0)
+      result = minutes > 1 ? `${minutes} minutes ago` : "A minute ago";
+    else result = seconds > 1 ? `${seconds} seconds ago` : "A second ago";
+
+    return result;
+  }
+
+  function createData(id, name, owner, created, modified) {
+    return { id, name, owner, created, modified };
+  }
+
+  const columns = [
+    {
+      id: "name",
+      label: "Name",
+      minWidth: 180,
+      width: "28%",
+      render: (record) => {
+        return (
+          <Box className="presentation__column">
+            <Tooltip title={record?.name ? record.name : ""} placement="top">
+              <NavLink to={`/presentation/${record.id}`}>
+                <Typography
+                  variant="span"
+                  sx={{ color: "rgba(0, 0, 0, 0.87)" }}
+                >
+                  {record?.name ? record.name : ""}
+                </Typography>
+              </NavLink>
+            </Tooltip>
+          </Box>
+        );
+      }
+    },
+    {
+      id: "owner",
+      label: "Owner",
+      minWidth: 90,
+      width: "16%",
+      render: (record) => {
+        return (
+          <Box className="presentation__column">
+            <Tooltip title={record?.owner ? record.owner : ""} placement="top">
+              <Typography variant="span">
+                {record?.owner ? record.owner : ""}
+              </Typography>
+            </Tooltip>
+          </Box>
+        );
+      }
+    },
+    {
+      id: "modified",
+      label: "Modified",
+      minWidth: 90,
+      width: "16%",
+      render: (record) => {
+        return (
+          <Box className="presentation__column">
+            <Tooltip
+              title={
+                record?.modified ? betweenDate(record.modified, Date.now()) : ""
+              }
+              placement="top"
+            >
+              <Typography variant="span">
+                {record?.modified
+                  ? betweenDate(record.modified, Date.now())
+                  : ""}
+              </Typography>
+            </Tooltip>
+          </Box>
+        );
+      }
+    },
+    {
+      id: "created",
+      label: "Created",
+      minWidth: 90,
+      width: "16%",
+      render: (record) => {
+        return (
+          <Box className="presentation__column">
+            <Tooltip
+              title={
+                record?.created ? betweenDate(record.created, Date.now()) : ""
+              }
+              placement="top"
+            >
+              <Typography variant="span">
+                {record?.created ? betweenDate(record.created, Date.now()) : ""}
+              </Typography>
+            </Tooltip>
+          </Box>
+        );
+      }
+    },
+    {
+      id: "action",
+      label: "Action",
+      minWidth: 180,
+      align: "right",
+      width: "28%",
+      render: () => {
+        return (
+          <Box className="presentation__action">
+            <Tooltip title="Edit" placement="top">
+              <Button variant="outlined" color="primary">
+                <MdModeEditOutline />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Delete" placement="top">
+              <Button variant="outlined" color="primary">
+                <MdDelete />
+              </Button>
+            </Tooltip>
+          </Box>
+        );
+      }
+    }
+  ];
+
+  const rows = [
+    createData(
+      "id01",
+      "Presentation 1 nhưng sao dài quá",
+      "User 1",
+      "2022-11-26T06:58:35.493Z",
+      "2022-12-09T10:10:14.763Z"
+    ),
+    createData(
+      "id02",
+      "Presentation 2",
+      "User 2",
+      "2022-11-26T06:58:35.493Z",
+      "2015-12-16T17:10:14.763Z"
+    ),
+    createData(
+      "id03",
+      "Presentation 3",
+      "User 3",
+      "2022-11-26T06:58:35.493Z",
+      "2022-12-09T14:54:29.648Z"
+    ),
+    createData(
+      "id04",
+      "Presentation 4",
+      "User 4",
+      "2022-11-26T06:58:35.493Z",
+      "2022-12-07T17:10:14.763Z"
+    ),
+    createData(
+      "id05",
+      "Presentation 5",
+      "User 5",
+      "2022-11-26T06:58:35.493Z",
+      "2022-12-06T17:10:14.763Z"
+    ),
+    createData(
+      "id06",
+      "Presentation 6",
+      "User 6",
+      "2022-11-26T06:58:35.493Z",
+      "2022-11-28T17:10:14.763Z"
+    ),
+    createData(
+      "id07",
+      "Presentation 7",
+      "User 7",
+      "2022-11-26T06:58:35.493Z",
+      "2022-11-28T17:10:14.763Z"
+    ),
+    createData(
+      "id08",
+      "Presentation 8",
+      "User 8",
+      "2022-11-26T06:58:35.493Z",
+      "2022-11-28T17:10:14.763Z"
+    )
+  ];
+
   console.log("rows:", rows);
 
-  //   useEffect(() => {}, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   dispatch(getAllPresentations(groupId, setLoading));
+  // }, [groupId]);
+
+  useEffect(() => {
+    document.title = "Presentation - RLP";
+  }, []);
 
   return (
     <Box
@@ -349,7 +354,7 @@ function Presentation() {
                   sx={{ fontSize: 16 }}
                   variant="contained"
                   color="primary"
-                  //   onClick={handleClickOpen}
+                  onClick={handleClickOpen}
                 >
                   <BiCommentAdd /> New Presentation
                 </Button>
@@ -363,7 +368,10 @@ function Presentation() {
                           <StyledTableCell
                             key={column.id}
                             align={column.align}
-                            style={{ minWidth: column.minWidth }}
+                            style={{
+                              minWidth: column.minWidth,
+                              width: column.width
+                            }}
                           >
                             {column.label}
                           </StyledTableCell>
@@ -409,6 +417,8 @@ function Presentation() {
           )}
         </Box>
       )}
+
+      <PresentationAddNew open={open} handleClose={handleClose} />
     </Box>
   );
 }
