@@ -163,30 +163,6 @@ function Presentation() {
       }
     },
     {
-      id: "modified",
-      label: "Modified",
-      minWidth: 90,
-      width: "16%",
-      render: (record) => {
-        return (
-          <Box className="presentation__column">
-            <Tooltip
-              title={
-                record?.modified ? betweenDate(record.modified, Date.now()) : ""
-              }
-              placement="top"
-            >
-              <Typography variant="span">
-                {record?.modified
-                  ? betweenDate(record.modified, Date.now())
-                  : ""}
-              </Typography>
-            </Tooltip>
-          </Box>
-        );
-      }
-    },
-    {
       id: "created",
       label: "Created",
       minWidth: 90,
@@ -209,8 +185,32 @@ function Presentation() {
       }
     },
     {
+      id: "modified",
+      label: "Last Modified",
+      minWidth: 90,
+      width: "16%",
+      render: (record) => {
+        return (
+          <Box className="presentation__column">
+            <Tooltip
+              title={
+                record?.modified ? betweenDate(record.modified, Date.now()) : ""
+              }
+              placement="top"
+            >
+              <Typography variant="span">
+                {record?.modified
+                  ? betweenDate(record.modified, Date.now())
+                  : ""}
+              </Typography>
+            </Tooltip>
+          </Box>
+        );
+      }
+    },
+    {
       id: "action",
-      label: "Action",
+      label: "",
       minWidth: 180,
       align: "right",
       width: "28%",
@@ -223,7 +223,7 @@ function Presentation() {
               </Button>
             </Tooltip>
             <Tooltip title="Delete" placement="top">
-              <Button variant="outlined" color="primary">
+              <Button variant="outlined" color="error">
                 <MdDelete />
               </Button>
             </Tooltip>
@@ -291,8 +291,6 @@ function Presentation() {
       "2022-11-28T17:10:14.763Z"
     )
   ];
-
-  console.log("rows:", rows);
 
   // useEffect(() => {
   //   setLoading(true);
