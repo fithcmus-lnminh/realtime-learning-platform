@@ -19,6 +19,7 @@ import { getAllGroups } from "../../redux/actions/groupAction";
 import Layout from "../Layout";
 import GroupAddNew from "./GroupAddNew/GroupAddNew";
 import "./Groups.scss";
+import Presentation from "../Presentation";
 
 /* eslint-disable react/prop-types */
 function RenderListGroup({ groups, navigateToGroupDetail }) {
@@ -170,6 +171,18 @@ function Groups() {
                   }
                   value="join"
                 />
+                <Tab
+                  label={
+                    <span
+                      className={`tab__label ${
+                        value === "presentation" ? "tab__active" : ""
+                      }`}
+                    >
+                      Presentation
+                    </span>
+                  }
+                  value="presentation"
+                />
               </TabList>
             </Box>
             <TabPanel value="own">
@@ -219,6 +232,12 @@ function Groups() {
                   )}
                 </div>
               )}
+            </TabPanel>
+
+            <TabPanel value="presentation">
+              <div>
+                <Presentation />
+              </div>
             </TabPanel>
           </TabContext>
         </Box>
