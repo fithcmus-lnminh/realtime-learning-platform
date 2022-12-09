@@ -20,7 +20,7 @@ const schema = yup
   })
   .required();
 
-function PresentationAddNew(prop) {
+function PresentationUpdate(prop) {
   const { open, handleClose } = prop;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
@@ -61,7 +61,7 @@ function PresentationAddNew(prop) {
       <Alert message={message} onClose={handleCloseAlert} />
 
       <Modal
-        title="Create new presentation"
+        title="Update presentation"
         loading={loading}
         disableAction={!isDirty}
         actions={["Cancel", "OK"]}
@@ -108,4 +108,4 @@ function PresentationAddNew(prop) {
   );
 }
 
-export default PresentationAddNew;
+export default PresentationUpdate;
