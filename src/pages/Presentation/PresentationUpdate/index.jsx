@@ -4,12 +4,12 @@ import {
   OutlinedInput,
   DialogContent
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import "./PresentationAddNew.scss";
+import "./PresentationUpdate.scss";
 // import { createGroup } from "../../../redux/actions/groupAction";
 import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
@@ -21,7 +21,7 @@ const schema = yup
   .required();
 
 function PresentationUpdate(prop) {
-  const { open, handleClose } = prop;
+  const { presentationDetail, open, handleClose } = prop;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
@@ -33,7 +33,8 @@ function PresentationUpdate(prop) {
     handleSubmit,
     formState: { errors, isDirty },
     control,
-    reset
+    reset,
+    setValue
   } = useForm({
     resolver: yupResolver(schema)
   });
@@ -46,7 +47,7 @@ function PresentationUpdate(prop) {
   const onSubmit = async (data) => {
     setLoading(true);
     console.log("data:", data);
-    // dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
+    // dispatch(updateGroup(data, handleClose, setLoading, reset, setMessage));
   };
 
   const handleCloseAlert = () => {
@@ -55,6 +56,12 @@ function PresentationUpdate(prop) {
       open: false
     });
   };
+
+  useEffect(() => {
+    setValue("name", presentationDetail?.name);
+  }, [open]);
+
+  console.log("presentationDetail:", presentationDetail);
 
   return (
     <>
@@ -65,7 +72,7 @@ function PresentationUpdate(prop) {
         loading={loading}
         disableAction={!isDirty}
         actions={["Cancel", "OK"]}
-        actionText="Create"
+        actionText="Save"
         show={open}
         onCloseModal={closeModalHandler}
         onActionClick={handleSubmit(onSubmit)}

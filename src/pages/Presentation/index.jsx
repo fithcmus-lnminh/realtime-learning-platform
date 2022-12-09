@@ -21,6 +21,7 @@ import moment from "moment";
 import Alert from "../../components/Alert";
 import "./Presentation.scss";
 import PresentationAddNew from "./PresentationAddNew";
+import PresentationUpdate from "./PresentationUpdate";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -72,6 +73,8 @@ function Presentation() {
     open: false
   });
   const [open, setOpen] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [presentationDetail, setPresentationDetail] = useState("");
 
   const handleCloseAlert = () => {
     setMessage({
@@ -86,6 +89,15 @@ function Presentation() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleClickOpenUpdate = (data) => {
+    setOpenUpdate(true);
+    setPresentationDetail(data);
+  };
+
+  const handleCloseUpdate = () => {
+    setOpenUpdate(false);
   };
 
   function betweenDate(start, end) {
@@ -214,11 +226,15 @@ function Presentation() {
       minWidth: 180,
       align: "right",
       width: "28%",
-      render: () => {
+      render: (record) => {
         return (
           <Box className="presentation__action">
             <Tooltip title="Edit" placement="top">
-              <Button variant="outlined" color="primary">
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => handleClickOpenUpdate(record)}
+              >
                 <MdModeEditOutline />
               </Button>
             </Tooltip>
@@ -417,6 +433,12 @@ function Presentation() {
       )}
 
       <PresentationAddNew open={open} handleClose={handleClose} />
+
+      <PresentationUpdate
+        open={openUpdate}
+        handleClose={handleCloseUpdate}
+        presentationDetail={presentationDetail}
+      />
     </Box>
   );
 }
