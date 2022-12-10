@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineHome, AiOutlineTeam } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { CiLogout } from "react-icons/ci";
+import { MdPresentToAll } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import kahoot from "../../assets/images/logo.png";
 import { logoutUser } from "../../redux/actions/userAction";
@@ -29,6 +30,9 @@ function Sidebar(prop) {
         navigate("/groups");
         break;
       case 3:
+        navigate("/presentations");
+        break;
+      case 4:
         navigate("/profile");
         break;
       default:
@@ -73,6 +77,18 @@ function Sidebar(prop) {
           }`}
           onClick={() => {
             activeHandler(3);
+          }}
+        >
+          <MdPresentToAll className="sidebar__icon" />
+          <span>MY PRESENTATIONS</span>
+        </div>
+        <div
+          role="presentation"
+          className={`sidebar__item ${
+            itemActive === 4 ? "sidebar__item-active" : ""
+          }`}
+          onClick={() => {
+            activeHandler(4);
           }}
         >
           <BsPerson className="sidebar__icon" />

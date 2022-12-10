@@ -23,6 +23,7 @@ import "./Presentation.scss";
 import PresentationAddNew from "./PresentationAddNew";
 import PresentationUpdate from "./PresentationUpdate";
 import PresentationDelete from "./PresentationDelete";
+import Layout from "../Layout";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,7 +44,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   }
 }));
 
-function Presentation() {
+function Presentations() {
   const [presentation] = useState([
     {
       _id: "id01",
@@ -333,135 +334,138 @@ function Presentation() {
   }, []);
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        minHeight: 200,
-        margin: "auto",
-        position: "relative"
-      }}
-      className="presentation"
-    >
-      <Alert message={message} onClose={handleCloseAlert} />
+    <Layout itemId={3}>
+      <Box
+        sx={{
+          width: "100%",
+          minHeight: 200,
+          margin: "auto",
+          position: "relative",
+          padding: "24px"
+        }}
+        className="presentation"
+      >
+        <Alert message={message} onClose={handleCloseAlert} />
 
-      {loading ? (
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            left: "50%"
-          }}
-        >
-          <CircularProgress color="inherit" />
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            mb: 0,
-            justifyContent: "space-between"
-          }}
-        >
-          {presentation.length > 0 ? (
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px"
-              }}
-            >
+        {loading ? (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              left: "50%"
+            }}
+          >
+            <CircularProgress color="inherit" />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: "flex",
+              mb: 0,
+              justifyContent: "space-between"
+            }}
+          >
+            {presentation.length > 0 ? (
               <Box
                 sx={{
+                  width: "100%",
                   display: "flex",
-                  justifyContent: "end"
+                  flexDirection: "column",
+                  gap: "24px"
                 }}
               >
-                <Button
-                  className="button__add-group"
-                  sx={{ fontSize: 16 }}
-                  variant="contained"
-                  color="primary"
-                  onClick={handleClickOpen}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "start"
+                  }}
                 >
-                  <BiCommentAdd /> New Presentation
-                </Button>
+                  <Button
+                    className="button__add-group"
+                    sx={{ fontSize: 16 }}
+                    variant="contained"
+                    color="primary"
+                    onClick={handleClickOpen}
+                  >
+                    <BiCommentAdd /> New Presentation
+                  </Button>
+                </Box>
+                <Box>
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 630 }} aria-label="customized table">
+                      <TableHead>
+                        <TableRow>
+                          {columns.map((column) => (
+                            <StyledTableCell
+                              key={column.id}
+                              align={column.align}
+                              style={{
+                                minWidth: column.minWidth,
+                                width: column.width
+                              }}
+                            >
+                              {column.label}
+                            </StyledTableCell>
+                          ))}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => {
+                          return (
+                            <StyledTableRow
+                              hover
+                              role="checkbox"
+                              tabIndex={-1}
+                              key={row.id}
+                            >
+                              {columns.map((column) => {
+                                const value = row[column.id] || "";
+                                return (
+                                  <StyledTableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {column.render ? column.render(row) : value}
+                                  </StyledTableCell>
+                                );
+                              })}
+                            </StyledTableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
               </Box>
-              <Box>
-                <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 630 }} aria-label="customized table">
-                    <TableHead>
-                      <TableRow>
-                        {columns.map((column) => (
-                          <StyledTableCell
-                            key={column.id}
-                            align={column.align}
-                            style={{
-                              minWidth: column.minWidth,
-                              width: column.width
-                            }}
-                          >
-                            {column.label}
-                          </StyledTableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows.map((row) => {
-                        return (
-                          <StyledTableRow
-                            hover
-                            role="checkbox"
-                            tabIndex={-1}
-                            key={row.id}
-                          >
-                            {columns.map((column) => {
-                              const value = row[column.id] || "";
-                              return (
-                                <StyledTableCell
-                                  key={column.id}
-                                  align={column.align}
-                                >
-                                  {column.render ? column.render(row) : value}
-                                </StyledTableCell>
-                              );
-                            })}
-                          </StyledTableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-            </Box>
-          ) : (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
-            >
-              No presentation available.
-            </Typography>
-          )}
-        </Box>
-      )}
+            ) : (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
+              >
+                No presentation available.
+              </Typography>
+            )}
+          </Box>
+        )}
 
-      <PresentationAddNew open={open} handleClose={handleClose} />
+        <PresentationAddNew open={open} handleClose={handleClose} />
 
-      <PresentationUpdate
-        open={openUpdate}
-        handleClose={handleCloseUpdate}
-        presentationDetail={presentationDetail}
-      />
+        <PresentationUpdate
+          open={openUpdate}
+          handleClose={handleCloseUpdate}
+          presentationDetail={presentationDetail}
+        />
 
-      <PresentationDelete
-        open={openDelete}
-        handleClose={handleCloseDelete}
-        presentationDetail={presentationDetail}
-      />
-    </Box>
+        <PresentationDelete
+          open={openDelete}
+          handleClose={handleCloseDelete}
+          presentationDetail={presentationDetail}
+        />
+      </Box>
+    </Layout>
   );
 }
 
-export default Presentation;
+export default Presentations;

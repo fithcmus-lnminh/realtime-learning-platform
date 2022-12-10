@@ -101,7 +101,7 @@ function Profile() {
   };
 
   return (
-    <Layout itemId={3}>
+    <Layout itemId={4}>
       <h2 className="common__title">MY ACCOUNT</h2>
       <div className="profile__container">
         <div className="profile__item">
