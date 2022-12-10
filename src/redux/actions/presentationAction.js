@@ -12,7 +12,6 @@ const API_URL = process.env.REACT_APP_SERVER_URL;
 export const getAllPresentations = (setLoading) => async (dispatch) => {
   try {
     const res = await $axios.get(`${API_URL}/api/presentation`);
-    console.log("res:", res);
 
     /* eslint-disable prefer-destructuring */
     if (res.code === ApiResposeCodeNumber.Success) {
@@ -50,9 +49,9 @@ export const createPresentation =
       if (res.code === ApiResposeCodeNumber.Success) {
         reset();
         handleClose();
-        if (setLoading) {
-          setLoading(false);
-        }
+        // if (setLoading) {
+        //   setLoading(false);
+        // }
         if (setMessage) {
           setMessage({
             success: true,

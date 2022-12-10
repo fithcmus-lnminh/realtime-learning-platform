@@ -16,7 +16,7 @@ import Modal from "../../../components/Modal";
 
 const schema = yup
   .object({
-    name: yup.string().required("Please enter group name")
+    title: yup.string().required("Please enter presentation title")
   })
   .required();
 
@@ -58,7 +58,7 @@ function PresentationUpdate(prop) {
   };
 
   useEffect(() => {
-    setValue("name", presentationDetail?.name);
+    setValue("title", presentationDetail?.title);
   }, [open]);
 
   return (
@@ -78,28 +78,28 @@ function PresentationUpdate(prop) {
         <DialogContent>
           <Grid>
             <Controller
-              name="name"
+              name="title"
               control={control}
               render={({ field }) => {
                 return (
                   <Grid item xs={12}>
-                    <p className="required form__label">Name</p>
+                    <p className="required form__label">Title</p>
                     <OutlinedInput
-                      id="name"
-                      placeholder="Enter a presentation name"
+                      id="title"
+                      placeholder="Enter a presentation title"
                       sx={{ width: 500, mb: 1, mt: 1 }}
                       fullWidth
-                      error={!!errors.name?.message}
+                      error={!!errors.title?.message}
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...field}
                     />
-                    {errors.name?.message && (
+                    {errors.title?.message && (
                       <FormHelperText
                         sx={{ mb: 2, mt: 0 }}
                         id="component-error-text"
                         error
                       >
-                        {errors.name.message}
+                        {errors.title.message}
                       </FormHelperText>
                     )}
                   </Grid>

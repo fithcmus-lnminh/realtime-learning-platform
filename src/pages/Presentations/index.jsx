@@ -152,9 +152,9 @@ function Presentations() {
     return result;
   }
 
-  function createData(id, title, owner, created, modified) {
-    return { id, title, owner, created, modified };
-  }
+  // function createData(id, title, owner, created, modified) {
+  //   return { id, title, owner, created, modified };
+  // }
 
   const columns = [
     {
@@ -180,7 +180,7 @@ function Presentations() {
       }
     },
     {
-      id: "created",
+      id: "createdAt",
       label: "Created",
       minWidth: 100,
       width: "16%",
@@ -189,12 +189,16 @@ function Presentations() {
           <Box className="presentation__column">
             <Tooltip
               title={
-                record?.created ? betweenDate(record.created, Date.now()) : ""
+                record?.createdAt
+                  ? betweenDate(record.createdAt, Date.now())
+                  : ""
               }
               placement="top"
             >
               <Typography variant="span">
-                {record?.created ? betweenDate(record.created, Date.now()) : ""}
+                {record?.createdAt
+                  ? betweenDate(record.createdAt, Date.now())
+                  : ""}
               </Typography>
             </Tooltip>
           </Box>
@@ -202,7 +206,7 @@ function Presentations() {
       }
     },
     {
-      id: "modified",
+      id: "updatedAt",
       label: "Last Modified",
       minWidth: 100,
       width: "16%",
@@ -211,13 +215,15 @@ function Presentations() {
           <Box className="presentation__column">
             <Tooltip
               title={
-                record?.modified ? betweenDate(record.modified, Date.now()) : ""
+                record?.updatedAt
+                  ? betweenDate(record.updatedAt, Date.now())
+                  : ""
               }
               placement="top"
             >
               <Typography variant="span">
-                {record?.modified
-                  ? betweenDate(record.modified, Date.now())
+                {record?.updatedAt
+                  ? betweenDate(record.updatedAt, Date.now())
                   : ""}
               </Typography>
             </Tooltip>
@@ -258,64 +264,64 @@ function Presentations() {
     }
   ];
 
-  const rows = [
-    createData(
-      "id01",
-      "Presentation 1 nhưng sao dài quá",
-      "User 1",
-      "2022-11-26T06:58:35.493Z",
-      "2022-12-09T10:10:14.763Z"
-    ),
-    createData(
-      "id02",
-      "Presentation 2",
-      "User 2",
-      "2022-11-26T06:58:35.493Z",
-      "2015-12-16T17:10:14.763Z"
-    ),
-    createData(
-      "id03",
-      "Presentation 3",
-      "User 3",
-      "2022-11-26T06:58:35.493Z",
-      "2022-12-09T14:54:29.648Z"
-    ),
-    createData(
-      "id04",
-      "Presentation 4",
-      "User 4",
-      "2022-11-26T06:58:35.493Z",
-      "2022-12-07T17:10:14.763Z"
-    ),
-    createData(
-      "id05",
-      "Presentation 5",
-      "User 5",
-      "2022-11-26T06:58:35.493Z",
-      "2022-12-06T17:10:14.763Z"
-    ),
-    createData(
-      "id06",
-      "Presentation 6",
-      "User 6",
-      "2022-11-26T06:58:35.493Z",
-      "2022-11-28T17:10:14.763Z"
-    ),
-    createData(
-      "id07",
-      "Presentation 7",
-      "User 7",
-      "2022-11-26T06:58:35.493Z",
-      "2022-11-28T17:10:14.763Z"
-    ),
-    createData(
-      "id08",
-      "Presentation 8",
-      "User 8",
-      "2022-11-26T06:58:35.493Z",
-      "2022-11-28T17:10:14.763Z"
-    )
-  ];
+  // const rows = [
+  //   createData(
+  //     "id01",
+  //     "Presentation 1 nhưng sao dài quá",
+  //     "User 1",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2022-12-09T10:10:14.763Z"
+  //   ),
+  //   createData(
+  //     "id02",
+  //     "Presentation 2",
+  //     "User 2",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2015-12-16T17:10:14.763Z"
+  //   ),
+  //   createData(
+  //     "id03",
+  //     "Presentation 3",
+  //     "User 3",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2022-12-09T14:54:29.648Z"
+  //   ),
+  //   createData(
+  //     "id04",
+  //     "Presentation 4",
+  //     "User 4",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2022-12-07T17:10:14.763Z"
+  //   ),
+  //   createData(
+  //     "id05",
+  //     "Presentation 5",
+  //     "User 5",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2022-12-06T17:10:14.763Z"
+  //   ),
+  //   createData(
+  //     "id06",
+  //     "Presentation 6",
+  //     "User 6",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2022-11-28T17:10:14.763Z"
+  //   ),
+  //   createData(
+  //     "id07",
+  //     "Presentation 7",
+  //     "User 7",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2022-11-28T17:10:14.763Z"
+  //   ),
+  //   createData(
+  //     "id08",
+  //     "Presentation 8",
+  //     "User 8",
+  //     "2022-11-26T06:58:35.493Z",
+  //     "2022-11-28T17:10:14.763Z"
+  //   )
+  // ];
 
   useEffect(() => {
     setLoading(true);
@@ -406,7 +412,8 @@ function Presentations() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {rows.map((row) => {
+                        {/* {rows.map((row) => { */}
+                        {presentations.map((row) => {
                           return (
                             <StyledTableRow
                               hover
@@ -445,18 +452,27 @@ function Presentations() {
           </Box>
         )}
 
-        <PresentationAddNew open={open} handleClose={handleClose} />
+        <PresentationAddNew
+          open={open}
+          handleClose={handleClose}
+          loading={loading}
+          setLoading={setLoading}
+        />
 
         <PresentationUpdate
           open={openUpdate}
           handleClose={handleCloseUpdate}
           presentationDetail={presentationDetail}
+          loading={loading}
+          setLoading={setLoading}
         />
 
         <PresentationDelete
           open={openDelete}
           handleClose={handleCloseDelete}
           presentationDetail={presentationDetail}
+          loading={loading}
+          setLoading={setLoading}
         />
       </Box>
     </Layout>
