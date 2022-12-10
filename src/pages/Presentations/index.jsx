@@ -17,9 +17,12 @@ import { NavLink } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { BiCommentAdd } from "react-icons/bi";
 import { MdModeEditOutline, MdDelete } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import { isEqual } from "lodash";
 import moment from "moment";
 import Alert from "../../components/Alert";
 import "./Presentation.scss";
+import { getAllPresentations } from "../../redux/actions/presentationAction";
 import PresentationAddNew from "./PresentationAddNew";
 import PresentationUpdate from "./PresentationUpdate";
 import PresentationDelete from "./PresentationDelete";
@@ -45,6 +48,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function Presentations() {
+  const dispatch = useDispatch();
+  const presentations = useSelector(
+    (state) => {
+      return state.presentation.presentations;
+    },
+    (prev, next) => isEqual(prev, next)
+  );
   const [presentation] = useState([
     {
       _id: "id01",
@@ -68,7 +78,7 @@ function Presentations() {
       access_code: "1"
     }
   ]);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
     data: "",
@@ -142,26 +152,26 @@ function Presentations() {
     return result;
   }
 
-  function createData(id, name, owner, created, modified) {
-    return { id, name, owner, created, modified };
+  function createData(id, title, owner, created, modified) {
+    return { id, title, owner, created, modified };
   }
 
   const columns = [
     {
-      id: "name",
-      label: "Name",
-      minWidth: 180,
-      width: "28%",
+      id: "title",
+      label: "Title",
+      minWidth: 250,
+      width: "40%",
       render: (record) => {
         return (
           <Box className="presentation__column">
-            <Tooltip title={record?.name ? record.name : ""} placement="top">
+            <Tooltip title={record?.title ? record.title : ""} placement="top">
               <NavLink to={`/presentation/${record.id}`}>
                 <Typography
                   variant="span"
                   sx={{ color: "rgba(0, 0, 0, 0.87)" }}
                 >
-                  {record?.name ? record.name : ""}
+                  {record?.title ? record.title : ""}
                 </Typography>
               </NavLink>
             </Tooltip>
@@ -170,26 +180,9 @@ function Presentations() {
       }
     },
     {
-      id: "owner",
-      label: "Owner",
-      minWidth: 90,
-      width: "16%",
-      render: (record) => {
-        return (
-          <Box className="presentation__column">
-            <Tooltip title={record?.owner ? record.owner : ""} placement="top">
-              <Typography variant="span">
-                {record?.owner ? record.owner : ""}
-              </Typography>
-            </Tooltip>
-          </Box>
-        );
-      }
-    },
-    {
       id: "created",
       label: "Created",
-      minWidth: 90,
+      minWidth: 100,
       width: "16%",
       render: (record) => {
         return (
@@ -211,7 +204,7 @@ function Presentations() {
     {
       id: "modified",
       label: "Last Modified",
-      minWidth: 90,
+      minWidth: 100,
       width: "16%",
       render: (record) => {
         return (
@@ -324,21 +317,23 @@ function Presentations() {
     )
   ];
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   dispatch(getAllPresentations(groupId, setLoading));
-  // }, [groupId]);
+  useEffect(() => {
+    setLoading(true);
+    dispatch(getAllPresentations(setLoading));
+  }, [presentations]);
 
   useEffect(() => {
     document.title = "Presentation - RLP";
   }, []);
+
+  console.log("presentations:", presentations);
 
   return (
     <Layout itemId={3}>
       <Box
         sx={{
           width: "100%",
-          minHeight: 200,
+          minHeight: 600,
           margin: "auto",
           position: "relative",
           padding: "24px"

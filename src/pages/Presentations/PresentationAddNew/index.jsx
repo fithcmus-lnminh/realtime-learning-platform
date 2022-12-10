@@ -5,12 +5,12 @@ import {
   DialogContent
 } from "@mui/material";
 import React, { useState } from "react";
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./PresentationAddNew.scss";
-// import { createGroup } from "../../../redux/actions/groupAction";
+import { createPresentation } from "../../../redux/actions/presentationAction";
 import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
 
@@ -28,7 +28,7 @@ function PresentationAddNew(prop) {
     data: "",
     open: false
   });
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     formState: { errors, isDirty },
@@ -46,7 +46,9 @@ function PresentationAddNew(prop) {
   const onSubmit = async (data) => {
     setLoading(true);
     console.log("data:", data);
-    // dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
+    dispatch(
+      createPresentation(data, handleClose, setLoading, reset, setMessage)
+    );
   };
 
   const handleCloseAlert = () => {
