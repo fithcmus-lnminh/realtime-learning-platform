@@ -22,12 +22,6 @@ const schema = yup
 
 function PresentationAddNew(prop) {
   const { open, handleClose, loading, setLoading } = prop;
-  // const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({
-    success: true,
-    data: "",
-    open: false
-  });
   const dispatch = useDispatch();
   const {
     handleSubmit,
@@ -37,6 +31,11 @@ function PresentationAddNew(prop) {
   } = useForm({
     resolver: yupResolver(schema)
   });
+  const [message, setMessage] = useState({
+    success: true,
+    data: "",
+    open: false
+  });
 
   const closeModalHandler = () => {
     handleClose();
@@ -45,7 +44,6 @@ function PresentationAddNew(prop) {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log("data:", data);
     dispatch(
       createPresentation(data, handleClose, setLoading, reset, setMessage)
     );

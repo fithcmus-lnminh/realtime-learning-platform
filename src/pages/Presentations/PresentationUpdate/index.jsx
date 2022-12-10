@@ -10,7 +10,8 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./PresentationUpdate.scss";
-// import { createGroup } from "../../../redux/actions/groupAction";
+import { useDispatch } from "react-redux";
+import { updatePresentation } from "../../../redux/actions/presentationAction";
 import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
 
@@ -21,14 +22,14 @@ const schema = yup
   .required();
 
 function PresentationUpdate(prop) {
-  const { open, handleClose, presentationDetail = {} } = prop;
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({
-    success: true,
-    data: "",
-    open: false
-  });
-  //   const dispatch = useDispatch();
+  const {
+    open,
+    handleClose,
+    presentationDetail = {},
+    loading,
+    setLoading
+  } = prop;
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     formState: { errors, isDirty },
@@ -37,6 +38,11 @@ function PresentationUpdate(prop) {
     setValue
   } = useForm({
     resolver: yupResolver(schema)
+  });
+  const [message, setMessage] = useState({
+    success: true,
+    data: "",
+    open: false
   });
 
   const closeModalHandler = () => {
@@ -47,7 +53,16 @@ function PresentationUpdate(prop) {
   const onSubmit = async (data) => {
     setLoading(true);
     console.log("data:", data);
-    // dispatch(updateGroup(data, handleClose, setLoading, reset, setMessage));
+    dispatch(
+      updatePresentation(
+        presentationDetail?.id,
+        data,
+        handleClose,
+        setLoading,
+        reset,
+        setMessage
+      )
+    );
   };
 
   const handleCloseAlert = () => {

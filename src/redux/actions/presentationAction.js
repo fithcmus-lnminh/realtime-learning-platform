@@ -49,13 +49,62 @@ export const createPresentation =
       if (res.code === ApiResposeCodeNumber.Success) {
         reset();
         handleClose();
-        // if (setLoading) {
-        //   setLoading(false);
-        // }
         if (setMessage) {
           setMessage({
             success: true,
             data: "Create presentation successfully",
+            open: true
+          });
+        }
+
+        setTimeout(() => {
+          dispatch(getAllPresentations());
+        }, 1000);
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const updatePresentation =
+  (presentationId, data, handleClose, setLoading, reset, setMessage) =>
+  async (dispatch) => {
+    try {
+      const res = await $axios.put(
+        `${API_URL}/api/presentation/${presentationId}`,
+        toSnake(data)
+      );
+
+      /* eslint-disable prefer-destructuring */
+      if (res.code === ApiResposeCodeNumber.Success) {
+        reset();
+        handleClose();
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Update presentation successfully",
             open: true
           });
         }

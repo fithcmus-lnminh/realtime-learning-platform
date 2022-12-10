@@ -55,29 +55,6 @@ function Presentations() {
     },
     (prev, next) => isEqual(prev, next)
   );
-  const [presentation] = useState([
-    {
-      _id: "id01",
-      name: "Title 1",
-      group_id: null,
-      slides: [],
-      access_code: "1"
-    },
-    {
-      _id: "id02",
-      name: "Title 2",
-      group_id: null,
-      slides: [],
-      access_code: "1"
-    },
-    {
-      _id: "id03",
-      name: "Title 3",
-      group_id: null,
-      slides: [],
-      access_code: "1"
-    }
-  ]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
@@ -152,16 +129,14 @@ function Presentations() {
     return result;
   }
 
-  // function createData(id, title, owner, created, modified) {
-  //   return { id, title, owner, created, modified };
-  // }
-
   const columns = [
     {
       id: "title",
       label: "Title",
-      minWidth: 250,
-      width: "40%",
+      styleHead: {
+        minWidth: 250,
+        width: "40%"
+      },
       render: (record) => {
         return (
           <Box className="presentation__column">
@@ -169,7 +144,7 @@ function Presentations() {
               <NavLink to={`/presentation/${record.id}`}>
                 <Typography
                   variant="span"
-                  sx={{ color: "rgba(0, 0, 0, 0.87)" }}
+                  sx={{ color: "rgba(0, 0, 0, 0.87)", fontWeight: 600 }}
                 >
                   {record?.title ? record.title : ""}
                 </Typography>
@@ -182,8 +157,10 @@ function Presentations() {
     {
       id: "createdAt",
       label: "Created",
-      minWidth: 100,
-      width: "16%",
+      styleHead: {
+        minWidth: 100,
+        width: "16%"
+      },
       render: (record) => {
         return (
           <Box className="presentation__column">
@@ -208,8 +185,10 @@ function Presentations() {
     {
       id: "updatedAt",
       label: "Last Modified",
-      minWidth: 100,
-      width: "16%",
+      styleHead: {
+        minWidth: 100,
+        width: "16%"
+      },
       render: (record) => {
         return (
           <Box className="presentation__column">
@@ -233,10 +212,11 @@ function Presentations() {
     },
     {
       id: "action",
-      label: "",
-      minWidth: 180,
-      align: "right",
-      width: "28%",
+      styleHead: {
+        minWidth: 180,
+        width: "28%",
+        textAlign: "right"
+      },
       render: (record) => {
         return (
           <Box className="presentation__action">
@@ -263,65 +243,6 @@ function Presentations() {
       }
     }
   ];
-
-  // const rows = [
-  //   createData(
-  //     "id01",
-  //     "Presentation 1 nhưng sao dài quá",
-  //     "User 1",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2022-12-09T10:10:14.763Z"
-  //   ),
-  //   createData(
-  //     "id02",
-  //     "Presentation 2",
-  //     "User 2",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2015-12-16T17:10:14.763Z"
-  //   ),
-  //   createData(
-  //     "id03",
-  //     "Presentation 3",
-  //     "User 3",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2022-12-09T14:54:29.648Z"
-  //   ),
-  //   createData(
-  //     "id04",
-  //     "Presentation 4",
-  //     "User 4",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2022-12-07T17:10:14.763Z"
-  //   ),
-  //   createData(
-  //     "id05",
-  //     "Presentation 5",
-  //     "User 5",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2022-12-06T17:10:14.763Z"
-  //   ),
-  //   createData(
-  //     "id06",
-  //     "Presentation 6",
-  //     "User 6",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2022-11-28T17:10:14.763Z"
-  //   ),
-  //   createData(
-  //     "id07",
-  //     "Presentation 7",
-  //     "User 7",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2022-11-28T17:10:14.763Z"
-  //   ),
-  //   createData(
-  //     "id08",
-  //     "Presentation 8",
-  //     "User 8",
-  //     "2022-11-26T06:58:35.493Z",
-  //     "2022-11-28T17:10:14.763Z"
-  //   )
-  // ];
 
   useEffect(() => {
     setLoading(true);
@@ -367,7 +288,7 @@ function Presentations() {
               justifyContent: "space-between"
             }}
           >
-            {presentation.length > 0 ? (
+            {presentations.length > 0 ? (
               <Box
                 sx={{
                   width: "100%",
@@ -402,9 +323,9 @@ function Presentations() {
                               key={column.id}
                               align={column.align}
                               style={{
-                                minWidth: column.minWidth,
-                                width: column.width
+                                ...column.styleHead
                               }}
+                              className={column.classNameHead}
                             >
                               {column.label}
                             </StyledTableCell>
@@ -412,23 +333,21 @@ function Presentations() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {/* {rows.map((row) => { */}
-                        {presentations.map((row) => {
+                        {presentations.map((presentation) => {
                           return (
                             <StyledTableRow
                               hover
                               role="checkbox"
                               tabIndex={-1}
-                              key={row.id}
+                              key={presentation.id}
                             >
                               {columns.map((column) => {
-                                const value = row[column.id] || "";
+                                const value = presentation[column.id] || "";
                                 return (
-                                  <StyledTableCell
-                                    key={column.id}
-                                    align={column.align}
-                                  >
-                                    {column.render ? column.render(row) : value}
+                                  <StyledTableCell key={column.id}>
+                                    {column.render
+                                      ? column.render(presentation)
+                                      : value}
                                   </StyledTableCell>
                                 );
                               })}
