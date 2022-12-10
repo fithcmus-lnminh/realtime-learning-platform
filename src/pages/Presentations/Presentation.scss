@@ -23,3 +23,37 @@
         }
     }
 }
+
+.table__container {
+    .table {
+        .table__head {
+            .table__row {
+                .table__cell {
+                    background-color: #2a518f;
+                    color: #fff;
+                    font-size: 15px;
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .table__body {
+            .table__row {
+                .table__cell {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .table__row {
+            &:nth-of-type(odd) {
+                background-color: rgba(0, 0, 0, 0.04);
+            }
+
+            &:last-child td,
+            &:last-child th {
+                border: 0
+            }
+        }
+    }
+}

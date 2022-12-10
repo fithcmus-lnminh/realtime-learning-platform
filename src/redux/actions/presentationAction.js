@@ -1,8 +1,5 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
-import {
-  GET_ALL_PRESENTATIONS_SUCCESS
-  // GET_PRESENTATION_SUCCESS
-} from "../../constants/presentationConstants";
+import { GET_ALL_PRESENTATIONS_SUCCESS } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
 
@@ -43,7 +40,6 @@ export const createPresentation =
         `${API_URL}/api/presentation`,
         toSnake(data)
       );
-      console.log("res createPresentation:", res);
 
       /* eslint-disable prefer-destructuring */
       if (res.code === ApiResposeCodeNumber.Success) {

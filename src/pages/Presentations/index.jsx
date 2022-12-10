@@ -11,8 +11,7 @@ import {
   Tooltip,
   Typography
 } from "@mui/material";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import { styled } from "@mui/material/styles";
+import TableCell from "@mui/material/TableCell";
 import { NavLink } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { BiCommentAdd } from "react-icons/bi";
@@ -27,25 +26,6 @@ import PresentationAddNew from "./PresentationAddNew";
 import PresentationUpdate from "./PresentationUpdate";
 import PresentationDelete from "./PresentationDelete";
 import Layout from "../Layout";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14
-  }
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover
-  },
-  "&:last-child td, &:last-child th": {
-    border: 0
-  }
-}));
 
 function Presentations() {
   const dispatch = useDispatch();
@@ -312,44 +292,55 @@ function Presentations() {
               </Box>
               {presentations.length > 0 ? (
                 <Box>
-                  <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 630 }} aria-label="customized table">
-                      <TableHead>
-                        <TableRow>
+                  <TableContainer
+                    component={Paper}
+                    className="table__container"
+                  >
+                    <Table
+                      sx={{ minWidth: 630 }}
+                      aria-label="customized table"
+                      className="table"
+                    >
+                      <TableHead className="table__head">
+                        <TableRow className="table__row">
                           {columns.map((column) => (
-                            <StyledTableCell
+                            <TableCell
                               key={column.id}
                               align={column.align}
                               style={{
                                 ...column.styleHead
                               }}
-                              className={column.classNameHead}
+                              className={`table__cell ${column.classNameHead}`}
                             >
                               {column.label}
-                            </StyledTableCell>
+                            </TableCell>
                           ))}
                         </TableRow>
                       </TableHead>
-                      <TableBody>
+                      <TableBody className="table__body">
                         {presentations.map((presentation) => {
                           return (
-                            <StyledTableRow
+                            <TableRow
                               hover
                               role="checkbox"
                               tabIndex={-1}
                               key={presentation.id}
+                              className="table__row"
                             >
                               {columns.map((column) => {
                                 const value = presentation[column.id] || "";
                                 return (
-                                  <StyledTableCell key={column.id}>
+                                  <TableCell
+                                    key={column.id}
+                                    className="table__cell"
+                                  >
                                     {column.render
                                       ? column.render(presentation)
                                       : value}
-                                  </StyledTableCell>
+                                  </TableCell>
                                 );
                               })}
-                            </StyledTableRow>
+                            </TableRow>
                           );
                         })}
                       </TableBody>
