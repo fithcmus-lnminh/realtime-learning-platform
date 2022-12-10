@@ -34,15 +34,7 @@ function PresentationDelete(prop) {
 
   const handleClickDelete = (id) => {
     setLoading(true);
-    console.log("delete id:", id);
-    dispatch(
-      deletePresentation(
-        presentationDetail?.id,
-        handleClose,
-        setLoading,
-        setMessage
-      )
-    );
+    dispatch(deletePresentation(id, handleClose, setLoading, setMessage));
   };
 
   return (

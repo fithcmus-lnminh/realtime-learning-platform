@@ -52,7 +52,6 @@ function PresentationUpdate(prop) {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    console.log("data:", data);
     dispatch(
       updatePresentation(
         presentationDetail?.id,

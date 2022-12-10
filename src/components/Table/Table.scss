@@ -1,0 +1,28 @@
+.table__container {
+    .table {
+        .table__head {
+            .table__row {
+                .table__cell {
+                    font-size: 15px;
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .table__body {
+            .table__row {
+                .table__cell {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .table__row {
+
+            &:last-child td,
+            &:last-child th {
+                border: 0
+            }
+        }
+    }
+}

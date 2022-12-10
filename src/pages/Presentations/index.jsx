@@ -2,16 +2,16 @@ import {
   Box,
   Button,
   CircularProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow,
+  // Paper,
+  // Table,
+  // TableBody,
+  // TableContainer,
+  // TableHead,
+  // TableRow,
   Tooltip,
   Typography
 } from "@mui/material";
-import TableCell from "@mui/material/TableCell";
+// import TableCell from "@mui/material/TableCell";
 import { NavLink } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { BiCommentAdd } from "react-icons/bi";
@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { isEqual } from "lodash";
 import moment from "moment";
 import Alert from "../../components/Alert";
+import Table from "../../components/Table";
 import "./Presentation.scss";
 import { getAllPresentations } from "../../redux/actions/presentationAction";
 import PresentationAddNew from "./PresentationAddNew";
@@ -292,60 +293,12 @@ function Presentations() {
               </Box>
               {presentations.length > 0 ? (
                 <Box>
-                  <TableContainer
-                    component={Paper}
-                    className="table__container"
-                  >
-                    <Table
-                      sx={{ minWidth: 630 }}
-                      aria-label="customized table"
-                      className="table"
-                    >
-                      <TableHead className="table__head">
-                        <TableRow className="table__row">
-                          {columns.map((column) => (
-                            <TableCell
-                              key={column.id}
-                              align={column.align}
-                              style={{
-                                ...column.styleHead
-                              }}
-                              className={`table__cell ${column.classNameHead}`}
-                            >
-                              {column.label}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      </TableHead>
-                      <TableBody className="table__body">
-                        {presentations.map((presentation) => {
-                          return (
-                            <TableRow
-                              hover
-                              role="checkbox"
-                              tabIndex={-1}
-                              key={presentation.id}
-                              className="table__row"
-                            >
-                              {columns.map((column) => {
-                                const value = presentation[column.id] || "";
-                                return (
-                                  <TableCell
-                                    key={column.id}
-                                    className="table__cell"
-                                  >
-                                    {column.render
-                                      ? column.render(presentation)
-                                      : value}
-                                  </TableCell>
-                                );
-                              })}
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  <Table
+                    dataSource={presentations}
+                    columns={columns}
+                    style={{ minWidth: "650px" }}
+                    className="table__presentation"
+                  />
                 </Box>
               ) : (
                 <Typography
