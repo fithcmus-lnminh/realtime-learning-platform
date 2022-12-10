@@ -253,8 +253,6 @@ function Presentations() {
     document.title = "Presentation - RLP";
   }, []);
 
-  console.log("presentations:", presentations);
-
   return (
     <Layout itemId={3}>
       <Box
@@ -288,31 +286,31 @@ function Presentations() {
               justifyContent: "space-between"
             }}
           >
-            {presentations.length > 0 ? (
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                gap: "24px"
+              }}
+            >
               <Box
                 sx={{
-                  width: "100%",
                   display: "flex",
-                  flexDirection: "column",
-                  gap: "24px"
+                  justifyContent: "start"
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "start"
-                  }}
+                <Button
+                  className="button__add-group"
+                  sx={{ fontSize: 16 }}
+                  variant="contained"
+                  color="primary"
+                  onClick={handleClickOpen}
                 >
-                  <Button
-                    className="button__add-group"
-                    sx={{ fontSize: 16 }}
-                    variant="contained"
-                    color="primary"
-                    onClick={handleClickOpen}
-                  >
-                    <BiCommentAdd /> New Presentation
-                  </Button>
-                </Box>
+                  <BiCommentAdd /> New Presentation
+                </Button>
+              </Box>
+              {presentations.length > 0 ? (
                 <Box>
                   <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 630 }} aria-label="customized table">
@@ -358,16 +356,16 @@ function Presentations() {
                     </Table>
                   </TableContainer>
                 </Box>
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
-              >
-                No presentation available.
-              </Typography>
-            )}
+              ) : (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  style={{ marginTop: 30, fontSize: 18, marginLeft: 30 }}
+                >
+                  No presentation available.
+                </Typography>
+              )}
+            </Box>
           </Box>
         )}
 

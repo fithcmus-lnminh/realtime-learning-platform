@@ -57,9 +57,7 @@ export const createPresentation =
           });
         }
 
-        setTimeout(() => {
-          dispatch(getAllPresentations());
-        }, 1000);
+        dispatch(getAllPresentations(setLoading));
       } else {
         if (setLoading) {
           setLoading(false);
@@ -109,9 +107,54 @@ export const updatePresentation =
           });
         }
 
-        setTimeout(() => {
-          dispatch(getAllPresentations());
-        }, 1000);
+        dispatch(getAllPresentations(setLoading));
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const deletePresentation =
+  (presentationId, handleClose, setLoading, setMessage) => async (dispatch) => {
+    try {
+      const res = await $axios.delete(
+        `${API_URL}/api/presentation/${presentationId}`
+      );
+
+      /* eslint-disable prefer-destructuring */
+      if (res.code === ApiResposeCodeNumber.Success) {
+        handleClose();
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Delete presentation successfully",
+            open: true
+          });
+        }
+
+        dispatch(getAllPresentations(setLoading));
       } else {
         if (setLoading) {
           setLoading(false);

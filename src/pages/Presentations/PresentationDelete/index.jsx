@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { DialogContent, Typography } from "@mui/material";
+import { useDispatch } from "react-redux";
 import "./PresentationDelete.scss";
+import { deletePresentation } from "../../../redux/actions/presentationAction";
 import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
 
 function PresentationDelete(prop) {
-  const { open, handleClose, presentationDetail = {} } = prop;
-  const [loading, setLoading] = useState(false);
+  const {
+    open,
+    handleClose,
+    presentationDetail = {},
+    loading,
+    setLoading
+  } = prop;
+  const dispatch = useDispatch();
   const [message, setMessage] = useState({
     success: true,
     data: "",
@@ -27,7 +35,14 @@ function PresentationDelete(prop) {
   const handleClickDelete = (id) => {
     setLoading(true);
     console.log("delete id:", id);
-    // dispatch(handleDelete);
+    dispatch(
+      deletePresentation(
+        presentationDetail?.id,
+        handleClose,
+        setLoading,
+        setMessage
+      )
+    );
   };
 
   return (
@@ -47,7 +62,7 @@ function PresentationDelete(prop) {
           <Typography variant="body2" sx={{ fontSize: "16px" }} gutterBottom>
             This will permanently delete{" "}
             <Typography variant="span" sx={{ fontWeight: 600 }}>
-              {presentationDetail?.name}
+              {presentationDetail?.title}
             </Typography>{" "}
             and any results.
           </Typography>
