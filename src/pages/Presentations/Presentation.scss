@@ -1,0 +1,59 @@
+.presentation {
+
+    .presentation__column {
+        display: block;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .presentation__action {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+
+        button {
+            font-size: 16px;
+            padding: 8px;
+            min-width: auto;
+            height: auto;
+        }
+    }
+}
+
+.table__presentation {
+    .table {
+        .table__head {
+            .table__row {
+                .table__cell {
+                    background-color: #2a518f;
+                    color: #fff;
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .table__body {
+            .table__row {
+                .table__cell {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .table__row {
+            &:nth-of-type(odd) {
+                background-color: rgba(0, 0, 0, 0.04);
+            }
+
+            &:last-child td,
+            &:last-child th {
+                border: 0
+            }
+        }
+    }
+}

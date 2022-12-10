@@ -6,11 +6,13 @@ import storage from "redux-persist/lib/storage";
 import { userReducer } from "./reducers/userReducer";
 import { groupReducer } from "./reducers/groupReducer";
 import { redirectReducer } from "./reducers/redirectReducer";
+import { presentationReducer } from "./reducers/presentationReducer";
 
 const reducer = combineReducers({
   user: userReducer,
   group: groupReducer,
-  redirect: redirectReducer
+  redirect: redirectReducer,
+  presentation: presentationReducer
 });
 
 const persistConfig = {
