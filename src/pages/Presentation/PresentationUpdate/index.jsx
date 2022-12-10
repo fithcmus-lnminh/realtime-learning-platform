@@ -21,7 +21,7 @@ const schema = yup
   .required();
 
 function PresentationUpdate(prop) {
-  const { presentationDetail, open, handleClose } = prop;
+  const { open, handleClose, presentationDetail = {} } = prop;
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
@@ -60,8 +60,6 @@ function PresentationUpdate(prop) {
   useEffect(() => {
     setValue("name", presentationDetail?.name);
   }, [open]);
-
-  console.log("presentationDetail:", presentationDetail);
 
   return (
     <>

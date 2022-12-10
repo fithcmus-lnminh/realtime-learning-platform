@@ -22,6 +22,7 @@ import Alert from "../../components/Alert";
 import "./Presentation.scss";
 import PresentationAddNew from "./PresentationAddNew";
 import PresentationUpdate from "./PresentationUpdate";
+import PresentationDelete from "./PresentationDelete";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -74,6 +75,7 @@ function Presentation() {
   });
   const [open, setOpen] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [presentationDetail, setPresentationDetail] = useState("");
 
   const handleCloseAlert = () => {
@@ -98,6 +100,15 @@ function Presentation() {
 
   const handleCloseUpdate = () => {
     setOpenUpdate(false);
+  };
+
+  const handleClickOpenDelete = (data) => {
+    setOpenDelete(true);
+    setPresentationDetail(data);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
   };
 
   function betweenDate(start, end) {
@@ -239,7 +250,11 @@ function Presentation() {
               </Button>
             </Tooltip>
             <Tooltip title="Delete" placement="top">
-              <Button variant="outlined" color="error">
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => handleClickOpenDelete(record)}
+              >
                 <MdDelete />
               </Button>
             </Tooltip>
@@ -437,6 +452,12 @@ function Presentation() {
       <PresentationUpdate
         open={openUpdate}
         handleClose={handleCloseUpdate}
+        presentationDetail={presentationDetail}
+      />
+
+      <PresentationDelete
+        open={openDelete}
+        handleClose={handleCloseDelete}
         presentationDetail={presentationDetail}
       />
     </Box>
