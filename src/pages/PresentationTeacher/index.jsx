@@ -98,7 +98,7 @@ function PresentationTeacher() {
 
   useEffect(() => {
     setCurrentSlide(
-      presentationDetail?.slides.filter((slide) => slide.active === true)[0]
+      presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
     );
   }, [presentationDetail]);
 
