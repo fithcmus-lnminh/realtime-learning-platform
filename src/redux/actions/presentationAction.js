@@ -1,5 +1,9 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
-import { GET_ALL_PRESENTATIONS_SUCCESS } from "../../constants/presentationConstants";
+import {
+  GET_ALL_PRESENTATIONS_SUCCESS,
+  GET_PRESENTATION_SUCCESS
+  // GET_PRESENTATION_SUCCESS
+} from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
 
@@ -177,3 +181,149 @@ export const deletePresentation =
       }
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const getPresentationById = (id) => async (dispatch) => {
+  try {
+    const res = await $axios.get(`${API_URL}/api/presentation/${id}`);
+
+    const newSlides = res.data.presentation.slides.map((slide, index) => ({
+      ...slide,
+      active: index === 0
+    }));
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch({
+        type: GET_PRESENTATION_SUCCESS,
+        payload: { ...res.data.presentation, slides: newSlides }
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const createMultipleChoiceSlide =
+  (presentationId) => async (dispatch) => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/presentation/${presentationId}/multiple-choice`
+      );
+
+      /* eslint-disable prefer-destructuring */
+      if (res.code === ApiResposeCodeNumber.Success) {
+        const res2 = await $axios.get(
+          `${API_URL}/api/presentation/${presentationId}`
+        );
+
+        const newSlides = res2.data.presentation.slides.map((slide, index) => ({
+          ...slide,
+          active: index === res2.data.presentation.slides.length - 1
+        }));
+
+        /* eslint-disable prefer-destructuring */
+        if (res2.code === ApiResposeCodeNumber.Success) {
+          dispatch({
+            type: GET_PRESENTATION_SUCCESS,
+            payload: { ...res2.data.presentation, slides: newSlides }
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const updateMultipleChoiceSlideQuestion =
+  (presentationId, slideId, question) => async (dispatch) => {
+    await $axios.put(
+      `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}`,
+      {
+        question
+      }
+    );
+
+    const res = await $axios.get(
+      `${API_URL}/api/presentation/${presentationId}`
+    );
+
+    const newSlides = res.data.presentation.slides.map((slide, index) => ({
+      ...slide,
+      active:
+        index ===
+        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
+    }));
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch({
+        type: GET_PRESENTATION_SUCCESS,
+        payload: { ...res.data.presentation, slides: newSlides }
+      });
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const createNewOption =
+  (presentationId, slideId) => async (dispatch) => {
+    await $axios.post(
+      `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}/option`
+    );
+
+    const res = await $axios.get(
+      `${API_URL}/api/presentation/${presentationId}`
+    );
+
+    const newSlides = res.data.presentation.slides.map((slide, index) => ({
+      ...slide,
+      active:
+        index ===
+        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
+    }));
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch({
+        type: GET_PRESENTATION_SUCCESS,
+        payload: { ...res.data.presentation, slides: newSlides }
+      });
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const updateTitleOption =
+  (presentationId, slideId, optionId, content) => async (dispatch) => {
+    await $axios.put(
+      `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}/option/${optionId}`,
+      { content }
+    );
+
+    const res = await $axios.get(
+      `${API_URL}/api/presentation/${presentationId}`
+    );
+
+    const newSlides = res.data.presentation.slides.map((slide, index) => ({
+      ...slide,
+      active:
+        index ===
+        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
+    }));
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch({
+        type: GET_PRESENTATION_SUCCESS,
+        payload: { ...res.data.presentation, slides: newSlides }
+      });
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const deleteOption = (presentationId, slideId, optionId) => async () => {
+  await $axios.delete(
+    `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}/option/${optionId}`
+  );
+};
