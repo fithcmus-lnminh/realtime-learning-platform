@@ -116,7 +116,7 @@ function Presentations() {
       label: "Title",
       styleHead: {
         minWidth: 250,
-        width: "40%"
+        width: "50%"
       },
       render: (record) => {
         return (
@@ -125,7 +125,10 @@ function Presentations() {
               <NavLink to={`/presentation/${record.id}`}>
                 <Typography
                   variant="span"
-                  sx={{ color: "rgba(0, 0, 0, 0.87)", fontWeight: 600 }}
+                  sx={{
+                    color: "primary",
+                    fontWeight: 600
+                  }}
                 >
                   {record?.title ? record.title : ""}
                 </Typography>
