@@ -1,0 +1,61 @@
+.presentation__join {
+    &__container {
+        background-color: rgba(25, 34, 68, 0.9);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__card {
+        padding: 50px 100px;
+        background-color: #fff;
+        border-radius: 8px;
+        text-align: center;
+        min-height: 370px;
+    }
+
+    &__title {
+        margin-bottom: 32px;
+        font-size: 28px;
+        width: 500px;
+    }
+
+    &__text {
+        font-size: 18px;
+    }
+
+    &__error {
+        color: red;
+    }
+
+    &__success {
+        color: #1ca125;
+    }
+
+    &__highlight {
+        color: #2a518f;
+    }
+
+    &__back-link {
+        text-decoration: underline;
+    }
+
+    &__text-bold {
+        font-weight: bold;
+    }
+
+    &__button {
+        background-color: #2a518f;
+        padding: 12px 0;
+        width: 100%;
+        border-radius: 20px;
+        color: #fff;
+        margin: 28px 0;
+        font-size: 22px;
+        text-transform: uppercase;
+        outline: none;
+        border: 0;
+    }
+}

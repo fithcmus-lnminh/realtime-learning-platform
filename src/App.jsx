@@ -17,6 +17,7 @@ import PermissionDeniedPage from "./pages/Error/403";
 import Presentations from "./pages/Presentations";
 import PresentationTeacher from "./pages/PresentationTeacher";
 import PresentPresentation from "./pages/PresentPresentation";
+import PresentationJoin from "./pages/Presentations/PresentationJoin";
 
 function App() {
   const theme = createTheme({
@@ -64,6 +65,7 @@ function App() {
         <Route path="/groups" element={<Groups />} />
         <Route path="/group/:id" element={<GroupDetails />} />
         <Route path="/presentations" element={<Presentations />} />
+        <Route path="/play" element={<PresentationJoin />} />
         <Route path="/invite/:groupId" element={<Invite />} />
         <Route path="/google-login" element={<GoogleLogin />} />
         <Route path="/presentation/:id" element={<PresentationTeacher />} />
