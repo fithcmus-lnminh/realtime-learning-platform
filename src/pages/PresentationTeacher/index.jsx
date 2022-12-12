@@ -9,6 +9,7 @@ import { BarChart, XAxis, YAxis, Bar, LabelList } from "recharts";
 import "./PresentationTeacher.scss";
 import { Box, CircularProgress, OutlinedInput, Popover } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { io } from "socket.io-client";
 import {
   createMultipleChoiceSlide,
   createNewOption,
@@ -22,6 +23,7 @@ function PresentationTeacher() {
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -30,6 +32,14 @@ function PresentationTeacher() {
   const [currentSlide, setCurrentSlide] = useState(
     presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
   );
+
+  const accessToken = localStorage.getItem("accessToken");
+  const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
+    withCredentials: true,
+    extraHeaders: {
+      token: accessToken
+    }
+  });
 
   const addOptionHandler = () => {
     dispatch(createNewOption(presentationDetail?.id, currentSlide?.content.id));
@@ -98,6 +108,11 @@ function PresentationTeacher() {
 
   useEffect(() => {
     getPresentationDetail();
+    socket.emit(
+      "teacher-join-presentation",
+      { access_code: presentationDetail?.accessCode1 },
+      () => {}
+    );
   }, []);
 
   useEffect(() => {
@@ -225,7 +240,11 @@ function PresentationTeacher() {
             </div>
             <div className="presentation__content">
               <p className="presentation__content-header">
-                Go to bla bla and enter code{" "}
+                Go to{" "}
+                <span style={{ fontStyle: "italic" }}>
+                  {process.env.REACT_APP_CLIENT_URL}/play
+                </span>{" "}
+                and enter code{" "}
                 <span style={{ fontWeight: "bold" }}>
                   {presentationDetail?.accessCode}
                 </span>

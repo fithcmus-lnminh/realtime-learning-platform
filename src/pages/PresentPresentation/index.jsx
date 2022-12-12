@@ -10,6 +10,7 @@ import {
 import { BiExpand, BiCollapse } from "react-icons/bi";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { io } from "socket.io-client";
 import { getPresentationById } from "../../redux/actions/presentationAction";
 import "./PresentPresentation.scss";
 
@@ -25,6 +26,14 @@ function PresentPresentation() {
   );
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
+  const accessToken = localStorage.getItem("accessToken");
+  const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
+    withCredentials: true,
+    extraHeaders: {
+      token: accessToken
+    }
+  });
+
   const getPresentationDetail = async () => {
     setLoading(true);
     await dispatch(getPresentationById(param.id));
@@ -36,19 +45,39 @@ function PresentPresentation() {
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
     setCurrentSlide(presentationDetail?.slides[currentSlideIndex - 1]);
+    socket.emit("teacher-previous-slide", {}, (data) => {
+      console.log(data);
+    });
+    socket.on("get-slide", (data) => {
+      console.log(data);
+    });
   };
 
   const handleGoToNextSlide = () => {
     setCurrentSlideIndex(currentSlideIndex + 1);
     setCurrentSlide(presentationDetail?.slides[currentSlideIndex + 1]);
+    socket.emit("teacher-next-slide", {}, (data) => {
+      console.log(data);
+    });
+    socket.on("get-slide", (data) => {
+      console.log(data);
+    });
   };
 
   const handleExitPresent = () => {
     navigate(`/presentation/${param.id}`);
+    socket.emit("teacher-end-presentation", {}, () => {});
   };
 
   useEffect(() => {
     getPresentationDetail();
+    socket.emit(
+      "teacher-start-presentation",
+      { access_code: presentationDetail?.accessCode, currentSlide: 1 },
+      (data) => {
+        console.log(data);
+      }
+    );
   }, []);
 
   useEffect(() => {
@@ -122,7 +151,11 @@ function PresentPresentation() {
               </div>
               <div className="present__content">
                 <p className="present__content-header">
-                  Go to bla bla and enter code{" "}
+                  Go to{" "}
+                  <span style={{ fontStyle: "italic" }}>
+                    {process.env.REACT_APP_CLIENT_URL}/play
+                  </span>{" "}
+                  and enter code{" "}
                   <span style={{ fontWeight: "bold" }}>
                     {presentationDetail?.accessCode}
                   </span>
