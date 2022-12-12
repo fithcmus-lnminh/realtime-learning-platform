@@ -92,6 +92,10 @@ function PresentationTeacher() {
     }, 1000);
   };
 
+  const presentPresentation = () => {
+    navigate(`/presentation/${presentationDetail.id}/present`);
+  };
+
   useEffect(() => {
     getPresentationDetail();
   }, []);
@@ -133,7 +137,11 @@ function PresentationTeacher() {
               <button type="button" className="button__share">
                 <FiShare2 /> Share
               </button>
-              <button type="button" className="button__primary">
+              <button
+                type="button"
+                className="button__primary"
+                onClick={presentPresentation}
+              >
                 <BsPlayFill /> Present
               </button>
             </div>
