@@ -95,7 +95,14 @@ function PresentationJoin() {
                       />
                       {errors.code?.message && (
                         <FormHelperText
-                          sx={{ mb: 2, mt: 0 }}
+                          sx={{
+                            width: 500,
+                            mb: 2,
+                            mt: 2,
+                            ml: 0,
+                            mr: 0,
+                            fontSize: 14
+                          }}
                           id="component-error-text"
                           error
                         >

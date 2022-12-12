@@ -1,4 +1,4 @@
-.presentation__join {
+.presentation__play {
     &__container {
         height: 100vh;
         overflow: hidden;
@@ -57,5 +57,18 @@
         text-transform: uppercase;
         outline: none;
         border: 0;
+
+        &-refresh {
+            background-color: #dedfe1;
+            color: #000;
+        }
+    }
+
+    &__progress {
+        font-size: 16px;
+        margin: 24px auto;
+        max-width: 500px;
+        text-align: end;
+        font-weight: 600;
     }
 }
