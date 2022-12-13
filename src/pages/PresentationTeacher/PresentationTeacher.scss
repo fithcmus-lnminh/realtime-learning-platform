@@ -96,6 +96,8 @@
     margin: 80px 40px;
     padding: 20px 32px;
     overflow-y: scroll;
+    position: relative;
+    overflow: hidden;
 
     &-header {
       text-align: center;
@@ -109,6 +111,12 @@
       justify-content: space-between;
       padding: 0 0 32px 0;
     }
+  }
+
+  &__badge {
+    position: absolute;
+    bottom: 24px;
+    right: 32px;
   }
 
   &__customize {

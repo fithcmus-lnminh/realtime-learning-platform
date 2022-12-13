@@ -1,6 +1,7 @@
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
-  GET_PRESENTATION_SUCCESS
+  GET_PRESENTATION_SUCCESS,
+  SET_TOTAL_STUDENTS
 } from "../../constants/presentationConstants";
 
 const initialState = {
@@ -20,6 +21,14 @@ export const presentationReducer = (state = initialState, action = {}) => {
       return {
         ...state,
         presentationDetail: action.payload
+      };
+    case SET_TOTAL_STUDENTS:
+      return {
+        ...state,
+        presentationDetail: {
+          ...state.presentationDetail,
+          totalStudents: action.payload
+        }
       };
     default:
       return state;

@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiShare2 } from "react-icons/fi";
-import { BsPlayFill } from "react-icons/bs";
+import { BsPlayFill, BsPersonCircle } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
 import { SlChart } from "react-icons/sl";
 import { MdClose } from "react-icons/md";
 import { BarChart, XAxis, YAxis, Bar, LabelList } from "recharts";
 import "./PresentationTeacher.scss";
-import { Box, CircularProgress, OutlinedInput, Popover } from "@mui/material";
+import {
+  Badge,
+  Box,
+  CircularProgress,
+  OutlinedInput,
+  Popover
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { io } from "socket.io-client";
+import { socket } from "../../utils/socket";
 import {
   createMultipleChoiceSlide,
   createNewOption,
   deleteOption,
   getPresentationById,
+  setTotalStudents,
   updateMultipleChoiceSlideQuestion,
   updateTitleOption
 } from "../../redux/actions/presentationAction";
@@ -26,20 +33,13 @@ function PresentationTeacher() {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [totalStudent, setTotalStudent] = useState(0);
 
   const { presentationDetail } = useSelector((state) => state.presentation);
 
   const [currentSlide, setCurrentSlide] = useState(
     presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
   );
-
-  const accessToken = localStorage.getItem("accessToken");
-  const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
-    withCredentials: true,
-    extraHeaders: {
-      token: accessToken
-    }
-  });
 
   const addOptionHandler = () => {
     dispatch(createNewOption(presentationDetail?.id, currentSlide?.content.id));
@@ -107,12 +107,17 @@ function PresentationTeacher() {
   };
 
   useEffect(() => {
-    getPresentationDetail();
-    socket.emit(
-      "teacher-join-presentation",
-      { access_code: presentationDetail?.accessCode1 },
-      () => {}
-    );
+    getPresentationDetail().then(() => {
+      socket.emit(
+        "teacher-join-presentation",
+        { access_code: presentationDetail?.accessCode },
+        () => {}
+      );
+      socket.on("get-total-students", (data) => {
+        dispatch(setTotalStudents(data.total_users));
+        setTotalStudent(data.total_users);
+      });
+    });
   }, []);
 
   useEffect(() => {
@@ -273,6 +278,18 @@ function PresentationTeacher() {
                   )}
                 </div>
               )}
+              <div className="presentation__badge">
+                <Badge
+                  color="primary"
+                  badgeContent={totalStudent === 0 ? "0" : totalStudent}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left"
+                  }}
+                >
+                  <BsPersonCircle size={30} />
+                </Badge>
+              </div>
             </div>
             <div className="presentation__customize">
               {presentationDetail?.slides?.length > 0 && (

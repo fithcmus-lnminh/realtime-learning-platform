@@ -1,46 +1,31 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Badge, Box, CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   MdOutlineArrowBackIosNew,
   MdOutlineArrowForwardIos,
   MdClose
 } from "react-icons/md";
+import { BsPersonCircle } from "react-icons/bs";
 import { BiExpand, BiCollapse } from "react-icons/bi";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
-import { io } from "socket.io-client";
-import { getPresentationById } from "../../redux/actions/presentationAction";
+// import { getPresentationById } from "../../redux/actions/presentationAction";
 import "./PresentPresentation.scss";
+import { socket } from "../../utils/socket";
 
 function PresentPresentation() {
   const param = useParams();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleFullScreen = useFullScreenHandle();
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const { presentationDetail } = useSelector((state) => state.presentation);
+
   const [currentSlide, setCurrentSlide] = useState(
     presentationDetail?.slides[0]
   );
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-
-  const accessToken = localStorage.getItem("accessToken");
-  const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
-    withCredentials: true,
-    extraHeaders: {
-      token: accessToken
-    }
-  });
-
-  const getPresentationDetail = async () => {
-    setLoading(true);
-    await dispatch(getPresentationById(param.id));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  };
 
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
@@ -48,18 +33,12 @@ function PresentPresentation() {
     socket.emit("teacher-previous-slide", {}, (data) => {
       console.log(data);
     });
-    socket.on("get-slide", (data) => {
-      console.log(data);
-    });
   };
 
-  const handleGoToNextSlide = () => {
+  const handleGoToNextSlide = async () => {
     setCurrentSlideIndex(currentSlideIndex + 1);
     setCurrentSlide(presentationDetail?.slides[currentSlideIndex + 1]);
     socket.emit("teacher-next-slide", {}, (data) => {
-      console.log(data);
-    });
-    socket.on("get-slide", (data) => {
       console.log(data);
     });
   };
@@ -70,7 +49,6 @@ function PresentPresentation() {
   };
 
   useEffect(() => {
-    getPresentationDetail();
     socket.emit(
       "teacher-start-presentation",
       { access_code: presentationDetail?.accessCode, currentSlide: 1 },
@@ -78,6 +56,10 @@ function PresentPresentation() {
         console.log(data);
       }
     );
+    socket.on("get-score", (data) => {
+      console.log("SCORE", data);
+      setCurrentSlide({ ...currentSlide, optitons: data.options });
+    });
   }, []);
 
   useEffect(() => {
@@ -192,6 +174,22 @@ function PresentPresentation() {
                     )}
                   </div>
                 )}
+                <div className="present__badge">
+                  <Badge
+                    color="primary"
+                    badgeContent={
+                      presentationDetail?.totalStudents === 0
+                        ? "0"
+                        : presentationDetail?.totalStudents
+                    }
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "left"
+                    }}
+                  >
+                    <BsPersonCircle size={45} />
+                  </Badge>
+                </div>
               </div>
             </div>
           </div>
