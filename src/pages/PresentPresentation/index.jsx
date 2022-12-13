@@ -51,7 +51,7 @@ function PresentPresentation() {
   useEffect(() => {
     socket.emit(
       "teacher-start-presentation",
-      { access_code: presentationDetail?.accessCode, currentSlide: 1 },
+      { access_code: presentationDetail?.accessCode, current_slide: 1 },
       (data) => {
         console.log(data);
       }
