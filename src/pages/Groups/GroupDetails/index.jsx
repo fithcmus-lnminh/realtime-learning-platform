@@ -111,7 +111,6 @@ function GroupDetails() {
               <GroupMore groupId={groupId} />
             </TabPanel>
           </TabContext>
-          {/* )} */}
         </Box>
       </Box>
 
