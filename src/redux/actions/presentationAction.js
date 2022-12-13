@@ -1,7 +1,8 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
-  GET_PRESENTATION_SUCCESS
+  GET_PRESENTATION_SUCCESS,
+  SET_TOTAL_STUDENTS
   // GET_PRESENTATION_SUCCESS
 } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
@@ -326,4 +327,9 @@ export const deleteOption = (presentationId, slideId, optionId) => async () => {
   await $axios.delete(
     `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}/option/${optionId}`
   );
+};
+
+/* eslint-disable import/prefer-default-export */
+export const setTotalStudents = (data) => (dispatch) => {
+  dispatch({ type: SET_TOTAL_STUDENTS, payload: data });
 };

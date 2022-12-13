@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiShare2 } from "react-icons/fi";
-import { BsPlayFill } from "react-icons/bs";
+import { BsPlayFill, BsPersonCircle } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
 import { SlChart } from "react-icons/sl";
 import { MdClose } from "react-icons/md";
 import { BarChart, XAxis, YAxis, Bar, LabelList } from "recharts";
 import "./PresentationTeacher.scss";
-import { Box, CircularProgress, OutlinedInput, Popover } from "@mui/material";
+import {
+  Badge,
+  Box,
+  CircularProgress,
+  OutlinedInput,
+  Popover
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { socket } from "../../utils/socket";
 import {
   createMultipleChoiceSlide,
   createNewOption,
   deleteOption,
   getPresentationById,
+  setTotalStudents,
   updateMultipleChoiceSlideQuestion,
   updateTitleOption
 } from "../../redux/actions/presentationAction";
@@ -22,8 +30,10 @@ function PresentationTeacher() {
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [totalStudent, setTotalStudent] = useState(0);
 
   const { presentationDetail } = useSelector((state) => state.presentation);
 
@@ -92,8 +102,22 @@ function PresentationTeacher() {
     }, 1000);
   };
 
+  const presentPresentation = () => {
+    navigate(`/presentation/${presentationDetail.id}/present`);
+  };
+
   useEffect(() => {
-    getPresentationDetail();
+    getPresentationDetail().then(() => {
+      socket.emit(
+        "teacher-join-presentation",
+        { access_code: presentationDetail?.accessCode },
+        () => {}
+      );
+      socket.on("get-total-students", (data) => {
+        dispatch(setTotalStudents(data.total_users));
+        setTotalStudent(data.total_users);
+      });
+    });
   }, []);
 
   useEffect(() => {
@@ -133,7 +157,11 @@ function PresentationTeacher() {
               <button type="button" className="button__share">
                 <FiShare2 /> Share
               </button>
-              <button type="button" className="button__primary">
+              <button
+                type="button"
+                className="button__primary"
+                onClick={presentPresentation}
+              >
                 <BsPlayFill /> Present
               </button>
             </div>
@@ -217,7 +245,11 @@ function PresentationTeacher() {
             </div>
             <div className="presentation__content">
               <p className="presentation__content-header">
-                Go to bla bla and enter code{" "}
+                Go to{" "}
+                <span style={{ fontStyle: "italic" }}>
+                  {process.env.REACT_APP_CLIENT_URL}/play
+                </span>{" "}
+                and enter code{" "}
                 <span style={{ fontWeight: "bold" }}>
                   {presentationDetail?.accessCode}
                 </span>
@@ -246,6 +278,18 @@ function PresentationTeacher() {
                   )}
                 </div>
               )}
+              <div className="presentation__badge">
+                <Badge
+                  color="primary"
+                  badgeContent={totalStudent === 0 ? "0" : totalStudent}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left"
+                  }}
+                >
+                  <BsPersonCircle size={30} />
+                </Badge>
+              </div>
             </div>
             <div className="presentation__customize">
               {presentationDetail?.slides?.length > 0 && (
