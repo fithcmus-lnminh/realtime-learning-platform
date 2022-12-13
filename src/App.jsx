@@ -67,7 +67,7 @@ function App() {
         <Route path="/group/:id" element={<GroupDetails />} />
         <Route path="/presentations" element={<Presentations />} />
         <Route path="/play" element={<PresentationJoin />} />
-        <Route path="/play/:id" element={<PresentationPlay />} />
+        <Route path="/play/:code" element={<PresentationPlay />} />
         <Route path="/invite/:groupId" element={<Invite />} />
         <Route path="/google-login" element={<GoogleLogin />} />
         <Route path="/presentation/:id" element={<PresentationTeacher />} />

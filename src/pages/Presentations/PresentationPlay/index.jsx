@@ -5,7 +5,8 @@ import {
   FormHelperText,
   Grid,
   Radio,
-  RadioGroup
+  RadioGroup,
+  Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -17,6 +18,7 @@ import { io } from "socket.io-client";
 import { studentVoteOption } from "../../../redux/actions/presentationAction";
 import "./PresentationPlay.scss";
 import Alert from "../../../components/Alert";
+// import { ApiResposeCodeNumber } from "../../../constants/api";
 
 const schema = yup
   .object({
@@ -36,38 +38,12 @@ function PresentationPlay() {
   const [slide, setSlide] = useState({});
   const [currentSlide, setCurrentSlide] = useState(1);
   const [totalSlides, setTotalSlide] = useState(1);
-
+  // const params = useParams();
   const userInfo = useSelector(
     (state) => state.user.userInfo,
     (prev, next) => isEqual(prev, next)
   );
   const dispatch = useDispatch();
-  // const multipleChoice = {
-  //   id: "choice1",
-  //   question: "Bạn hôm nay muốn ăn gì?",
-  //   options: [
-  //     {
-  //       id: "ops1",
-  //       content: "Thịt gà",
-  //       upvoted: ""
-  //     },
-  //     {
-  //       id: "ops2",
-  //       content: "Thịt bò",
-  //       upvoted: ""
-  //     },
-  //     {
-  //       id: "ops3",
-  //       content: "Thịt heo",
-  //       upvoted: ""
-  //     },
-  //     {
-  //       id: "ops4",
-  //       content: "Thịt dê",
-  //       upvoted: ""
-  //     }
-  //   ]
-  // };
   const [isEnding, setIsEnding] = useState(false);
   const [isVote, setIsVote] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -104,11 +80,6 @@ function PresentationPlay() {
   }, []);
 
   useEffect(() => {
-    socket.on("get-total-students", (data) => {
-      // const { total_users } = data;
-      console.log("data get-total-students:", data);
-    });
-
     socket.on("get-slide", (data) => {
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
@@ -138,12 +109,19 @@ function PresentationPlay() {
       setIsEnding(true);
     });
     return () => {
-      socket.off("get-total-students");
       socket.off("get-slide");
       socket.off("get-score");
       socket.off("end-presentation");
     };
   }, []);
+
+  // useEffect(() => {
+  //   socket.emit("student-check-vote", { access_code: params.code }, (res) => {
+  //     if (res.code === ApiResposeCodeNumber.Success) {
+  //     } else {
+  //     }
+  //   });
+  // }, [params.code, slide]);
 
   console.log("slide:", slide);
   console.log("options:", options);
@@ -172,99 +150,161 @@ function PresentationPlay() {
           </div>
         ) : (
           <div>
-            {!isEnding ? (
+            {isEnding ? (
               <div
                 style={{
                   width: "500px",
                   position: "absolute",
                   top: "50%",
                   transform: "translate(-50%, -50%)",
-                  left: "50%"
+                  left: "50%",
+                  fontSize: "28px"
                 }}
               >
-                The presentation has been ended.
+                <Typography variant="h1" gutterBottom sx={{ fontSize: "28px" }}>
+                  The presentation has been ended.
+                </Typography>
+                <button
+                  type="button"
+                  className="presentation__play__button"
+                  onClick={() => {
+                    window.open(`/presentations`, "_self");
+                  }}
+                  style={{
+                    width: "auto",
+                    padding: "12px 24px"
+                  }}
+                >
+                  Back to my presentation
+                </button>
               </div>
             ) : (
+              /* eslint-disable react/jsx-no-useless-fragment */
               <>
-                <div className="presentation__play__form">
-                  <Controller
-                    name="answer"
-                    control={control}
-                    render={({ field }) => {
-                      return (
-                        <Grid item xs={12}>
-                          <FormControl>
-                            <RadioGroup
-                              aria-labelledby="radio-buttons-answer"
-                              name="answer"
-                              sx={{ width: 500, mb: 1, mt: 1 }}
-                              /* eslint-disable react/jsx-props-no-spreading */
-                              {...field}
-                            >
-                              {slide?.content?.options.length > 0 &&
-                                slide?.content?.options.map((option) => (
-                                  <FormControlLabel
-                                    key={option.id}
-                                    value={option.id}
-                                    control={<Radio />}
-                                    label={option.content}
-                                    disabled={isVote}
-                                  />
-                                ))}
-                            </RadioGroup>
-                            {errors.answer?.message && (
-                              <FormHelperText
-                                sx={{
-                                  width: 500,
-                                  mb: 2,
-                                  mt: 2,
-                                  ml: 0,
-                                  mr: 0,
-                                  fontSize: 14
-                                }}
-                                id="component-error-text"
-                                error
-                              >
-                                {errors.answer.message}
-                              </FormHelperText>
-                            )}
-                            {isVote && (
-                              <FormHelperText
-                                sx={{
-                                  width: 500,
-                                  mb: 2,
-                                  mt: 2,
-                                  ml: 0,
-                                  mr: 0,
-                                  fontSize: 14
-                                }}
-                                id="component-info-text"
-                              >
-                                You have already voted on this question. Please
-                                wait for the presenter to show the next slide.
-                              </FormHelperText>
-                            )}
-                          </FormControl>
-                        </Grid>
-                      );
+                {slide &&
+                typeof slide === "object" &&
+                Object.keys(slide).length > 0 &&
+                slide.content &&
+                typeof slide.content === "object" &&
+                Object.keys(slide.content).length > 0 &&
+                slide.content ? (
+                  <>
+                    <div className="presentation__play__form">
+                      <Controller
+                        name="answer"
+                        control={control}
+                        render={({ field }) => {
+                          return (
+                            <Grid item xs={12}>
+                              <FormControl>
+                                <RadioGroup
+                                  aria-labelledby="radio-buttons-answer"
+                                  name="answer"
+                                  sx={{ width: 500, mb: 1, mt: 1 }}
+                                  /* eslint-disable react/jsx-props-no-spreading */
+                                  {...field}
+                                >
+                                  {slide?.content?.options.length > 0 &&
+                                    slide?.content?.options.map((option) => (
+                                      <FormControlLabel
+                                        key={option.id}
+                                        value={option.id}
+                                        control={<Radio />}
+                                        label={option.content}
+                                        disabled={isVote}
+                                      />
+                                    ))}
+                                </RadioGroup>
+                                {errors.answer?.message && (
+                                  <FormHelperText
+                                    sx={{
+                                      width: 500,
+                                      mb: 2,
+                                      mt: 2,
+                                      ml: 0,
+                                      mr: 0,
+                                      fontSize: 14
+                                    }}
+                                    id="component-error-text"
+                                    error
+                                  >
+                                    {errors.answer.message}
+                                  </FormHelperText>
+                                )}
+                                {isVote && (
+                                  <FormHelperText
+                                    sx={{
+                                      width: 500,
+                                      mb: 2,
+                                      mt: 2,
+                                      ml: 0,
+                                      mr: 0,
+                                      fontSize: 14
+                                    }}
+                                    id="component-info-text"
+                                  >
+                                    You have already voted on this question.
+                                    Please wait for the presenter to show the
+                                    next slide.
+                                  </FormHelperText>
+                                )}
+                              </FormControl>
+                            </Grid>
+                          );
+                        }}
+                      />
+
+                      <button
+                        type="button"
+                        className="presentation__play__button"
+                        onClick={isVote ? () => {} : handleSubmit(onSubmit)}
+                        style={
+                          isVote
+                            ? { cursor: "not-allowed", opacity: "0.7" }
+                            : {}
+                        }
+                      >
+                        Submit
+                      </button>
+                    </div>
+
+                    <p className="presentation__play__progress">
+                      {currentSlide}/{totalSlides}
+                    </p>
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      width: "500px",
+                      position: "absolute",
+                      top: "50%",
+                      transform: "translate(-50%, -50%)",
+                      left: "50%",
+                      fontSize: "28px"
                     }}
-                  />
-
-                  <button
-                    type="button"
-                    className="presentation__play__button"
-                    onClick={isVote ? () => {} : handleSubmit(onSubmit)}
-                    style={
-                      isVote ? { cursor: "not-allowed", opacity: "0.7" } : {}
-                    }
                   >
-                    Submit
-                  </button>
-                </div>
-
-                <p className="presentation__play__progress">
-                  {currentSlide}/{totalSlides}
-                </p>
+                    <Typography
+                      variant="h1"
+                      gutterBottom
+                      sx={{ fontSize: "28px" }}
+                    >
+                      The presentation not found.
+                    </Typography>
+                    <button
+                      type="button"
+                      className="presentation__play__button"
+                      onClick={() => {
+                        window.open(`/presentations`, "_self");
+                      }}
+                      style={{
+                        width: "auto",
+                        padding: "12px 24px"
+                      }}
+                    >
+                      Back to my presentation
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </div>
