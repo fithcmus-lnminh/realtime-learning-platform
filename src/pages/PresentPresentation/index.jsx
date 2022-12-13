@@ -58,7 +58,7 @@ function PresentPresentation() {
     );
     socket.on("get-score", (data) => {
       console.log("SCORE", data);
-      setCurrentSlide({ ...currentSlide, optitons: data.options });
+      setCurrentSlide({ ...currentSlide, options: data.options });
     });
   }, []);
 
