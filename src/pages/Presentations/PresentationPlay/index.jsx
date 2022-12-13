@@ -9,12 +9,12 @@ import {
   Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import io from "socket.io-client";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { isEqual } from "lodash";
-import { io } from "socket.io-client";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 // import { useParams } from "react-router-dom";
 import { studentVoteOption } from "../../../redux/actions/presentationAction";
@@ -38,6 +38,45 @@ function PresentationPlay() {
   });
   const [options, setOptions] = useState([]);
   const [slide, setSlide] = useState({});
+  // const [slide, setSlide] = useState({
+  //   slide_type: "MultipleChoice",
+  //   content: {
+  //     _id: "63986dd2864a5305bb9ef9da",
+  //     options: [
+  //       {
+  //         _id: "63986dd2864a5305bb9ef9d4",
+  //         content: "10",
+  //         upvotes: [],
+  //         createdAt: "2022-12-13T12:19:30.096Z",
+  //         updatedAt: "2022-12-13T12:20:35.112Z",
+  //         __v: 0,
+  //         numUpvote: 0
+  //       },
+  //       {
+  //         _id: "63986dd2864a5305bb9ef9d6",
+  //         content: " 11",
+  //         upvotes: [],
+  //         createdAt: "2022-12-13T12:19:30.172Z",
+  //         updatedAt: "2022-12-13T12:20:38.239Z",
+  //         __v: 0,
+  //         numUpvote: 0
+  //       },
+  //       {
+  //         _id: "63986dd2864a5305bb9ef9d8",
+  //         content: "12",
+  //         upvotes: [],
+  //         createdAt: "2022-12-13T12:19:30.233Z",
+  //         updatedAt: "2022-12-13T12:20:42.411Z",
+  //         __v: 0,
+  //         numUpvote: 0
+  //       }
+  //     ],
+  //     createdAt: "2022-12-13T12:19:30.296Z",
+  //     updatedAt: "2022-12-13T12:20:47.988Z",
+  //     __v: 2,
+  //     question: "Bạn học lớp mấy?"
+  //   }
+  // });
   const [currentSlide, setCurrentSlide] = useState(1);
   const [totalSlides, setTotalSlide] = useState(1);
   // const params = useParams();
@@ -58,7 +97,8 @@ function PresentationPlay() {
     handleSubmit,
     formState: { errors },
     control,
-    setValue
+    setValue,
+    getValues
   } = useForm({
     resolver: yupResolver(schema)
   });
@@ -116,6 +156,8 @@ function PresentationPlay() {
       socket.off("end-presentation");
     };
   }, []);
+
+  console.log("data get-answer:", getValues("answer"));
 
   // useEffect(() => {
   //   socket.emit("student-check-vote", { access_code: params.code }, (res) => {
@@ -270,7 +312,14 @@ function PresentationPlay() {
                       </button>
                     </div>
 
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "700px",
+                        border: "1px solid #fff"
+                      }}
+                    >
                       <BarChart
                         width={1000}
                         height={550}

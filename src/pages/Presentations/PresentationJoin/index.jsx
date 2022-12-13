@@ -5,60 +5,73 @@ import {
   OutlinedInput
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./PresentationJoin.scss";
 import Alert from "../../../components/Alert";
+import {
+  studentJoinPresentation,
+  studentJoinPresentationAnonymous
+} from "../../../redux/actions/presentationAction";
 
 const schema = yup
   .object({
-    code: yup.string().required("Please choose the answer")
+    accessCode: yup.string().required("Please enter the code")
+  })
+  .required();
+
+const nameSchema = yup
+  .object({
+    name: yup.string().required("Please enter your name")
   })
   .required();
 
 function PresentationJoin() {
-  const accessToken = localStorage.getItem("accessToken");
-  const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
-    withCredentials: true,
-    extraHeaders: {
-      token: accessToken
-    }
-  });
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [isAuth, setIsAuth] = useState(true);
   const [message, setMessage] = useState({
     success: true,
     data: "",
     open: false
   });
-  //   const dispatch = useDispatch();
   const {
     handleSubmit,
     formState: { errors },
-    control
-    // reset
+    control,
+    watch
   } = useForm({
     resolver: yupResolver(schema)
   });
+  const {
+    handleSubmit: handleSubmitName,
+    formState: { errors: errorsName },
+    control: controlName
+  } = useForm({
+    resolver: yupResolver(nameSchema)
+  });
+
+  const watchAccessCode = watch("accessCode");
 
   const onSubmit = async (data) => {
-    setLoading(false);
-    console.log("data:", data);
-    // socket.emit("student-join-presentation", [
-    //   { access_code: data.code },
-    //   (data2) => {
-    //     console.log("callback client:", data2);
-    //   }
-    // ]);
-    socket.emit(
-      "student-join-presentation",
-      { access_code: data.code },
-      (data2) => {
-        console.log("callback client:", data2);
-      }
+    setLoading(true);
+
+    dispatch(studentJoinPresentation(data, setLoading, setMessage, setIsAuth));
+  };
+
+  const onSubmitAnonymous = async (data) => {
+    setLoading(true);
+    dispatch(
+      studentJoinPresentationAnonymous(
+        data,
+        { accessCode: watchAccessCode },
+        setLoading,
+        setMessage,
+        setIsAuth
+      )
     );
-    // dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
   };
 
   const handleCloseAlert = () => {
@@ -72,41 +85,6 @@ function PresentationJoin() {
     document.title = "Enter the code - RLP";
   }, []);
 
-  console.log("accessToken:", accessToken);
-  console.log("socket:", socket);
-
-  useEffect(() => {
-    // socket.emit("student-vote-option", { option_id: "1" }, () => {});
-
-    // socket.emit("disconnecting");
-
-    socket.on("get-total-students", (data) => {
-      // const { total_users } = data;
-      console.log("data get-total-students:", data);
-    });
-
-    socket.on("get-slide", (data) => {
-      // const { slide, current_slide, total_slides } = data;
-      console.log("data get-slide:", data);
-    });
-
-    socket.on("get-score", (data) => {
-      // const { options } = data;
-      console.log("data get-score:", data);
-    });
-
-    socket.on("connect", () => {
-      console.log("connect");
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("get-total-students");
-      socket.off("get-slide");
-      socket.off("get-score");
-    };
-  }, []);
-
   return (
     <div className="presentation__join__container">
       <div
@@ -114,7 +92,9 @@ function PresentationJoin() {
         style={{ position: "relative" }}
       >
         <Alert message={message} onClose={handleCloseAlert} />
-        <h2 className="presentation__join__title">Please enter the code</h2>
+        <h2 className="presentation__join__title">
+          {isAuth ? "Please enter the code" : "Please enter your name"}
+        </h2>
         {loading ? (
           <div
             style={{
@@ -129,51 +109,113 @@ function PresentationJoin() {
           </div>
         ) : (
           <div>
-            <div>
-              <Controller
-                name="code"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <Grid item xs={12}>
-                      <OutlinedInput
-                        id="code"
-                        placeholder="Enter a code"
-                        sx={{ width: 500, mb: 1, mt: 1 }}
-                        fullWidth
-                        error={!!errors.code?.message}
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...field}
-                      />
-                      {errors.code?.message && (
-                        <FormHelperText
-                          sx={{
-                            width: 500,
-                            mb: 2,
-                            mt: 2,
-                            ml: 0,
-                            mr: 0,
-                            fontSize: 14
+            {isAuth ? (
+              <div>
+                <Controller
+                  name="accessCode"
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <Grid item xs={12}>
+                        <OutlinedInput
+                          id="accessCode"
+                          placeholder="Enter a code"
+                          sx={{ width: 500, mb: 1, mt: 1 }}
+                          fullWidth
+                          error={!!errors.accessCode?.message}
+                          onChange={() => {
+                            console.log("Access code change");
                           }}
-                          id="component-error-text"
-                          error
-                        >
-                          {errors.code.message}
-                        </FormHelperText>
-                      )}
-                    </Grid>
-                  );
-                }}
-              />
+                          /* eslint-disable react/jsx-props-no-spreading */
+                          {...field}
+                        />
+                        {errors.accessCode?.message && (
+                          <FormHelperText
+                            sx={{
+                              width: 500,
+                              mb: 2,
+                              mt: 2,
+                              ml: 0,
+                              mr: 0,
+                              fontSize: 14
+                            }}
+                            id="component-error-text"
+                            error
+                          >
+                            {errors.accessCode.message}
+                          </FormHelperText>
+                        )}
+                      </Grid>
+                    );
+                  }}
+                />
 
-              <button
-                type="button"
-                className="presentation__join__button"
-                onClick={handleSubmit(onSubmit)}
-              >
-                Submit
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="presentation__join__button"
+                  onClick={handleSubmit(onSubmit)}
+                  // onClick={loading ? () => {} : handleSubmit(onSubmit)}
+                  style={
+                    loading ? { cursor: "not-allowed", opacity: "0.7" } : {}
+                  }
+                >
+                  Submit
+                </button>
+              </div>
+            ) : (
+              <div>
+                <Controller
+                  name="name"
+                  control={controlName}
+                  render={({ field }) => {
+                    return (
+                      <Grid item xs={12}>
+                        <OutlinedInput
+                          id="name"
+                          placeholder="Enter your name"
+                          sx={{ width: 500, mb: 1, mt: 1 }}
+                          fullWidth
+                          error={!!errorsName.name?.message}
+                          /* eslint-disable react/jsx-props-no-spreading */
+                          {...field}
+                        />
+                        {errorsName.name?.message && (
+                          <FormHelperText
+                            sx={{
+                              width: 500,
+                              mb: 2,
+                              mt: 2,
+                              ml: 0,
+                              mr: 0,
+                              fontSize: 14
+                            }}
+                            id="component-error-text"
+                            error
+                          >
+                            {errorsName.name.message}
+                          </FormHelperText>
+                        )}
+                      </Grid>
+                    );
+                  }}
+                />
+
+                <button
+                  type="button"
+                  className="presentation__join__button"
+                  onClick={handleSubmitName(onSubmitAnonymous)}
+                >
+                  Submit
+                </button>
+                {/* <button
+                  type="button"
+                  className="presentation__join__button presentation__join__button-back"
+                  onClick={() => setIsAuth(true)}
+                >
+                  Enter the code
+                </button> */}
+              </div>
+            )}
           </div>
         )}
       </div>

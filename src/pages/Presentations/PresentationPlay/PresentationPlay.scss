@@ -1,74 +1,75 @@
 .presentation__play {
-    &__container {
-        height: 100vh;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+  &__container {
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-    &__card {
-        padding: 50px 100px;
-        background-color: #fff;
-        border-radius: 8px;
-        text-align: center;
-        min-height: 370px;
-        box-shadow: 0 2px 25px rgba(0, 0, 0, 0.5);
-    }
+  &__card {
+    margin: 40px auto;
+    padding: 50px 100px;
+    background-color: #fff;
+    border-radius: 8px;
+    text-align: center;
+    min-height: 370px;
+    box-shadow: 0 2px 25px rgba(0, 0, 0, 0.5);
+  }
 
-    &__title {
-        margin-bottom: 32px;
-        font-size: 28px;
-        width: 500px;
-    }
+  &__title {
+    margin-bottom: 32px;
+    font-size: 28px;
+    width: 500px;
+  }
 
-    &__text {
-        font-size: 18px;
-    }
+  &__text {
+    font-size: 18px;
+  }
 
-    &__error {
-        color: red;
-    }
+  &__error {
+    color: red;
+  }
 
-    &__success {
-        color: #1ca125;
-    }
+  &__success {
+    color: #1ca125;
+  }
 
-    &__highlight {
-        color: #2a518f;
-    }
+  &__highlight {
+    color: #2a518f;
+  }
 
-    &__back-link {
-        text-decoration: underline;
-    }
+  &__back-link {
+    text-decoration: underline;
+  }
 
-    &__text-bold {
-        font-weight: bold;
-    }
+  &__text-bold {
+    font-weight: bold;
+  }
 
-    &__button {
-        background-color: #2a518f;
-        padding: 12px 0;
-        width: 100%;
-        border-radius: 20px;
-        color: #fff;
-        margin: 28px 0;
-        font-size: 22px;
-        text-transform: uppercase;
-        outline: none;
-        border: 0;
+  &__button {
+    background-color: #2a518f;
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 20px;
+    color: #fff;
+    margin: 28px 0;
+    font-size: 22px;
+    text-transform: uppercase;
+    outline: none;
+    border: 0;
 
-        &-refresh {
-            background-color: #dedfe1;
-            color: #000;
-        }
+    &-refresh {
+      background-color: #dedfe1;
+      color: #000;
     }
+  }
 
-    &__progress {
-        font-size: 16px;
-        margin: 24px auto;
-        max-width: 500px;
-        text-align: end;
-        font-weight: 600;
-    }
+  &__progress {
+    font-size: 16px;
+    margin: 24px auto;
+    max-width: 500px;
+    text-align: end;
+    font-weight: 600;
+  }
 }
