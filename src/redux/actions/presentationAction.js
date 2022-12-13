@@ -1,3 +1,4 @@
+import { io } from "socket.io-client";
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
@@ -333,3 +334,185 @@ export const deleteOption = (presentationId, slideId, optionId) => async () => {
 export const setTotalStudents = (data) => (dispatch) => {
   dispatch({ type: SET_TOTAL_STUDENTS, payload: data });
 };
+
+/* eslint-disable import/prefer-default-export */
+export const studentJoinPresentation =
+  (data, setLoading, setMessage, setIsAuth) => async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await $axios.post(
+        `${API_URL}/api/presentation/access-code`,
+        toSnake(data)
+      );
+
+      if (accessToken) {
+        if (res.code === ApiResposeCodeNumber.Success) {
+          const socket = io(
+            `${process.env.REACT_APP_SERVER_URL}/presentation`,
+            {
+              withCredentials: true,
+              extraHeaders: {
+                token: accessToken
+              }
+            }
+          );
+
+          socket.emit(
+            "student-join-presentation",
+            { access_code: data.accessCode },
+            (res2) => {
+              if (res2.code === ApiResposeCodeNumber.Success) {
+                if (setLoading) {
+                  setLoading(false);
+                }
+                setMessage({
+                  success: true,
+                  data: "Join presentation successfully",
+                  open: true
+                });
+                setTimeout(() => {
+                  window.location.href = `/play/${data.accessCode}`;
+                }, 1000);
+              } else {
+                if (setLoading) {
+                  setLoading(false);
+                }
+                setMessage({
+                  success: false,
+                  data: res2.message || "Join presentation failed",
+                  open: true
+                });
+              }
+            }
+          );
+        } else {
+          if (setLoading) {
+            setLoading(false);
+          }
+          if (setMessage) {
+            setMessage({
+              success: false,
+              data: res.message,
+              open: true
+            });
+          }
+        }
+      } else {
+        if (setIsAuth) {
+          setIsAuth(false);
+        }
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const studentJoinPresentationAnonymous =
+  (data, dataCode, setLoading, setMessage, setIsAuth) => async (dispatch) => {
+    try {
+      const res = await $axios.post(`${API_URL}/api/anonymous`, toSnake(data));
+
+      if (res.code === ApiResposeCodeNumber.Success) {
+        const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
+          withCredentials: true,
+          extraHeaders: {
+            token: res.data.token
+          }
+        });
+        dispatch(
+          studentJoinPresentation(
+            dataCode,
+            socket,
+            setLoading,
+            setMessage,
+            setIsAuth
+          )
+        );
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const studentVoteOption =
+  (data, socket, setLoading, setMessage, setIsVote) => async () => {
+    try {
+      socket.emit("student-vote-option", { option_id: data.answer }, (res2) => {
+        if (res2.code === ApiResposeCodeNumber.Success) {
+          if (setLoading) {
+            setLoading(false);
+          }
+          setMessage({
+            success: true,
+            data: "You voted successfully",
+            open: true
+          });
+          setIsVote(true);
+        } else {
+          if (setLoading) {
+            setLoading(false);
+          }
+          setMessage({
+            success: false,
+            data: res2.message,
+            open: true
+          });
+        }
+      });
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error.message,
+          open: true
+        });
+      }
+    }
+  };
