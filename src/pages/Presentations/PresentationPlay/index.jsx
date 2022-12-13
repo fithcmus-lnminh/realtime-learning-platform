@@ -15,6 +15,8 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { isEqual } from "lodash";
 import { io } from "socket.io-client";
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
+// import { useParams } from "react-router-dom";
 import { studentVoteOption } from "../../../redux/actions/presentationAction";
 import "./PresentationPlay.scss";
 import Alert from "../../../components/Alert";
@@ -266,6 +268,22 @@ function PresentationPlay() {
                       >
                         Submit
                       </button>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <BarChart
+                        width={1000}
+                        height={550}
+                        data={slide?.content.options}
+                        barSize={90}
+                        margin={{ top: 20 }}
+                      >
+                        <XAxis dataKey="content" />
+                        <YAxis tick={false} axisLine={false} />
+                        <Bar dataKey="numUpvote" fill="#2a518f">
+                          <LabelList dataKey="numUpvote" position="top" />
+                        </Bar>
+                      </BarChart>
                     </div>
 
                     <p className="presentation__play__progress">
