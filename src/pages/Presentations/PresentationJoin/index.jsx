@@ -5,7 +5,7 @@ import {
   OutlinedInput
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-// import { useDispatch } from "react-redux";
+import io from "socket.io-client";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -14,14 +14,18 @@ import Alert from "../../../components/Alert";
 
 const schema = yup
   .object({
-    code: yup
-      .number("Please enter the code")
-      .typeError("Please enter the code")
-      .required("Please enter the code")
+    code: yup.string().required("Please choose the answer")
   })
   .required();
 
 function PresentationJoin() {
+  const accessToken = localStorage.getItem("accessToken");
+  const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
+    withCredentials: true,
+    extraHeaders: {
+      token: accessToken
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
     success: true,
@@ -39,8 +43,21 @@ function PresentationJoin() {
   });
 
   const onSubmit = async (data) => {
-    setLoading(true);
+    setLoading(false);
     console.log("data:", data);
+    // socket.emit("student-join-presentation", [
+    //   { access_code: data.code },
+    //   (data2) => {
+    //     console.log("callback client:", data2);
+    //   }
+    // ]);
+    socket.emit(
+      "student-join-presentation",
+      { access_code: data.code },
+      (data2) => {
+        console.log("callback client:", data2);
+      }
+    );
     // dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
   };
 
@@ -53,6 +70,41 @@ function PresentationJoin() {
 
   useEffect(() => {
     document.title = "Enter the code - RLP";
+  }, []);
+
+  console.log("accessToken:", accessToken);
+  console.log("socket:", socket);
+
+  useEffect(() => {
+    // socket.emit("student-vote-option", { option_id: "1" }, () => {});
+
+    // socket.emit("disconnecting");
+
+    socket.on("get-total-students", (data) => {
+      // const { total_users } = data;
+      console.log("data get-total-students:", data);
+    });
+
+    socket.on("get-slide", (data) => {
+      // const { slide, current_slide, total_slides } = data;
+      console.log("data get-slide:", data);
+    });
+
+    socket.on("get-score", (data) => {
+      // const { options } = data;
+      console.log("data get-score:", data);
+    });
+
+    socket.on("connect", () => {
+      console.log("connect");
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("get-total-students");
+      socket.off("get-slide");
+      socket.off("get-score");
+    };
   }, []);
 
   return (

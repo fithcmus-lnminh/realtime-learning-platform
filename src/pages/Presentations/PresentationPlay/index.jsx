@@ -8,7 +8,6 @@ import {
   RadioGroup
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-// import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -49,9 +48,6 @@ function PresentationPlay() {
     ]
   };
   const [status, setStatus] = useState("not_choose");
-  //   const status = "choose";
-  //   const status = "next";
-
   const [disabled, setDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
@@ -59,7 +55,6 @@ function PresentationPlay() {
     data: "",
     open: false
   });
-  //   const dispatch = useDispatch();
   const {
     handleSubmit,
     formState: { errors },
@@ -72,11 +67,9 @@ function PresentationPlay() {
   const onSubmit = async (data) => {
     setLoading(true);
     setDisabled(true);
-    // setStatus("choose");
     setStatus("next");
     console.log("data:", data);
     // dispatch(createGroup(data, handleClose, setLoading, reset, setMessage));
-    setLoading(false);
   };
 
   const handleCloseAlert = () => {
