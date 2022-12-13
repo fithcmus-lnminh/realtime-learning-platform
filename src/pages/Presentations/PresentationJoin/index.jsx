@@ -5,6 +5,7 @@ import {
   OutlinedInput
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -30,6 +31,7 @@ const nameSchema = yup
 
 function PresentationJoin() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(true);
   const [message, setMessage] = useState({
@@ -58,7 +60,9 @@ function PresentationJoin() {
   const onSubmit = async (data) => {
     setLoading(true);
 
-    dispatch(studentJoinPresentation(data, setLoading, setMessage, setIsAuth));
+    dispatch(
+      studentJoinPresentation(data, setLoading, setMessage, setIsAuth, navigate)
+    );
   };
 
   const onSubmitAnonymous = async (data) => {

@@ -1,4 +1,3 @@
-import { io } from "socket.io-client";
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
@@ -8,6 +7,7 @@ import {
 } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
+import { socket } from "../../utils/socket";
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -337,7 +337,7 @@ export const setTotalStudents = (data) => (dispatch) => {
 
 /* eslint-disable import/prefer-default-export */
 export const studentJoinPresentation =
-  (data, setLoading, setMessage, setIsAuth) => async () => {
+  (data, setLoading, setMessage, setIsAuth, navigate) => async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const res = await $axios.post(
@@ -347,20 +347,11 @@ export const studentJoinPresentation =
 
       if (accessToken) {
         if (res.code === ApiResposeCodeNumber.Success) {
-          const socket = io(
-            `${process.env.REACT_APP_SERVER_URL}/presentation`,
-            {
-              withCredentials: true,
-              extraHeaders: {
-                token: accessToken
-              }
-            }
-          );
-
           socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
+              console.log(res2);
               if (res2.code === ApiResposeCodeNumber.Success) {
                 if (setLoading) {
                   setLoading(false);
@@ -370,9 +361,7 @@ export const studentJoinPresentation =
                   data: "Join presentation successfully",
                   open: true
                 });
-                setTimeout(() => {
-                  window.location.href = `/play/${data.accessCode}`;
-                }, 1000);
+                navigate(`/play/${data.accessCode}`);
               } else {
                 if (setLoading) {
                   setLoading(false);
@@ -434,12 +423,6 @@ export const studentJoinPresentationAnonymous =
       const res = await $axios.post(`${API_URL}/api/anonymous`, toSnake(data));
 
       if (res.code === ApiResposeCodeNumber.Success) {
-        const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
-          withCredentials: true,
-          extraHeaders: {
-            token: res.data.token
-          }
-        });
         dispatch(
           studentJoinPresentation(
             dataCode,
@@ -478,7 +461,7 @@ export const studentJoinPresentationAnonymous =
 
 /* eslint-disable import/prefer-default-export */
 export const studentVoteOption =
-  (data, socket, setLoading, setMessage, setIsVote) => async () => {
+  (data, setLoading, setMessage, setIsVote) => async () => {
     try {
       socket.emit("student-vote-option", { option_id: data.answer }, (res2) => {
         if (res2.code === ApiResposeCodeNumber.Success) {

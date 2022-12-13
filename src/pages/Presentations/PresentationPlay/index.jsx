@@ -9,7 +9,6 @@ import {
   Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -20,6 +19,7 @@ import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import { studentVoteOption } from "../../../redux/actions/presentationAction";
 import "./PresentationPlay.scss";
 import Alert from "../../../components/Alert";
+import { socket } from "../../../utils/socket";
 // import { ApiResposeCodeNumber } from "../../../constants/api";
 
 const schema = yup
@@ -29,54 +29,8 @@ const schema = yup
   .required();
 
 function PresentationPlay() {
-  const accessToken = localStorage.getItem("accessToken");
-  const socket = io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
-    withCredentials: true,
-    extraHeaders: {
-      token: accessToken
-    }
-  });
   const [options, setOptions] = useState([]);
   const [slide, setSlide] = useState({});
-  // const [slide, setSlide] = useState({
-  //   slide_type: "MultipleChoice",
-  //   content: {
-  //     _id: "63986dd2864a5305bb9ef9da",
-  //     options: [
-  //       {
-  //         _id: "63986dd2864a5305bb9ef9d4",
-  //         content: "10",
-  //         upvotes: [],
-  //         createdAt: "2022-12-13T12:19:30.096Z",
-  //         updatedAt: "2022-12-13T12:20:35.112Z",
-  //         __v: 0,
-  //         numUpvote: 0
-  //       },
-  //       {
-  //         _id: "63986dd2864a5305bb9ef9d6",
-  //         content: " 11",
-  //         upvotes: [],
-  //         createdAt: "2022-12-13T12:19:30.172Z",
-  //         updatedAt: "2022-12-13T12:20:38.239Z",
-  //         __v: 0,
-  //         numUpvote: 0
-  //       },
-  //       {
-  //         _id: "63986dd2864a5305bb9ef9d8",
-  //         content: "12",
-  //         upvotes: [],
-  //         createdAt: "2022-12-13T12:19:30.233Z",
-  //         updatedAt: "2022-12-13T12:20:42.411Z",
-  //         __v: 0,
-  //         numUpvote: 0
-  //       }
-  //     ],
-  //     createdAt: "2022-12-13T12:19:30.296Z",
-  //     updatedAt: "2022-12-13T12:20:47.988Z",
-  //     __v: 2,
-  //     question: "Bạn học lớp mấy?"
-  //   }
-  // });
   const [currentSlide, setCurrentSlide] = useState(1);
   const [totalSlides, setTotalSlide] = useState(1);
   // const params = useParams();
@@ -105,9 +59,7 @@ function PresentationPlay() {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    dispatch(
-      studentVoteOption(data, socket, setLoading, setMessage, setIsVote)
-    );
+    dispatch(studentVoteOption(data, setLoading, setMessage, setIsVote));
   };
 
   const handleCloseAlert = () => {
@@ -119,16 +71,14 @@ function PresentationPlay() {
 
   useEffect(() => {
     document.title = "Voting - RLP";
-  }, []);
-
-  useEffect(() => {
     socket.on("get-slide", (data) => {
+      console.log("data get-slide:", data);
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
       // { slide_type: slide.slide_type, content: slide.slide_id }
       setCurrentSlide(current_slide);
       setTotalSlide(total_slides);
-      console.log("data get-slide:", data);
+      setIsEnding(false);
     });
 
     socket.on("get-score", (data) => {
@@ -177,9 +127,11 @@ function PresentationPlay() {
         style={{ position: "relative" }}
       >
         <Alert message={message} onClose={handleCloseAlert} />
-        <h2 className="presentation__play__title">
-          {slide?.content?.question}
-        </h2>
+        {!isEnding && (
+          <h2 className="presentation__play__title">
+            {slide?.content?.question}
+          </h2>
+        )}
         {loading ? (
           <div
             style={{
