@@ -96,7 +96,7 @@ function PresentationJoin() {
         {loading ? (
           <div
             style={{
-              width: "500px",
+              minWidth: "500px",
               position: "absolute",
               top: "50%",
               transform: "translate(-50%, -50%)",
@@ -118,7 +118,7 @@ function PresentationJoin() {
                         <OutlinedInput
                           name="accessCode"
                           placeholder="Enter a code"
-                          sx={{ width: 500, mb: 1, mt: 1 }}
+                          sx={{ minWidth: "500px", mb: 1, mt: 1 }}
                           fullWidth
                           error={!!errors.accessCode?.message}
                           /* eslint-disable react/jsx-props-no-spreading */
@@ -127,7 +127,7 @@ function PresentationJoin() {
                         {errors.accessCode?.message && (
                           <FormHelperText
                             sx={{
-                              width: 500,
+                              minWidth: "500px",
                               mb: 2,
                               mt: 2,
                               ml: 0,
@@ -150,7 +150,7 @@ function PresentationJoin() {
                     <OutlinedInput
                       name="name"
                       placeholder="Enter your name"
-                      sx={{ width: 500, mb: 1, mt: 1 }}
+                      sx={{ minWidth: "500px", mb: 1, mt: 1 }}
                       fullWidth
                       value={name}
                       onChange={(e) => {
@@ -166,7 +166,7 @@ function PresentationJoin() {
                   {messageName && (
                     <FormHelperText
                       sx={{
-                        width: 500,
+                        minWidth: "500px",
                         mb: 2,
                         mt: 2,
                         ml: 0,

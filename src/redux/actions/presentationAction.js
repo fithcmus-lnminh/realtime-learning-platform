@@ -407,13 +407,6 @@ export const studentJoinPresentation =
         if (setLoading) {
           setLoading(false);
         }
-        if (setMessage) {
-          setMessage({
-            success: false,
-            data: "Anonymous user",
-            open: true
-          });
-        }
       }
     } catch (error) {
       console.log("error:", error);

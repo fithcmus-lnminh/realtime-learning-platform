@@ -13,7 +13,6 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-// import { isEqual } from "lodash";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import { useParams } from "react-router-dom";
 import { studentVoteOption } from "../../../redux/actions/presentationAction";
@@ -35,10 +34,6 @@ function PresentationPlay() {
   const [currentSlide, setCurrentSlide] = useState(1);
   const [totalSlides, setTotalSlide] = useState(1);
   const params = useParams();
-  // const userInfo = useSelector(
-  //   (state) => state.user.userInfo,
-  //   (prev, next) => isEqual(prev, next)
-  // );
   const dispatch = useDispatch();
   const [isEnding, setIsEnding] = useState(false);
   const [isVote, setIsVote] = useState(false);
@@ -76,13 +71,12 @@ function PresentationPlay() {
       console.log("data get-slide:", data);
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
-      // { slide_type: slide.slide_type, content: slide.slide_id }
+      setOptions(slideInfo?.content?.options);
       setCurrentSlide(current_slide);
       setTotalSlide(total_slides);
       setIsEnding(false);
 
       socket.emit("student-check-vote", { access_code: params.code }, (res) => {
-        console.log("res student-check-vote:", res);
         if (res.code === ApiResposeCodeNumber.Success) {
           if (res?.data?.option_id) {
             setValue("answer", res?.data?.option_id);
@@ -101,17 +95,6 @@ function PresentationPlay() {
     socket.on("get-score", (data) => {
       const { options: optionsCurrent } = data;
       setOptions(optionsCurrent);
-
-      // if (optionsCurrent.length > 0) {
-      //   optionsCurrent.forEach((option) => {
-      //     if (userInfo.id === option?.upvotes?.user_id) {
-      //       setValue("answer", option?.id); // cập nhật lại đáp án
-      //     }
-      //   });
-      // }
-
-      // [{ ...option, numUpvote: option.upvotes.length }, { ...option, numUpvote: option.upvotes.length }]
-      console.log("data get-score:", data);
     });
 
     socket.on("end-presentation", () => {
@@ -128,10 +111,6 @@ function PresentationPlay() {
     };
   }, []);
 
-  console.log("data get-answer:", getValues("answer"));
-  console.log("slide:", slide);
-  console.log("options:", options);
-
   return (
     <div className="presentation__play__container">
       <div
@@ -147,7 +126,7 @@ function PresentationPlay() {
         {loading ? (
           <div
             style={{
-              width: "500px",
+              minWidth: "500px",
               position: "absolute",
               top: "50%",
               transform: "translate(-50%, -50%)",
@@ -162,7 +141,7 @@ function PresentationPlay() {
             {isEnding ? (
               <div
                 style={{
-                  width: "500px",
+                  minWidth: "500px",
                   position: "absolute",
                   top: "50%",
                   transform: "translate(-50%, -50%)",
@@ -209,7 +188,7 @@ function PresentationPlay() {
                                 <RadioGroup
                                   aria-labelledby="radio-buttons-answer"
                                   name="answer"
-                                  sx={{ width: 500, mb: 1, mt: 1 }}
+                                  sx={{ minWidth: "500px", mb: 1, mt: 1 }}
                                   /* eslint-disable react/jsx-props-no-spreading */
                                   {...field}
                                 >
@@ -233,7 +212,7 @@ function PresentationPlay() {
                                 {errors.answer?.message && (
                                   <FormHelperText
                                     sx={{
-                                      width: 500,
+                                      minWidth: "500px",
                                       mb: 2,
                                       mt: 2,
                                       ml: 0,
@@ -249,7 +228,7 @@ function PresentationPlay() {
                                 {isVote && (
                                   <FormHelperText
                                     sx={{
-                                      width: 500,
+                                      minWidth: "500px",
                                       mb: 2,
                                       mt: 2,
                                       ml: 0,
@@ -315,7 +294,7 @@ function PresentationPlay() {
                 ) : (
                   <div
                     style={{
-                      width: "500px",
+                      minWidth: "500px",
                       position: "absolute",
                       top: "50%",
                       transform: "translate(-50%, -50%)",
