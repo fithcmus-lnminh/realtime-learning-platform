@@ -30,7 +30,7 @@ function PresentPresentation() {
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
     setCurrentSlide(presentationDetail?.slides[currentSlideIndex - 1]);
-    socket().emit("teacher-previous-slide", {}, (data) => {
+    socket.emit("teacher-previous-slide", {}, (data) => {
       console.log(data);
     });
   };
@@ -38,25 +38,25 @@ function PresentPresentation() {
   const handleGoToNextSlide = async () => {
     setCurrentSlideIndex(currentSlideIndex + 1);
     setCurrentSlide(presentationDetail?.slides[currentSlideIndex + 1]);
-    socket().emit("teacher-next-slide", {}, (data) => {
+    socket.emit("teacher-next-slide", {}, (data) => {
       console.log(data);
     });
   };
 
   const handleExitPresent = () => {
     navigate(`/presentation/${param.id}`);
-    socket().emit("teacher-end-presentation", {}, () => {});
+    socket.emit("teacher-end-presentation", {}, () => {});
   };
 
   useEffect(() => {
-    socket().emit(
+    socket.emit(
       "teacher-start-presentation",
       { access_code: presentationDetail?.accessCode, current_slide: 1 },
       (data) => {
         console.log(data);
       }
     );
-    socket().on("get-score", (data) => {
+    socket.on("get-score", (data) => {
       console.log("SCORE", data);
       setCurrentSlide({ ...currentSlide, options: data.options });
     });

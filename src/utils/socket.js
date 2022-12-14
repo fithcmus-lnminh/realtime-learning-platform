@@ -2,8 +2,7 @@ import { io } from "socket.io-client";
 
 const accessToken = localStorage.getItem("accessToken");
 
-/* eslint-disable import/prefer-default-export */
-export const socket = (token = accessToken) => {
+export const callbackSocket = (token = accessToken) => {
   return io(`${process.env.REACT_APP_SERVER_URL}/presentation`, {
     withCredentials: true,
     extraHeaders: {
@@ -11,3 +10,6 @@ export const socket = (token = accessToken) => {
     }
   });
 };
+
+/* eslint-disable import/prefer-default-export */
+export const socket = callbackSocket();

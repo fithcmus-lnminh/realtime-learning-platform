@@ -7,7 +7,7 @@ import {
 } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
-import { socket } from "../../utils/socket";
+import { callbackSocket, socket } from "../../utils/socket";
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -352,8 +352,10 @@ export const studentJoinPresentation =
         console.log("res:", res);
 
         if (res.code === ApiResposeCodeNumber.Success) {
+          callbackSocket(accessToken);
+
           console.log("1");
-          socket(accessToken).emit(
+          socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
@@ -479,32 +481,28 @@ export const studentJoinPresentationAnonymous =
 export const studentVoteOption =
   (data, setLoading, setMessage, setIsVote) => async () => {
     try {
-      socket().emit(
-        "student-vote-option",
-        { option_id: data.answer },
-        (res2) => {
-          if (res2.code === ApiResposeCodeNumber.Success) {
-            if (setLoading) {
-              setLoading(false);
-            }
-            setMessage({
-              success: true,
-              data: "You voted successfully",
-              open: true
-            });
-            setIsVote(true);
-          } else {
-            if (setLoading) {
-              setLoading(false);
-            }
-            setMessage({
-              success: false,
-              data: res2.message,
-              open: true
-            });
+      socket.emit("student-vote-option", { option_id: data.answer }, (res2) => {
+        if (res2.code === ApiResposeCodeNumber.Success) {
+          if (setLoading) {
+            setLoading(false);
           }
+          setMessage({
+            success: true,
+            data: "You voted successfully",
+            open: true
+          });
+          setIsVote(true);
+        } else {
+          if (setLoading) {
+            setLoading(false);
+          }
+          setMessage({
+            success: false,
+            data: res2.message,
+            open: true
+          });
         }
-      );
+      });
     } catch (error) {
       console.log("error:", error);
       if (setLoading) {
