@@ -160,7 +160,11 @@ function PresentPresentation() {
                     </h1>
                     {currentSlide?.content?.options.length > 0 && (
                       <div
-                        style={{ display: "flex", justifyContent: "center" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          marginTop: 64
+                        }}
                       >
                         <BarChart
                           width={1000}
