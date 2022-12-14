@@ -238,6 +238,31 @@ export const createMultipleChoiceSlide =
   };
 
 /* eslint-disable import/prefer-default-export */
+export const deleteMultipleChoiceSlide =
+  (presentationId, slideId) => async (dispatch) => {
+    await $axios.delete(
+      `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}`
+    );
+
+    const res = await $axios.get(
+      `${API_URL}/api/presentation/${presentationId}`
+    );
+
+    const newSlides = res.data.presentation.slides.map((slide, index) => ({
+      ...slide,
+      active: index === 0
+    }));
+
+    /* eslint-disable prefer-destructuring */
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch({
+        type: GET_PRESENTATION_SUCCESS,
+        payload: { ...res.data.presentation, slides: newSlides }
+      });
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
 export const updateMultipleChoiceSlideQuestion =
   (presentationId, slideId, question) => async (dispatch) => {
     await $axios.put(

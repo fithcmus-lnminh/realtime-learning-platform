@@ -11,20 +11,24 @@ import {
   Badge,
   Box,
   CircularProgress,
+  DialogContent,
   OutlinedInput,
-  Popover
+  Popover,
+  Typography
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../utils/socket";
 import {
   createMultipleChoiceSlide,
   createNewOption,
+  deleteMultipleChoiceSlide,
   deleteOption,
   getPresentationById,
   setTotalStudents,
   updateMultipleChoiceSlideQuestion,
   updateTitleOption
 } from "../../redux/actions/presentationAction";
+import Modal from "../../components/Modal";
 
 function PresentationTeacher() {
   const param = useParams();
@@ -34,6 +38,7 @@ function PresentationTeacher() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [totalStudent, setTotalStudent] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
 
   const { presentationDetail } = useSelector((state) => state.presentation);
 
@@ -55,14 +60,6 @@ function PresentationTeacher() {
         )
       }
     });
-    dispatch(
-      updateTitleOption(
-        presentationDetail?.id,
-        currentSlide?.content.id,
-        option.id,
-        e.target.value
-      )
-    );
   };
 
   const onChangeSlide = (slideId) => {
@@ -104,6 +101,10 @@ function PresentationTeacher() {
 
   const presentPresentation = () => {
     navigate(`/presentation/${presentationDetail.id}/present`);
+  };
+
+  const handleDeleteSlide = (preId, slideId) => {
+    dispatch(deleteMultipleChoiceSlide(preId, slideId));
   };
 
   useEffect(() => {
@@ -239,6 +240,34 @@ function PresentationTeacher() {
                         >
                           {slide.content.question || "Multiple Choice"}
                         </p>
+                        <MdClose
+                          className="presentation__slide-delete"
+                          color="rgb(147, 148, 151)"
+                          cursor="pointer"
+                          onClick={() => {
+                            setOpenModal(true);
+                          }}
+                        />
+                        <Modal
+                          title="Delete slide"
+                          loading={loading}
+                          actions={["Cancel", "OK"]}
+                          show={openModal}
+                          onCloseModal={() => setOpenModal(false)}
+                          onActionClick={() => {
+                            handleDeleteSlide(
+                              presentationDetail?.id,
+                              currentSlide?.content?.id
+                            );
+                            setOpenModal(false);
+                          }}
+                        >
+                          <DialogContent>
+                            <Typography variant="body2">
+                              Do you really want to delete this slide?
+                            </Typography>
+                          </DialogContent>
+                        </Modal>
                       </div>
                     )}
                   </div>
@@ -336,6 +365,18 @@ function PresentationTeacher() {
                           value={option.content}
                           fullWidth
                           onChange={(e) => onChangeOptionTitle(e, option)}
+                          onBlur={() => {
+                            dispatch(
+                              updateTitleOption(
+                                presentationDetail?.id,
+                                currentSlide?.content.id,
+                                option.id,
+                                currentSlide?.content.options.find(
+                                  (opt) => opt.id === option.id
+                                ).content
+                              )
+                            );
+                          }}
                           sx={{ mb: 1 }}
                         />
                         <MdClose
