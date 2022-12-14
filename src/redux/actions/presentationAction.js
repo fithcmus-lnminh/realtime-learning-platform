@@ -1,3 +1,4 @@
+import { io } from "socket.io-client";
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
@@ -341,21 +342,26 @@ export const studentJoinPresentation =
     try {
       const accessToken = localStorage.getItem("accessToken");
 
-      console.log("*** data:", data);
-      console.log("accessToken:", accessToken);
-
       if (accessToken) {
         const res = await $axios.post(
           `${API_URL}/api/presentation/access-code`,
           toSnake(data)
         );
-        console.log("res:", res);
 
         if (res.code === ApiResposeCodeNumber.Success) {
           callbackSocket(accessToken);
 
-          console.log("1");
-          socket.emit(
+          const socketIo = io(
+            `${process.env.REACT_APP_SERVER_URL}/presentation`,
+            {
+              withCredentials: true,
+              extraHeaders: {
+                token: accessToken
+              }
+            }
+          );
+
+          socketIo.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
@@ -383,7 +389,6 @@ export const studentJoinPresentation =
             }
           );
         } else {
-          console.log("2");
           if (setLoading) {
             setLoading(false);
           }
@@ -396,8 +401,6 @@ export const studentJoinPresentation =
           }
         }
       } else {
-        console.log("3");
-
         if (setIsAuth) {
           setIsAuth(false);
         }
@@ -413,8 +416,6 @@ export const studentJoinPresentation =
         }
       }
     } catch (error) {
-      console.log("4");
-
       console.log("error:", error);
       if (setLoading) {
         setLoading(false);
@@ -438,7 +439,6 @@ export const studentJoinPresentationAnonymous =
 
       if (res.code === ApiResposeCodeNumber.Success) {
         localStorage.setItem("accessToken", res.data.token);
-        console.log("5:", res);
 
         dispatch(
           studentJoinPresentation(
@@ -450,7 +450,6 @@ export const studentJoinPresentationAnonymous =
           )
         );
       } else {
-        console.log("6");
         if (setLoading) {
           setLoading(false);
         }
