@@ -104,7 +104,8 @@
     padding: 20px 32px;
     overflow-y: scroll;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
 
     &-header {
       text-align: center;
