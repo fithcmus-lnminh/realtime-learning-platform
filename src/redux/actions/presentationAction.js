@@ -349,11 +349,11 @@ export const studentJoinPresentation =
         );
 
         if (res.code === ApiResposeCodeNumber.Success) {
+          socket.io.opts.extraHeaders = { token: accessToken };
           socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
-              console.log("res2:", res2);
               if (res2.code === ApiResposeCodeNumber.Success) {
                 if (setLoading) {
                   setLoading(false);
@@ -426,43 +426,6 @@ export const studentJoinPresentationAnonymous =
 
       if (res.code === ApiResposeCodeNumber.Success) {
         localStorage.setItem("accessToken", res.data.token);
-
-        // callbackSocket(res.data.token).emit(
-        //   "student-join-presentation",
-        //   { access_code: dataCode.accessCode },
-        //   (res2) => {
-        //     console.log("res2 anonymous:", res2);
-        //     if (res2.code === ApiResposeCodeNumber.Success) {
-        //       console.log("success");
-        //       if (setLoading) {
-        //         setLoading(false);
-        //       }
-        //       if (setMessage) {
-        //         setMessage({
-        //           success: true,
-        //           data: "Join presentation successfully",
-        //           open: true
-        //         });
-        //       }
-        //       if (navigate) {
-        //         navigate(`/play/${dataCode.accessCode}`);
-        //       }
-        //     } else {
-        //       console.log("failure");
-        //       if (setLoading) {
-        //         setLoading(false);
-        //       }
-        //       if (setMessage) {
-        //         setMessage({
-        //           success: false,
-        //           data: res2.message || "Join presentation failed",
-        //           open: true
-        //         });
-        //       }
-        //     }
-        //   }
-        // );
-        //
 
         dispatch(
           studentJoinPresentation(

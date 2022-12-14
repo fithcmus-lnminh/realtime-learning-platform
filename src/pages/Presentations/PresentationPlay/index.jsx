@@ -74,7 +74,6 @@ function PresentationPlay() {
     document.title = "Voting - RLP";
 
     socket.on("get-slide", (data) => {
-      console.log("data get-slide:", data);
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
       setOptions(slideInfo?.content?.options);
@@ -117,14 +116,8 @@ function PresentationPlay() {
     };
   }, []);
 
-  console.log("Playing slide");
-
   useEffect(() => {
     setLoading(true);
-
-    console.log("isAuthenticated:", isAuthenticated());
-    console.log("accessToken:", accessToken);
-
     if (accessToken && params?.code) {
       dispatch(
         studentJoinPresentation({ accessCode: params.code }, setLoading)
