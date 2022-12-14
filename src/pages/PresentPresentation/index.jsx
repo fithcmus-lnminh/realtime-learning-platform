@@ -56,11 +56,16 @@ function PresentPresentation() {
         console.log(data);
       }
     );
-    socket.on("get-score", (data) => {
-      console.log("SCORE", data);
-      setCurrentSlide({ ...currentSlide, options: data.options });
-    });
   }, []);
+
+  useEffect(() => {
+    socket.on("get-score", (data) => {
+      setCurrentSlide({
+        ...currentSlide,
+        content: { ...currentSlide.content, options: data.options }
+      });
+    });
+  }, [currentSlide]);
 
   useEffect(() => {
     setCurrentSlide(presentationDetail?.slides[0]);
@@ -155,7 +160,11 @@ function PresentPresentation() {
                     </h1>
                     {currentSlide?.content?.options.length > 0 && (
                       <div
-                        style={{ display: "flex", justifyContent: "center" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          marginTop: 64
+                        }}
                       >
                         <BarChart
                           width={1000}
