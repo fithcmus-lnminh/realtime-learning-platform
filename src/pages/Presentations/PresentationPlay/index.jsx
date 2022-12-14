@@ -21,6 +21,7 @@ import "./PresentationPlay.scss";
 import Alert from "../../../components/Alert";
 import { socket } from "../../../utils/socket";
 import { ApiResposeCodeNumber } from "../../../constants/api";
+import { isAuthenticated } from "../../../utils/isAuthenticated";
 
 const schema = yup
   .object({
@@ -81,7 +82,7 @@ function PresentationPlay() {
       setIsEnding(false);
 
       socket.emit("student-check-vote", { access_code: params.code }, (res) => {
-        console.log("res:", res);
+        console.log("res student-check-vote:", res);
         if (res.code === ApiResposeCodeNumber.Success) {
           if (res?.data?.option_id) {
             setValue("answer", res?.data?.option_id);
@@ -115,6 +116,10 @@ function PresentationPlay() {
 
     socket.on("end-presentation", () => {
       setIsEnding(true);
+
+      if (!isAuthenticated()) {
+        localStorage.removeItem("accessToken");
+      }
     });
     return () => {
       socket.off("get-slide");
@@ -124,15 +129,6 @@ function PresentationPlay() {
   }, []);
 
   console.log("data get-answer:", getValues("answer"));
-
-  // useEffect(() => {
-  //   socket.emit("student-check-vote", { access_code: params.code }, (res) => {
-  //     if (res.code === ApiResposeCodeNumber.Success) {
-  //     } else {
-  //     }
-  //   });
-  // }, [params.code, slide]);
-
   console.log("slide:", slide);
   console.log("options:", options);
 
@@ -283,28 +279,30 @@ function PresentationPlay() {
                       </button>
                     </div>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "700px",
-                        border: "1px solid #fff"
-                      }}
-                    >
-                      <BarChart
-                        width={1000}
-                        height={550}
-                        data={options}
-                        barSize={90}
-                        margin={{ top: 20 }}
+                    {isVote && (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          width: "700px",
+                          border: "1px solid #fff"
+                        }}
                       >
-                        <XAxis dataKey="content" />
-                        <YAxis tick={false} axisLine={false} />
-                        <Bar dataKey="numUpvote" fill="#2a518f">
-                          <LabelList dataKey="numUpvote" position="top" />
-                        </Bar>
-                      </BarChart>
-                    </div>
+                        <BarChart
+                          width={1000}
+                          height={550}
+                          data={options}
+                          barSize={90}
+                          margin={{ top: 20 }}
+                        >
+                          <XAxis dataKey="content" />
+                          <YAxis tick={false} axisLine={false} />
+                          <Bar dataKey="numUpvote" fill="#2a518f">
+                            <LabelList dataKey="numUpvote" position="top" />
+                          </Bar>
+                        </BarChart>
+                      </div>
+                    )}
 
                     <p className="presentation__play__progress">
                       {currentSlide}/{totalSlides}

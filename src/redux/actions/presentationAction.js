@@ -1,4 +1,4 @@
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
@@ -351,17 +351,17 @@ export const studentJoinPresentation =
         if (res.code === ApiResposeCodeNumber.Success) {
           callbackSocket(accessToken);
 
-          const socketIo = io(
-            `${process.env.REACT_APP_SERVER_URL}/presentation`,
-            {
-              withCredentials: true,
-              extraHeaders: {
-                token: accessToken
-              }
-            }
-          );
+          // const socketIo = io(
+          //   `${process.env.REACT_APP_SERVER_URL}/presentation`,
+          //   {
+          //     withCredentials: true,
+          //     extraHeaders: {
+          //       token: accessToken
+          //     }
+          //   }
+          // );
 
-          socketIo.emit(
+          socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
