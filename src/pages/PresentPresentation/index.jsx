@@ -56,11 +56,16 @@ function PresentPresentation() {
         console.log(data);
       }
     );
-    socket.on("get-score", (data) => {
-      console.log("SCORE", data);
-      setCurrentSlide({ ...currentSlide, options: data.options });
-    });
   }, []);
+
+  useEffect(() => {
+    socket.on("get-score", (data) => {
+      setCurrentSlide({
+        ...currentSlide,
+        content: { ...currentSlide.content, options: data.options }
+      });
+    });
+  }, [currentSlide]);
 
   useEffect(() => {
     setCurrentSlide(presentationDetail?.slides[0]);
