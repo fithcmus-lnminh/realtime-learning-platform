@@ -1,10 +1,8 @@
-// import { io } from "socket.io-client";
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
   GET_PRESENTATION_SUCCESS,
   SET_TOTAL_STUDENTS
-  // GET_PRESENTATION_SUCCESS
 } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
@@ -341,13 +339,12 @@ export const studentJoinPresentation =
   (data, setLoading, setMessage, setIsAuth, navigate) => async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
+      const res = await $axios.post(
+        `${API_URL}/api/presentation/access-code`,
+        toSnake(data)
+      );
 
       if (accessToken) {
-        const res = await $axios.post(
-          `${API_URL}/api/presentation/access-code`,
-          toSnake(data)
-        );
-
         if (res.code === ApiResposeCodeNumber.Success) {
           socket.io.opts.extraHeaders = { token: accessToken };
           socket.emit(
@@ -395,8 +392,21 @@ export const studentJoinPresentation =
           }
         }
       } else {
-        if (setIsAuth) {
-          setIsAuth(false);
+        if (res.code === ApiResposeCodeNumber.Success) {
+          if (setIsAuth) {
+            setIsAuth(false);
+          }
+        } else {
+          if (setIsAuth) {
+            setIsAuth(true);
+          }
+          if (setMessage) {
+            setMessage({
+              success: false,
+              data: res.message,
+              open: true
+            });
+          }
         }
         if (setLoading) {
           setLoading(false);

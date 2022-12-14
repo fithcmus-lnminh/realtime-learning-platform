@@ -163,7 +163,8 @@ function PresentationPlay() {
                   top: "50%",
                   transform: "translate(-50%, -50%)",
                   left: "50%",
-                  fontSize: "28px"
+                  fontSize: "28px",
+                  textAlign: "center"
                 }}
               >
                 <Typography variant="h1" gutterBottom sx={{ fontSize: "28px" }}>
@@ -316,7 +317,8 @@ function PresentationPlay() {
                       top: "50%",
                       transform: "translate(-50%, -50%)",
                       left: "50%",
-                      fontSize: "28px"
+                      fontSize: "28px",
+                      textAlign: "center"
                     }}
                   >
                     <Typography
