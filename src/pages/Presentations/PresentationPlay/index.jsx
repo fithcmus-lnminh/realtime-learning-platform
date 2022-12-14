@@ -71,7 +71,7 @@ function PresentationPlay() {
 
   useEffect(() => {
     document.title = "Voting - RLP";
-    socket.on("get-slide", (data) => {
+    socket().on("get-slide", (data) => {
       console.log("data get-slide:", data);
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
@@ -80,24 +80,28 @@ function PresentationPlay() {
       setTotalSlide(total_slides);
       setIsEnding(false);
 
-      socket.emit("student-check-vote", { access_code: params.code }, (res) => {
-        console.log("res:", res);
-        if (res.code === ApiResposeCodeNumber.Success) {
-          if (res?.data?.option_id) {
-            setValue("answer", res?.data?.option_id);
+      socket().emit(
+        "student-check-vote",
+        { access_code: params.code },
+        (res) => {
+          console.log("res:", res);
+          if (res.code === ApiResposeCodeNumber.Success) {
+            if (res?.data?.option_id) {
+              setValue("answer", res?.data?.option_id);
+            }
+            setIsVote(res?.data?.is_voted);
+          } else {
+            setMessage({
+              success: false,
+              data: res.message,
+              open: true
+            });
           }
-          setIsVote(res?.data?.is_voted);
-        } else {
-          setMessage({
-            success: false,
-            data: res.message,
-            open: true
-          });
         }
-      });
+      );
     });
 
-    socket.on("get-score", (data) => {
+    socket().on("get-score", (data) => {
       const { options: optionsCurrent } = data;
       setOptions(optionsCurrent);
 
@@ -113,20 +117,20 @@ function PresentationPlay() {
       console.log("data get-score:", data);
     });
 
-    socket.on("end-presentation", () => {
+    socket().on("end-presentation", () => {
       setIsEnding(true);
     });
     return () => {
-      socket.off("get-slide");
-      socket.off("get-score");
-      socket.off("end-presentation");
+      socket().off("get-slide");
+      socket().off("get-score");
+      socket().off("end-presentation");
     };
   }, []);
 
   console.log("data get-answer:", getValues("answer"));
 
   // useEffect(() => {
-  //   socket.emit("student-check-vote", { access_code: params.code }, (res) => {
+  //   socket().emit("student-check-vote", { access_code: params.code }, (res) => {
   //     if (res.code === ApiResposeCodeNumber.Success) {
   //     } else {
   //     }

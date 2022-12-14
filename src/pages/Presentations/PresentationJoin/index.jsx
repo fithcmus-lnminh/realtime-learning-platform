@@ -159,7 +159,6 @@ function PresentationJoin() {
                   type="button"
                   className="presentation__join__button"
                   onClick={handleSubmit(onSubmit)}
-                  // onClick={loading ? () => {} : handleSubmit(onSubmit)}
                   style={
                     loading ? { cursor: "not-allowed", opacity: "0.7" } : {}
                   }
@@ -212,13 +211,6 @@ function PresentationJoin() {
                 >
                   Submit
                 </button>
-                {/* <button
-                  type="button"
-                  className="presentation__join__button presentation__join__button-back"
-                  onClick={() => setIsAuth(true)}
-                >
-                  Enter the code
-                </button> */}
               </div>
             )}
           </div>

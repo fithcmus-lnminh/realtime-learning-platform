@@ -108,14 +108,14 @@ function PresentationTeacher() {
 
   useEffect(() => {
     getPresentationDetail().then(() => {
-      socket.emit(
+      socket().emit(
         "teacher-join-presentation",
         { access_code: presentationDetail?.accessCode },
         (data) => {
           console.log(data);
         }
       );
-      socket.on("get-total-students", (data) => {
+      socket().on("get-total-students", (data) => {
         dispatch(setTotalStudents(data.total_users));
         setTotalStudent(data.total_users);
       });

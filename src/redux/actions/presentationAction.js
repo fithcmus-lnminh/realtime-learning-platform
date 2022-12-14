@@ -340,21 +340,24 @@ export const studentJoinPresentation =
   (data, setLoading, setMessage, setIsAuth, navigate) => async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-      const res = await $axios.post(
-        `${API_URL}/api/presentation/access-code`,
-        toSnake(data)
-      );
 
+      console.log("*** data:", data);
       console.log("accessToken:", accessToken);
 
       if (accessToken) {
+        const res = await $axios.post(
+          `${API_URL}/api/presentation/access-code`,
+          toSnake(data)
+        );
+        console.log("res:", res);
+
         if (res.code === ApiResposeCodeNumber.Success) {
           console.log("1");
-          socket.emit(
+          socket(accessToken).emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
-              console.log(res2);
+              console.log("res2:", res2);
               if (res2.code === ApiResposeCodeNumber.Success) {
                 if (setLoading) {
                   setLoading(false);
@@ -402,7 +405,7 @@ export const studentJoinPresentation =
         if (setMessage) {
           setMessage({
             success: false,
-            data: res.message,
+            data: "Anonymous user",
             open: true
           });
         }
@@ -445,6 +448,7 @@ export const studentJoinPresentationAnonymous =
           )
         );
       } else {
+        console.log("6");
         if (setLoading) {
           setLoading(false);
         }
@@ -475,28 +479,32 @@ export const studentJoinPresentationAnonymous =
 export const studentVoteOption =
   (data, setLoading, setMessage, setIsVote) => async () => {
     try {
-      socket.emit("student-vote-option", { option_id: data.answer }, (res2) => {
-        if (res2.code === ApiResposeCodeNumber.Success) {
-          if (setLoading) {
-            setLoading(false);
+      socket().emit(
+        "student-vote-option",
+        { option_id: data.answer },
+        (res2) => {
+          if (res2.code === ApiResposeCodeNumber.Success) {
+            if (setLoading) {
+              setLoading(false);
+            }
+            setMessage({
+              success: true,
+              data: "You voted successfully",
+              open: true
+            });
+            setIsVote(true);
+          } else {
+            if (setLoading) {
+              setLoading(false);
+            }
+            setMessage({
+              success: false,
+              data: res2.message,
+              open: true
+            });
           }
-          setMessage({
-            success: true,
-            data: "You voted successfully",
-            open: true
-          });
-          setIsVote(true);
-        } else {
-          if (setLoading) {
-            setLoading(false);
-          }
-          setMessage({
-            success: false,
-            data: res2.message,
-            open: true
-          });
         }
-      });
+      );
     } catch (error) {
       console.log("error:", error);
       if (setLoading) {
