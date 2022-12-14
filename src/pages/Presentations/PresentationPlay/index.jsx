@@ -222,6 +222,10 @@ function PresentationPlay() {
                                         value={option._id}
                                         control={<Radio />}
                                         label={option.content}
+                                        /* eslint-disable no-underscore-dangle */
+                                        checked={
+                                          getValues("answer") === option._id
+                                        }
                                         disabled={isVote}
                                       />
                                     ))}
