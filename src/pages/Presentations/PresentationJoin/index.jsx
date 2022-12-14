@@ -100,7 +100,8 @@ function PresentationJoin() {
               position: "absolute",
               top: "50%",
               transform: "translate(-50%, -50%)",
-              left: "50%"
+              left: "50%",
+              textAlign: "center"
             }}
           >
             <CircularProgress />

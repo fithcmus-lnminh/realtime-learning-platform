@@ -14,8 +14,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
-import { useParams } from "react-router-dom";
-import { studentVoteOption } from "../../../redux/actions/presentationAction";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  studentJoinPresentation,
+  studentVoteOption
+} from "../../../redux/actions/presentationAction";
 import "./PresentationPlay.scss";
 import Alert from "../../../components/Alert";
 import { socket } from "../../../utils/socket";
@@ -29,6 +32,8 @@ const schema = yup
   .required();
 
 function PresentationPlay() {
+  const navigate = useNavigate();
+  const accessToken = localStorage.getItem("accessToken");
   const [options, setOptions] = useState([]);
   const [slide, setSlide] = useState({});
   const [currentSlide, setCurrentSlide] = useState(1);
@@ -67,6 +72,7 @@ function PresentationPlay() {
 
   useEffect(() => {
     document.title = "Voting - RLP";
+
     socket.on("get-slide", (data) => {
       console.log("data get-slide:", data);
       const { slide: slideInfo, current_slide, total_slides } = data;
@@ -111,6 +117,23 @@ function PresentationPlay() {
     };
   }, []);
 
+  console.log("Playing slide");
+
+  useEffect(() => {
+    setLoading(true);
+
+    console.log("isAuthenticated:", isAuthenticated());
+    console.log("accessToken:", accessToken);
+
+    if (accessToken && params?.code) {
+      dispatch(
+        studentJoinPresentation({ accessCode: params.code }, setLoading)
+      );
+    } else {
+      navigate("/play");
+    }
+  }, [params?.code]);
+
   return (
     <div className="presentation__play__container">
       <div
@@ -130,7 +153,8 @@ function PresentationPlay() {
               position: "absolute",
               top: "50%",
               transform: "translate(-50%, -50%)",
-              left: "50%"
+              left: "50%",
+              textAlign: "center"
             }}
           >
             <CircularProgress />
@@ -156,14 +180,14 @@ function PresentationPlay() {
                   type="button"
                   className="presentation__play__button"
                   onClick={() => {
-                    window.open(`/presentations`, "_self");
+                    window.open(`/play`, "_self");
                   }}
                   style={{
                     width: "auto",
                     padding: "12px 24px"
                   }}
                 >
-                  Back to my presentation
+                  Join another presentation
                 </button>
               </div>
             ) : (
