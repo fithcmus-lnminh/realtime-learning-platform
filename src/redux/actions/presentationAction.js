@@ -345,8 +345,11 @@ export const studentJoinPresentation =
         toSnake(data)
       );
 
+      console.log("accessToken:", accessToken);
+
       if (accessToken) {
         if (res.code === ApiResposeCodeNumber.Success) {
+          console.log("1");
           socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
@@ -375,6 +378,7 @@ export const studentJoinPresentation =
             }
           );
         } else {
+          console.log("2");
           if (setLoading) {
             setLoading(false);
           }
@@ -387,6 +391,8 @@ export const studentJoinPresentation =
           }
         }
       } else {
+        console.log("3");
+
         if (setIsAuth) {
           setIsAuth(false);
         }
@@ -402,6 +408,8 @@ export const studentJoinPresentation =
         }
       }
     } catch (error) {
+      console.log("4");
+
       console.log("error:", error);
       if (setLoading) {
         setLoading(false);
@@ -418,18 +426,22 @@ export const studentJoinPresentation =
 
 /* eslint-disable import/prefer-default-export */
 export const studentJoinPresentationAnonymous =
-  (data, dataCode, setLoading, setMessage, setIsAuth) => async (dispatch) => {
+  (data, dataCode, setLoading, setMessage, setIsAuth, navigate) =>
+  async (dispatch) => {
     try {
       const res = await $axios.post(`${API_URL}/api/anonymous`, toSnake(data));
 
       if (res.code === ApiResposeCodeNumber.Success) {
+        localStorage.setItem("accessToken", res.data.token);
+        console.log("5:", res);
+
         dispatch(
           studentJoinPresentation(
             dataCode,
-            socket,
             setLoading,
             setMessage,
-            setIsAuth
+            setIsAuth,
+            navigate
           )
         );
       } else {

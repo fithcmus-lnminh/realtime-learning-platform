@@ -43,6 +43,7 @@ function App() {
         location.pathname === "/register" ||
         location.pathname.startsWith("/verify") ||
         location.pathname.startsWith("/invite") ||
+        location.pathname.startsWith("/play") ||
         location.pathname === "/google-login"
       )
     )

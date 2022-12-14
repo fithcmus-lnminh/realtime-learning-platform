@@ -73,7 +73,8 @@ function PresentationJoin() {
         { accessCode: watchAccessCode },
         setLoading,
         setMessage,
-        setIsAuth
+        setIsAuth,
+        navigate
       )
     );
   };

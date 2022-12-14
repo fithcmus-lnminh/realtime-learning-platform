@@ -12,15 +12,15 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { isEqual } from "lodash";
+import { useDispatch } from "react-redux";
+// import { isEqual } from "lodash";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
-// import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { studentVoteOption } from "../../../redux/actions/presentationAction";
 import "./PresentationPlay.scss";
 import Alert from "../../../components/Alert";
 import { socket } from "../../../utils/socket";
-// import { ApiResposeCodeNumber } from "../../../constants/api";
+import { ApiResposeCodeNumber } from "../../../constants/api";
 
 const schema = yup
   .object({
@@ -33,11 +33,11 @@ function PresentationPlay() {
   const [slide, setSlide] = useState({});
   const [currentSlide, setCurrentSlide] = useState(1);
   const [totalSlides, setTotalSlide] = useState(1);
-  // const params = useParams();
-  const userInfo = useSelector(
-    (state) => state.user.userInfo,
-    (prev, next) => isEqual(prev, next)
-  );
+  const params = useParams();
+  // const userInfo = useSelector(
+  //   (state) => state.user.userInfo,
+  //   (prev, next) => isEqual(prev, next)
+  // );
   const dispatch = useDispatch();
   const [isEnding, setIsEnding] = useState(false);
   const [isVote, setIsVote] = useState(false);
@@ -79,19 +79,35 @@ function PresentationPlay() {
       setCurrentSlide(current_slide);
       setTotalSlide(total_slides);
       setIsEnding(false);
+
+      socket.emit("student-check-vote", { access_code: params.code }, (res) => {
+        console.log("res:", res);
+        if (res.code === ApiResposeCodeNumber.Success) {
+          if (res?.data?.option_id) {
+            setValue("answer", res?.data?.option_id);
+          }
+          setIsVote(res?.data?.is_voted);
+        } else {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
+      });
     });
 
     socket.on("get-score", (data) => {
       const { options: optionsCurrent } = data;
       setOptions(optionsCurrent);
 
-      if (optionsCurrent.length > 0) {
-        optionsCurrent.forEach((option) => {
-          if (userInfo.id === option?.upvotes?.user_id) {
-            setValue("answer", option?.id); // cập nhật lại đáp án
-          }
-        });
-      }
+      // if (optionsCurrent.length > 0) {
+      //   optionsCurrent.forEach((option) => {
+      //     if (userInfo.id === option?.upvotes?.user_id) {
+      //       setValue("answer", option?.id); // cập nhật lại đáp án
+      //     }
+      //   });
+      // }
 
       // [{ ...option, numUpvote: option.upvotes.length }, { ...option, numUpvote: option.upvotes.length }]
       console.log("data get-score:", data);
@@ -145,7 +161,8 @@ function PresentationPlay() {
             <CircularProgress />
           </div>
         ) : (
-          <div>
+          /* eslint-disable react/jsx-no-useless-fragment */
+          <>
             {isEnding ? (
               <div
                 style={{
@@ -203,8 +220,10 @@ function PresentationPlay() {
                                   {slide?.content?.options.length > 0 &&
                                     slide?.content?.options.map((option) => (
                                       <FormControlLabel
-                                        key={option.id}
-                                        value={option.id}
+                                        /* eslint-disable no-underscore-dangle */
+                                        key={option._id}
+                                        /* eslint-disable no-underscore-dangle */
+                                        value={option._id}
                                         control={<Radio />}
                                         label={option.content}
                                         disabled={isVote}
@@ -275,7 +294,7 @@ function PresentationPlay() {
                       <BarChart
                         width={1000}
                         height={550}
-                        data={slide?.content.options}
+                        data={options}
                         barSize={90}
                         margin={{ top: 20 }}
                       >
@@ -307,26 +326,13 @@ function PresentationPlay() {
                       gutterBottom
                       sx={{ fontSize: "28px" }}
                     >
-                      The presentation not found.
+                      Please wait for the Host to start this presentation.
                     </Typography>
-                    <button
-                      type="button"
-                      className="presentation__play__button"
-                      onClick={() => {
-                        window.open(`/presentations`, "_self");
-                      }}
-                      style={{
-                        width: "auto",
-                        padding: "12px 24px"
-                      }}
-                    >
-                      Back to my presentation
-                    </button>
                   </div>
                 )}
               </>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>
