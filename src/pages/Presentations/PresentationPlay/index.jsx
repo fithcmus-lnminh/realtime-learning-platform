@@ -12,15 +12,18 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import { isEqual } from "lodash";
+import { useDispatch } from "react-redux";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
-// import { useParams } from "react-router-dom";
-import { studentVoteOption } from "../../../redux/actions/presentationAction";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  studentJoinPresentation,
+  studentVoteOption
+} from "../../../redux/actions/presentationAction";
 import "./PresentationPlay.scss";
 import Alert from "../../../components/Alert";
 import { socket } from "../../../utils/socket";
-// import { ApiResposeCodeNumber } from "../../../constants/api";
+import { ApiResposeCodeNumber } from "../../../constants/api";
+import { isAuthenticated } from "../../../utils/isAuthenticated";
 
 const schema = yup
   .object({
@@ -29,15 +32,13 @@ const schema = yup
   .required();
 
 function PresentationPlay() {
+  const navigate = useNavigate();
+  const accessToken = localStorage.getItem("accessToken");
   const [options, setOptions] = useState([]);
   const [slide, setSlide] = useState({});
   const [currentSlide, setCurrentSlide] = useState(1);
   const [totalSlides, setTotalSlide] = useState(1);
-  // const params = useParams();
-  const userInfo = useSelector(
-    (state) => state.user.userInfo,
-    (prev, next) => isEqual(prev, next)
-  );
+  const params = useParams();
   const dispatch = useDispatch();
   const [isEnding, setIsEnding] = useState(false);
   const [isVote, setIsVote] = useState(false);
@@ -71,34 +72,42 @@ function PresentationPlay() {
 
   useEffect(() => {
     document.title = "Voting - RLP";
+
     socket.on("get-slide", (data) => {
-      console.log("data get-slide:", data);
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
-      // { slide_type: slide.slide_type, content: slide.slide_id }
+      setOptions(slideInfo?.content?.options);
       setCurrentSlide(current_slide);
       setTotalSlide(total_slides);
       setIsEnding(false);
+
+      socket.emit("student-check-vote", { access_code: params.code }, (res) => {
+        if (res.code === ApiResposeCodeNumber.Success) {
+          if (res?.data?.option_id) {
+            setValue("answer", res?.data?.option_id);
+          }
+          setIsVote(res?.data?.is_voted);
+        } else {
+          setMessage({
+            success: false,
+            data: res.message,
+            open: true
+          });
+        }
+      });
     });
 
     socket.on("get-score", (data) => {
       const { options: optionsCurrent } = data;
       setOptions(optionsCurrent);
-
-      if (optionsCurrent.length > 0) {
-        optionsCurrent.forEach((option) => {
-          if (userInfo.id === option?.upvotes?.user_id) {
-            setValue("answer", option?.id); // cập nhật lại đáp án
-          }
-        });
-      }
-
-      // [{ ...option, numUpvote: option.upvotes.length }, { ...option, numUpvote: option.upvotes.length }]
-      console.log("data get-score:", data);
     });
 
     socket.on("end-presentation", () => {
       setIsEnding(true);
+
+      if (!isAuthenticated()) {
+        localStorage.removeItem("accessToken");
+      }
     });
     return () => {
       socket.off("get-slide");
@@ -107,18 +116,16 @@ function PresentationPlay() {
     };
   }, []);
 
-  console.log("data get-answer:", getValues("answer"));
-
-  // useEffect(() => {
-  //   socket.emit("student-check-vote", { access_code: params.code }, (res) => {
-  //     if (res.code === ApiResposeCodeNumber.Success) {
-  //     } else {
-  //     }
-  //   });
-  // }, [params.code, slide]);
-
-  console.log("slide:", slide);
-  console.log("options:", options);
+  useEffect(() => {
+    setLoading(true);
+    if (accessToken && params?.code) {
+      dispatch(
+        studentJoinPresentation({ accessCode: params.code }, setLoading)
+      );
+    } else {
+      navigate("/play");
+    }
+  }, [params?.code]);
 
   return (
     <div className="presentation__play__container">
@@ -135,26 +142,29 @@ function PresentationPlay() {
         {loading ? (
           <div
             style={{
-              width: "500px",
+              minWidth: "500px",
               position: "absolute",
               top: "50%",
               transform: "translate(-50%, -50%)",
-              left: "50%"
+              left: "50%",
+              textAlign: "center"
             }}
           >
             <CircularProgress />
           </div>
         ) : (
-          <div>
+          /* eslint-disable react/jsx-no-useless-fragment */
+          <>
             {isEnding ? (
               <div
                 style={{
-                  width: "500px",
+                  minWidth: "500px",
                   position: "absolute",
                   top: "50%",
                   transform: "translate(-50%, -50%)",
                   left: "50%",
-                  fontSize: "28px"
+                  fontSize: "28px",
+                  textAlign: "center"
                 }}
               >
                 <Typography variant="h1" gutterBottom sx={{ fontSize: "28px" }}>
@@ -164,14 +174,14 @@ function PresentationPlay() {
                   type="button"
                   className="presentation__play__button"
                   onClick={() => {
-                    window.open(`/presentations`, "_self");
+                    window.open(`/play`, "_self");
                   }}
                   style={{
                     width: "auto",
                     padding: "12px 24px"
                   }}
                 >
-                  Back to my presentation
+                  Join another presentation
                 </button>
               </div>
             ) : (
@@ -196,17 +206,23 @@ function PresentationPlay() {
                                 <RadioGroup
                                   aria-labelledby="radio-buttons-answer"
                                   name="answer"
-                                  sx={{ width: 500, mb: 1, mt: 1 }}
+                                  sx={{ minWidth: "500px", mb: 1, mt: 1 }}
                                   /* eslint-disable react/jsx-props-no-spreading */
                                   {...field}
                                 >
                                   {slide?.content?.options.length > 0 &&
                                     slide?.content?.options.map((option) => (
                                       <FormControlLabel
-                                        key={option.id}
-                                        value={option.id}
+                                        /* eslint-disable no-underscore-dangle */
+                                        key={option._id}
+                                        /* eslint-disable no-underscore-dangle */
+                                        value={option._id}
                                         control={<Radio />}
                                         label={option.content}
+                                        /* eslint-disable no-underscore-dangle */
+                                        checked={
+                                          getValues("answer") === option._id
+                                        }
                                         disabled={isVote}
                                       />
                                     ))}
@@ -214,7 +230,7 @@ function PresentationPlay() {
                                 {errors.answer?.message && (
                                   <FormHelperText
                                     sx={{
-                                      width: 500,
+                                      minWidth: "500px",
                                       mb: 2,
                                       mt: 2,
                                       ml: 0,
@@ -230,7 +246,7 @@ function PresentationPlay() {
                                 {isVote && (
                                   <FormHelperText
                                     sx={{
-                                      width: 500,
+                                      minWidth: "500px",
                                       mb: 2,
                                       mt: 2,
                                       ml: 0,
@@ -264,28 +280,30 @@ function PresentationPlay() {
                       </button>
                     </div>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "700px",
-                        border: "1px solid #fff"
-                      }}
-                    >
-                      <BarChart
-                        width={1000}
-                        height={550}
-                        data={slide?.content.options}
-                        barSize={90}
-                        margin={{ top: 20 }}
+                    {isVote && (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          width: "700px",
+                          border: "1px solid #fff"
+                        }}
                       >
-                        <XAxis dataKey="content" />
-                        <YAxis tick={false} axisLine={false} />
-                        <Bar dataKey="numUpvote" fill="#2a518f">
-                          <LabelList dataKey="numUpvote" position="top" />
-                        </Bar>
-                      </BarChart>
-                    </div>
+                        <BarChart
+                          width={1000}
+                          height={550}
+                          data={options}
+                          barSize={90}
+                          margin={{ top: 20 }}
+                        >
+                          <XAxis dataKey="content" />
+                          <YAxis tick={false} axisLine={false} />
+                          <Bar dataKey="numUpvote" fill="#2a518f">
+                            <LabelList dataKey="numUpvote" position="top" />
+                          </Bar>
+                        </BarChart>
+                      </div>
+                    )}
 
                     <p className="presentation__play__progress">
                       {currentSlide}/{totalSlides}
@@ -294,12 +312,13 @@ function PresentationPlay() {
                 ) : (
                   <div
                     style={{
-                      width: "500px",
+                      minWidth: "500px",
                       position: "absolute",
                       top: "50%",
                       transform: "translate(-50%, -50%)",
                       left: "50%",
-                      fontSize: "28px"
+                      fontSize: "28px",
+                      textAlign: "center"
                     }}
                   >
                     <Typography
@@ -307,26 +326,13 @@ function PresentationPlay() {
                       gutterBottom
                       sx={{ fontSize: "28px" }}
                     >
-                      The presentation not found.
+                      Please wait for the Host to start this presentation.
                     </Typography>
-                    <button
-                      type="button"
-                      className="presentation__play__button"
-                      onClick={() => {
-                        window.open(`/presentations`, "_self");
-                      }}
-                      style={{
-                        width: "auto",
-                        padding: "12px 24px"
-                      }}
-                    >
-                      Back to my presentation
-                    </button>
                   </div>
                 )}
               </>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>

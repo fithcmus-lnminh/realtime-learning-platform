@@ -3,7 +3,6 @@ import {
   GET_ALL_PRESENTATIONS_SUCCESS,
   GET_PRESENTATION_SUCCESS,
   SET_TOTAL_STUDENTS
-  // GET_PRESENTATION_SUCCESS
 } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
 import { toSnake } from "../../utils/normalizer";
@@ -347,30 +346,36 @@ export const studentJoinPresentation =
 
       if (accessToken) {
         if (res.code === ApiResposeCodeNumber.Success) {
+          socket.io.opts.extraHeaders = { token: accessToken };
           socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
-              console.log(res2);
               if (res2.code === ApiResposeCodeNumber.Success) {
                 if (setLoading) {
                   setLoading(false);
                 }
-                setMessage({
-                  success: true,
-                  data: "Join presentation successfully",
-                  open: true
-                });
-                navigate(`/play/${data.accessCode}`);
+                if (setMessage) {
+                  setMessage({
+                    success: true,
+                    data: "Join presentation successfully",
+                    open: true
+                  });
+                }
+                if (navigate) {
+                  navigate(`/play/${data.accessCode}`);
+                }
               } else {
                 if (setLoading) {
                   setLoading(false);
                 }
-                setMessage({
-                  success: false,
-                  data: res2.message || "Join presentation failed",
-                  open: true
-                });
+                if (setMessage) {
+                  setMessage({
+                    success: false,
+                    data: res2.message || "Join presentation failed",
+                    open: true
+                  });
+                }
               }
             }
           );
@@ -387,18 +392,24 @@ export const studentJoinPresentation =
           }
         }
       } else {
-        if (setIsAuth) {
-          setIsAuth(false);
+        if (res.code === ApiResposeCodeNumber.Success) {
+          if (setIsAuth) {
+            setIsAuth(false);
+          }
+        } else {
+          if (setIsAuth) {
+            setIsAuth(true);
+          }
+          if (setMessage) {
+            setMessage({
+              success: false,
+              data: res.message,
+              open: true
+            });
+          }
         }
         if (setLoading) {
           setLoading(false);
-        }
-        if (setMessage) {
-          setMessage({
-            success: false,
-            data: res.message,
-            open: true
-          });
         }
       }
     } catch (error) {
@@ -418,18 +429,21 @@ export const studentJoinPresentation =
 
 /* eslint-disable import/prefer-default-export */
 export const studentJoinPresentationAnonymous =
-  (data, dataCode, setLoading, setMessage, setIsAuth) => async (dispatch) => {
+  (data, dataCode, setLoading, setMessage, setIsAuth, navigate) =>
+  async (dispatch) => {
     try {
       const res = await $axios.post(`${API_URL}/api/anonymous`, toSnake(data));
 
       if (res.code === ApiResposeCodeNumber.Success) {
+        localStorage.setItem("accessToken", res.data.token);
+
         dispatch(
           studentJoinPresentation(
             dataCode,
-            socket,
             setLoading,
             setMessage,
-            setIsAuth
+            setIsAuth,
+            navigate
           )
         );
       } else {
@@ -468,21 +482,25 @@ export const studentVoteOption =
           if (setLoading) {
             setLoading(false);
           }
-          setMessage({
-            success: true,
-            data: "You voted successfully",
-            open: true
-          });
+          if (setMessage) {
+            setMessage({
+              success: true,
+              data: "You voted successfully",
+              open: true
+            });
+          }
           setIsVote(true);
         } else {
           if (setLoading) {
             setLoading(false);
           }
-          setMessage({
-            success: false,
-            data: res2.message,
-            open: true
-          });
+          if (setMessage) {
+            setMessage({
+              success: false,
+              data: res2.message,
+              open: true
+            });
+          }
         }
       });
     } catch (error) {
