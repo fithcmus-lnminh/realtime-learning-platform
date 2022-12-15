@@ -29,7 +29,6 @@ function PresentPresentation() {
 
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
-    setCurrentSlide(presentationDetail?.slides[currentSlideIndex - 1]);
     socket.emit("teacher-previous-slide", {}, (data) => {
       console.log(data);
     });
@@ -37,7 +36,6 @@ function PresentPresentation() {
 
   const handleGoToNextSlide = async () => {
     setCurrentSlideIndex(currentSlideIndex + 1);
-    setCurrentSlide(presentationDetail?.slides[currentSlideIndex + 1]);
     socket.emit("teacher-next-slide", {}, (data) => {
       console.log(data);
     });
@@ -56,6 +54,18 @@ function PresentPresentation() {
         console.log(data);
       }
     );
+    socket.on("get-slide", (data) => {
+      setCurrentSlide({
+        ...currentSlide,
+        slideType: data.slide.slide_type,
+        content: {
+          // eslint-disable-next-line no-underscore-dangle
+          id: data.slide.content._id,
+          options: data.slide.content.options,
+          question: data.slide.content.question
+        }
+      });
+    });
   }, []);
 
   useEffect(() => {
