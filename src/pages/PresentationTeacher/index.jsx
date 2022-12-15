@@ -109,23 +109,30 @@ function PresentationTeacher() {
 
   useEffect(() => {
     getPresentationDetail();
-    setCurrentSlide(
-      presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
-    );
   }, []);
 
   useEffect(() => {
-    socket.emit(
-      "teacher-join-presentation",
-      { access_code: presentationDetail?.accessCode },
-      (data) => {
-        console.log(data);
-      }
-    );
-    socket.on("get-total-students", (data) => {
-      dispatch(setTotalStudents(data.total_users));
-      setTotalStudent(data.total_users);
-    });
+    if (presentationDetail?.slides) {
+      setCurrentSlide(
+        presentationDetail.slides.filter((slide) => slide.active === true)[0]
+      );
+    }
+  }, [presentationDetail.slides]);
+
+  useEffect(() => {
+    if (presentationDetail?.accessCode) {
+      socket.emit(
+        "teacher-join-presentation",
+        { access_code: presentationDetail?.accessCode },
+        (data) => {
+          console.log(data);
+        }
+      );
+      socket.on("get-total-students", (data) => {
+        dispatch(setTotalStudents(data.total_users));
+        setTotalStudent(data.total_users);
+      });
+    }
   }, [presentationDetail.accessCode]);
 
   return (
