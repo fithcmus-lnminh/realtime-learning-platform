@@ -14,7 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   studentJoinPresentation,
   studentVoteOption
@@ -32,7 +32,6 @@ const schema = yup
   .required();
 
 function PresentationPlay() {
-  const navigate = useNavigate();
   const accessToken = localStorage.getItem("accessToken");
   const [options, setOptions] = useState([]);
   const [slide, setSlide] = useState({});
@@ -73,6 +72,12 @@ function PresentationPlay() {
   useEffect(() => {
     document.title = "Voting - RLP";
 
+    // if (accessToken && !isAuthenticated()) {
+    //   console.log("xoa nha 2");
+    //   localStorage.removeItem("accessToken");
+    //   navigate("/play");
+    // }
+
     socket.on("get-slide", (data) => {
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
@@ -105,8 +110,11 @@ function PresentationPlay() {
     socket.on("end-presentation", () => {
       setIsEnding(true);
 
-      if (!isAuthenticated()) {
+      console.log("isAuthenticated():", isAuthenticated());
+      if (accessToken && !isAuthenticated()) {
+        console.log("xoa nha");
         localStorage.removeItem("accessToken");
+        window.open(`/play`, "_self");
       }
     });
     return () => {
@@ -123,7 +131,7 @@ function PresentationPlay() {
         studentJoinPresentation({ accessCode: params.code }, setLoading)
       );
     } else {
-      navigate("/play");
+      window.open(`/play`, "_self");
     }
   }, [params?.code]);
 
