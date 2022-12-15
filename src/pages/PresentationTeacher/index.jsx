@@ -109,12 +109,12 @@ function PresentationTeacher() {
 
   useEffect(() => {
     getPresentationDetail();
-  }, []);
-
-  useEffect(() => {
     setCurrentSlide(
       presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
     );
+  }, []);
+
+  useEffect(() => {
     socket.emit(
       "teacher-join-presentation",
       { access_code: presentationDetail?.accessCode },
@@ -126,7 +126,7 @@ function PresentationTeacher() {
       dispatch(setTotalStudents(data.total_users));
       setTotalStudent(data.total_users);
     });
-  }, [presentationDetail]);
+  }, [presentationDetail.accessCode]);
 
   return (
     <div>
