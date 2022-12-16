@@ -371,21 +371,15 @@ export const studentJoinPresentation =
       );
 
       if (accessToken) {
-        console.log("-- Account normal");
-
         if (res.code === ApiResposeCodeNumber.Success) {
-          console.log("Code normal valid");
-
           socket.io.opts.extraHeaders = { token: accessToken };
           socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
-              console.log("res2 khi emit join normal:", res2);
+              console.log("** res2 normal:", res2);
 
               if (res2.code === ApiResposeCodeNumber.Success) {
-                console.log("emit join thành công normal");
-
                 if (setLoading) {
                   setLoading(false);
                 }
@@ -400,8 +394,6 @@ export const studentJoinPresentation =
                   navigate(`/play/${data.accessCode}`);
                 }
               } else {
-                console.log("emit join thất bại normal");
-
                 if (setLoading) {
                   setLoading(false);
                 }
@@ -415,9 +407,7 @@ export const studentJoinPresentation =
               }
             }
           );
-          console.log("======= khi gui xong socket normal ===========");
         } else {
-          console.log("Code normal invalid");
           if (setLoading) {
             setLoading(false);
           }
@@ -445,6 +435,7 @@ export const studentJoinPresentation =
                 "student-join-presentation",
                 { access_code: data.accessCode },
                 (res2) => {
+                  console.log("** res2 google:", res2);
                   if (res2.code === ApiResposeCodeNumber.Success) {
                     if (setLoading) {
                       setLoading(false);
