@@ -112,7 +112,7 @@ function Login() {
                     </button>
                   </div>
                   <div className="auth__alert">
-                    <NavLink to="/password/forgot">
+                    <NavLink to="/forgot-password">
                       Forgot your password?
                     </NavLink>
                   </div>

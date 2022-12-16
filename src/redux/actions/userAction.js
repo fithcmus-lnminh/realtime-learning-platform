@@ -204,7 +204,7 @@ export const forgotUserPassword =
   (data, setLoading, setMessage, reset) => async () => {
     try {
       const res = await $axios.post(
-        `${API_URL}/api/auth/forgot-password`,
+        `${API_URL}/api/reset-password`,
         toSnake(data)
       );
 
