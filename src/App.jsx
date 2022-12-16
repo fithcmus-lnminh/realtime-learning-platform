@@ -43,9 +43,11 @@ function App() {
       !(
         location.pathname === "/login" ||
         location.pathname === "/register" ||
+        location.pathname === "/password/forgot" ||
         location.pathname.startsWith("/verify") ||
         location.pathname.startsWith("/invite") ||
         location.pathname.startsWith("/play") ||
+        location.pathname.startsWith("/password/reset") ||
         location.pathname === "/google-login"
       )
     )

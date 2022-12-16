@@ -198,3 +198,50 @@ export const changeUserPassword =
       });
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const forgotUserPassword =
+  (data, setLoading, setMessage, reset) => async () => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/auth/password/forgot`,
+        toSnake(data)
+      );
+
+      if (res.code === ApiResposeCodeNumber.Success) {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "An password reset link has been sent to your email"
+          });
+        }
+        if (reset) {
+          reset();
+        }
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error?.message || error?.response?.data?.message || ""
+        });
+      }
+    }
+  };

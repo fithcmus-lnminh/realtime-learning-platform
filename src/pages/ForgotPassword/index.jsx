@@ -1,35 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-// import "./ForgotPassword.scss";
-import "../Auth/Auth.scss";
+import "./ForgotPassword.scss";
 import kahoot from "../../assets/images/logo.png";
-import google from "../../assets/images/google.svg";
-import { loginUser } from "../../redux/actions/userAction";
+import { forgotUserPassword } from "../../redux/actions/userAction";
 
 const schema = yup
   .object({
     email: yup
       .string()
       .required("Please enter your email address")
-      .email("Please enter valid email address"),
-    password: yup
-      .string()
-      .required("Please enter your password")
-      .min(8, "Your password must be at least 8 characters or greater")
+      .email("Please enter valid email address")
   })
   .required();
 
 function ForgotPassword() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ success: true, data: "" });
-
-  const { redirect } = useSelector((state) => state.redirect);
 
   const {
     register,
@@ -41,100 +32,64 @@ function ForgotPassword() {
   });
   const onSubmit = async (data) => {
     setLoading(true);
-    dispatch(
-      loginUser(data, setLoading, setMessage, reset, navigate, redirect)
-    );
+    dispatch(forgotUserPassword(data, setLoading, setMessage, reset));
   };
 
   useEffect(() => {
-    document.title = "Login - RLP";
+    document.title = "Forgot Password - RLP";
   }, []);
 
-  const handleGoogleLogin = () => {
-    const clientURL = process.env.REACT_APP_SERVER_URL;
-    window.open(`${clientURL}/auth/google`, "_self");
-  };
-
   return (
-    <div className="auth">
-      <div className="auth__wrapper">
-        <div className="auth__main">
-          <div className="auth__form">
-            <div className="auth__img">
+    <div className="forgot">
+      <div className="forgot__wrapper">
+        <div className="forgot__main">
+          <div className="forgot__form">
+            <div className="forgot__img">
               <img src={kahoot} alt="" />
             </div>
-            <h1 className="auth__title">Forgot Password</h1>
+            <h1 className="forgot__title">Forgot Password</h1>
             <p
-              className={`auth__message ${
+              className={`forgot__message ${
                 message.success
-                  ? "auth__message-success"
-                  : "auth__message-failure"
+                  ? "forgot__message-success"
+                  : "forgot__message-failure"
               }`}
             >
               {message.data}
             </p>
-            <div className="auth__content">
+            <div className="forgot__content">
               <form
-                className="auth__form-wrapper"
+                className="forgot__form-wrapper"
                 onSubmit={handleSubmit(onSubmit)}
               >
-                <div className="auth__container">
-                  <div className="auth__form-field">
-                    <p className="auth__label">Email</p>
+                <div className="forgot__container">
+                  <div className="forgot__form-field">
+                    <p className="forgot__label">Email</p>
                     <input
                       type="text"
                       name="email"
                       placeholder="abc@example.com"
-                      className="auth__input"
+                      className="forgot__input"
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...register("email")}
                     />
-                    <p className="auth__error">{errors.email?.message}</p>
+                    <p className="forgot__error">{errors.email?.message}</p>
                   </div>
-                  <div className="auth__form-field">
-                    <p className="auth__label">Password</p>
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Enter a password"
-                      className="auth__input"
-                      /* eslint-disable react/jsx-props-no-spreading */
-                      {...register("password")}
-                    />
-                    <p className="auth__error">{errors.password?.message}</p>
-                  </div>
-                  <div className="auth__action">
+                  <div className="forgot__action">
                     <button
                       type="submit"
-                      className="auth__btn"
+                      className="forgot__btn"
                       disabled={loading}
                     >
-                      Login
+                      Request reset link
                     </button>
                   </div>
                 </div>
               </form>
             </div>
-            <div className="auth__bottom">
-              <div className="auth__line">
-                <hr />
-                <span className="auth__line-text">Or</span>
-              </div>
-              <div className="auth__btn_other">
-                <button
-                  type="button"
-                  className="auth__btn_social"
-                  onClick={handleGoogleLogin}
-                >
-                  <img src={google} alt="" />
-                  <div className="auth__btn-text">Continue with Google</div>
-                </button>
-              </div>
-            </div>
 
-            <div className="auth__alert">
-              Dont&apos;t have an account?{" "}
-              <NavLink to="/register">Sign up</NavLink>
+            <div className="forgot__alert">
+              <NavLink to="/login">Back to Login</NavLink>
             </div>
           </div>
         </div>
