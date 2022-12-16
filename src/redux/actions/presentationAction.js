@@ -377,8 +377,6 @@ export const studentJoinPresentation =
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
-              console.log("** res2 normal:", res2);
-
               if (res2.code === ApiResposeCodeNumber.Success) {
                 if (setLoading) {
                   setLoading(false);
@@ -435,7 +433,6 @@ export const studentJoinPresentation =
                 "student-join-presentation",
                 { access_code: data.accessCode },
                 (res2) => {
-                  console.log("** res2 google:", res2);
                   if (res2.code === ApiResposeCodeNumber.Success) {
                     if (setLoading) {
                       setLoading(false);

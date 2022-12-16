@@ -41,7 +41,7 @@ function PresentationPlay() {
   const dispatch = useDispatch();
   const [isEnding, setIsEnding] = useState(false);
   const [isVote, setIsVote] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({
     success: true,
     data: "",
