@@ -204,7 +204,7 @@ export const forgotUserPassword =
   (data, setLoading, setMessage, reset) => async () => {
     try {
       const res = await $axios.post(
-        `${API_URL}/api/auth/password/forgot`,
+        `${API_URL}/api/auth/forgot-password`,
         toSnake(data)
       );
 
@@ -243,5 +243,82 @@ export const forgotUserPassword =
           data: error?.message || error?.response?.data?.message || ""
         });
       }
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const resetUserPassword =
+  (data, setLoading, setMessage, reset) => async () => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/auth/reset-password`,
+        toSnake(data)
+      );
+
+      if (res.code === ApiResposeCodeNumber.Success) {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Reset password successfully"
+          });
+        }
+        if (reset) {
+          reset();
+        }
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error?.message || error?.response?.data?.message || ""
+        });
+      }
+    }
+  };
+
+export const verifyTokenResetUserPassword =
+  (token, setLoading, setMessage) => async () => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/auth/forgot-password/${token}`
+      );
+
+      if (res.code === ApiResposeCodeNumber.Success) {
+        setLoading(false);
+        setMessage({
+          success: true,
+          data: "Authentication successfully"
+        });
+      } else {
+        setLoading(false);
+        setMessage({
+          success: false,
+          data: res.message
+        });
+      }
+    } catch (error) {
+      console.log("error:", error);
+      setLoading(false);
+      setMessage({
+        success: false,
+        data: error?.message || error?.response?.data?.message || ""
+      });
     }
   };

@@ -43,11 +43,10 @@ function App() {
       !(
         location.pathname === "/login" ||
         location.pathname === "/register" ||
-        location.pathname === "/password/forgot" ||
         location.pathname.startsWith("/verify") ||
         location.pathname.startsWith("/invite") ||
         location.pathname.startsWith("/play") ||
-        location.pathname.startsWith("/password/reset") ||
+        location.pathname.startsWith("/forgot-password") ||
         location.pathname === "/google-login"
       )
     )
@@ -67,8 +66,8 @@ function App() {
           element={isAuthenticated() ? <Navigate to="/" /> : <Register />}
         />
         <Route path="/verify/:token" element={<Verify />} />
-        <Route path="/password/forgot" element={<ForgotPassword />} />
-        <Route path="/password/reset/:token" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forgot-password/:token" element={<ResetPassword />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/groups" element={<Groups />} />
         <Route path="/group/:id" element={<GroupDetails />} />
