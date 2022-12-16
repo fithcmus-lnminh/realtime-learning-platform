@@ -48,6 +48,7 @@ function PresentPresentation() {
   };
 
   useEffect(() => {
+    setCurrentSlide(presentationDetail?.slides[0]);
     socket.emit(
       "teacher-start-presentation",
       { access_code: presentationDetail?.accessCode, current_slide: 1 },
@@ -68,10 +69,6 @@ function PresentPresentation() {
       });
     });
   }, [currentSlide]);
-
-  useEffect(() => {
-    setCurrentSlide(presentationDetail?.slides[0]);
-  }, [presentationDetail]);
 
   return (
     <div>

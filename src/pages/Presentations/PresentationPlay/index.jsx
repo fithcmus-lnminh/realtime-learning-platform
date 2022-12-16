@@ -109,11 +109,6 @@ function PresentationPlay() {
         localStorage.removeItem("accessToken");
       }
     });
-    return () => {
-      socket.off("get-slide");
-      socket.off("get-score");
-      socket.off("end-presentation");
-    };
   }, []);
 
   useEffect(() => {
