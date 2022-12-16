@@ -72,12 +72,6 @@ function PresentationPlay() {
   useEffect(() => {
     document.title = "Voting - RLP";
 
-    // if (accessToken && !isAuthenticated()) {
-    //   console.log("xoa nha 2");
-    //   localStorage.removeItem("accessToken");
-    //   navigate("/play");
-    // }
-
     socket.on("get-slide", (data) => {
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
@@ -110,9 +104,7 @@ function PresentationPlay() {
     socket.on("end-presentation", () => {
       setIsEnding(true);
 
-      console.log("isAuthenticated():", isAuthenticated());
       if (accessToken && !isAuthenticated()) {
-        console.log("xoa nha");
         localStorage.removeItem("accessToken");
         window.open(`/play`, "_self");
       }
@@ -131,7 +123,14 @@ function PresentationPlay() {
         studentJoinPresentation({ accessCode: params.code }, setLoading)
       );
     } else {
-      window.open(`/play`, "_self");
+      /* eslint-disable no-lonely-if */
+      if (isAuthenticated()) {
+        dispatch(
+          studentJoinPresentation({ accessCode: params.code }, setLoading)
+        );
+      } else {
+        window.open(`/play`, "_self");
+      }
     }
   }, [params?.code]);
 

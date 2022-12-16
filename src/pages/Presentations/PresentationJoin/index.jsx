@@ -83,6 +83,10 @@ function PresentationJoin() {
     document.title = "Enter the code - RLP";
   }, []);
 
+  console.log("*** loading:", loading);
+  console.log("message:", message);
+  console.log("isAuth:", isAuth);
+
   return (
     <div className="presentation__join__container">
       <div
