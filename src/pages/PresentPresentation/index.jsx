@@ -23,9 +23,7 @@ function PresentPresentation() {
   const [loading] = useState(false);
   const { presentationDetail } = useSelector((state) => state.presentation);
 
-  const [currentSlide, setCurrentSlide] = useState(
-    presentationDetail?.slides[0]
-  );
+  const [currentSlide, setCurrentSlide] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   const handleGoToPreviousSlide = () => {
@@ -48,7 +46,6 @@ function PresentPresentation() {
   };
 
   useEffect(() => {
-    setCurrentSlide(presentationDetail?.slides[0]);
     socket.emit(
       "teacher-start-presentation",
       { access_code: presentationDetail?.accessCode, current_slide: 1 },
@@ -57,6 +54,7 @@ function PresentPresentation() {
       }
     );
     socket.on("get-slide", (data) => {
+      console.log(data.slide);
       setCurrentSlide(toCamel(data.slide));
     });
   }, []);
@@ -65,7 +63,7 @@ function PresentPresentation() {
     socket.on("get-score", (data) => {
       setCurrentSlide({
         ...currentSlide,
-        content: { ...currentSlide.content, options: data.options }
+        content: { ...currentSlide?.content, options: data.options }
       });
     });
   }, [currentSlide]);
