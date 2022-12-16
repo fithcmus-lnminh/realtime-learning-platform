@@ -215,7 +215,7 @@ export const forgotUserPassword =
         if (setMessage) {
           setMessage({
             success: true,
-            data: "An password reset link has been sent to your email"
+            data: "A password reset link has been sent to your email"
           });
         }
         if (reset) {
@@ -268,6 +268,7 @@ export const resetUserPassword =
         if (reset) {
           reset();
         }
+        window.location.href = "/login";
       } else {
         if (setLoading) {
           setLoading(false);
@@ -294,31 +295,46 @@ export const resetUserPassword =
   };
 
 export const verifyTokenResetUserPassword =
-  (token, setLoading, setMessage) => async () => {
+  (token, setLoading, setMessage, setVerify) => async () => {
     try {
       const res = await $axios.post(
         `${API_URL}/api/auth/forgot-password/${token}`
       );
 
       if (res.code === ApiResposeCodeNumber.Success) {
-        setLoading(false);
-        setMessage({
-          success: true,
-          data: "Authentication successfully"
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setVerify) {
+          setVerify(true);
+        }
       } else {
-        setLoading(false);
-        setMessage({
-          success: false,
-          data: res.message
-        });
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setVerify) {
+          setVerify(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message
+          });
+        }
       }
     } catch (error) {
       console.log("error:", error);
-      setLoading(false);
-      setMessage({
-        success: false,
-        data: error?.message || error?.response?.data?.message || ""
-      });
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setVerify) {
+        setVerify(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error?.message || error?.response?.data?.message || ""
+        });
+      }
     }
   };
