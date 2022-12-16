@@ -248,10 +248,10 @@ export const forgotUserPassword =
 
 /* eslint-disable import/prefer-default-export */
 export const resetUserPassword =
-  (data, setLoading, setMessage, reset) => async () => {
+  (data, token, setLoading, setMessage, reset) => async () => {
     try {
       const res = await $axios.post(
-        `${API_URL}/api/auth/reset-password`,
+        `${API_URL}/api/reset-password/${token}`,
         toSnake(data)
       );
 
@@ -268,7 +268,9 @@ export const resetUserPassword =
         if (reset) {
           reset();
         }
-        window.location.href = "/login";
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
       } else {
         if (setLoading) {
           setLoading(false);
@@ -284,51 +286,6 @@ export const resetUserPassword =
       console.log("error:", error);
       if (setLoading) {
         setLoading(false);
-      }
-      if (setMessage) {
-        setMessage({
-          success: false,
-          data: error?.message || error?.response?.data?.message || ""
-        });
-      }
-    }
-  };
-
-export const verifyTokenResetUserPassword =
-  (token, setLoading, setMessage, setVerify) => async () => {
-    try {
-      const res = await $axios.post(
-        `${API_URL}/api/auth/forgot-password/${token}`
-      );
-
-      if (res.code === ApiResposeCodeNumber.Success) {
-        if (setLoading) {
-          setLoading(false);
-        }
-        if (setVerify) {
-          setVerify(true);
-        }
-      } else {
-        if (setLoading) {
-          setLoading(false);
-        }
-        if (setVerify) {
-          setVerify(false);
-        }
-        if (setMessage) {
-          setMessage({
-            success: false,
-            data: res.message
-          });
-        }
-      }
-    } catch (error) {
-      console.log("error:", error);
-      if (setLoading) {
-        setLoading(false);
-      }
-      if (setVerify) {
-        setVerify(false);
       }
       if (setMessage) {
         setMessage({

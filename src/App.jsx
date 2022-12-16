@@ -47,6 +47,7 @@ function App() {
         location.pathname.startsWith("/invite") ||
         location.pathname.startsWith("/play") ||
         location.pathname.startsWith("/forgot-password") ||
+        location.pathname.startsWith("/reset-password") ||
         location.pathname === "/google-login"
       )
     )
@@ -67,7 +68,7 @@ function App() {
         />
         <Route path="/verify/:token" element={<Verify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/forgot-password/:token" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/groups" element={<Groups />} />
         <Route path="/group/:id" element={<GroupDetails />} />

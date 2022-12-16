@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -19,6 +19,7 @@ const schema = yup
 
 function ForgotPassword() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ success: true, data: "" });
 
@@ -78,6 +79,15 @@ function ForgotPassword() {
                   <div className="forgot__action">
                     <button
                       type="submit"
+                      className="forgot__btn forgot__btn-login"
+                      disabled={loading}
+                      onClick={() => navigate("/login")}
+                    >
+                      Back to Login
+                    </button>
+
+                    <button
+                      type="submit"
                       className="forgot__btn"
                       disabled={loading}
                     >
@@ -86,10 +96,6 @@ function ForgotPassword() {
                   </div>
                 </div>
               </form>
-            </div>
-
-            <div className="forgot__alert">
-              <NavLink to="/login">Back to Login</NavLink>
             </div>
           </div>
         </div>
