@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiShare2 } from "react-icons/fi";
-import { BsPlayFill, BsPersonCircle } from "react-icons/bs";
+import { BsPlayFill, BsPersonCircle, BsPeople } from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
 import { SlChart } from "react-icons/sl";
 import { MdClose } from "react-icons/md";
@@ -14,7 +14,9 @@ import {
   DialogContent,
   OutlinedInput,
   Popover,
-  Typography
+  Typography,
+  Modal,
+  Avatar
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../utils/socket";
@@ -28,7 +30,20 @@ import {
   updateMultipleChoiceSlideQuestion,
   updateTitleOption
 } from "../../redux/actions/presentationAction";
-import Modal from "../../components/Modal";
+import { stringAvatar } from "../../utils/stringAvatar";
+
+const style = {
+  position: "absolute",
+  top: "20%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "#fff",
+  border: "none",
+  borderRadius: 1,
+  boxShadow: 24,
+  p: 4
+};
 
 function PresentationTeacher() {
   const param = useParams();
@@ -39,8 +54,11 @@ function PresentationTeacher() {
   const [loading, setLoading] = useState(false);
   const [totalStudent, setTotalStudent] = useState(0);
   const [openModal, setOpenModal] = useState(false);
+  const [isOpenShareModal, setIsOpenShareModal] = useState(false);
+  const [isAddCollab, setIsAddCollab] = useState(false);
 
   const { presentationDetail } = useSelector((state) => state.presentation);
+  const { userInfo } = useSelector((state) => state.user);
 
   const [currentSlide, setCurrentSlide] = useState(
     presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
@@ -163,9 +181,88 @@ function PresentationTeacher() {
             </div>
 
             <div className="button__header">
-              <button type="button" className="button__share">
-                <FiShare2 /> Share
+              <button
+                type="button"
+                className="button__share"
+                onClick={() => setIsOpenShareModal(true)}
+              >
+                <FiShare2 /> Collaborators
               </button>
+              <Modal
+                open={isOpenShareModal}
+                onClose={() => setIsOpenShareModal(false)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                  <Typography
+                    id="modal-modal-title"
+                    variant="h6"
+                    component="h2"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Collaborators
+                  </Typography>
+                  <div className="presentation__collaborator">
+                    <Typography
+                      id="modal-modal-description"
+                      sx={{
+                        mt: 2,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1
+                      }}
+                    >
+                      <BsPeople size={20} />
+                      <span>
+                        Following people have access to{" "}
+                        <span style={{ fontWeight: "bold" }}>edit</span> this
+                        presentation.
+                      </span>
+                    </Typography>
+                    <div className="presentation__collaborator-item">
+                      <Avatar
+                        /* eslint-disable react/jsx-props-no-spreading */
+                        {...stringAvatar(
+                          `${userInfo?.firstName} ${userInfo?.lastName}`
+                        )}
+                      />
+                      <div>
+                        <p style={{ fontWeight: "bold" }}>
+                          {`${userInfo?.firstName} ${userInfo?.lastName}`} (me)
+                        </p>
+                        <p>{userInfo?.email}</p>
+                      </div>
+                    </div>
+                    <div className="presentation__collaborator-item">
+                      <Avatar
+                        /* eslint-disable react/jsx-props-no-spreading */
+                        {...stringAvatar(
+                          `${userInfo?.firstName} ${userInfo?.lastName}`
+                        )}
+                      />
+                      <div>
+                        <p style={{ fontWeight: "bold" }}>
+                          {`${userInfo?.firstName} ${userInfo?.lastName}`} (me)
+                        </p>
+                        <p>{userInfo?.email}</p>
+                      </div>
+                    </div>
+                    <div>
+                      {isAddCollab ? (
+                        "input"
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setIsAddCollab(true)}
+                        >
+                          +Add
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </Box>
+              </Modal>
               <button
                 type="button"
                 className="button__primary"

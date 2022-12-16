@@ -14,6 +14,7 @@ import { FullScreen, useFullScreenHandle } from "react-full-screen";
 // import { getPresentationById } from "../../redux/actions/presentationAction";
 import "./PresentPresentation.scss";
 import { socket } from "../../utils/socket";
+import { toCamel } from "../../utils/normalizer";
 
 function PresentPresentation() {
   const param = useParams();
@@ -29,7 +30,6 @@ function PresentPresentation() {
 
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
-    setCurrentSlide(presentationDetail?.slides[currentSlideIndex - 1]);
     socket.emit("teacher-previous-slide", {}, (data) => {
       console.log(data);
     });
@@ -37,7 +37,6 @@ function PresentPresentation() {
 
   const handleGoToNextSlide = async () => {
     setCurrentSlideIndex(currentSlideIndex + 1);
-    setCurrentSlide(presentationDetail?.slides[currentSlideIndex + 1]);
     socket.emit("teacher-next-slide", {}, (data) => {
       console.log(data);
     });
@@ -56,6 +55,9 @@ function PresentPresentation() {
         console.log(data);
       }
     );
+    socket.on("get-slide", (data) => {
+      setCurrentSlide(toCamel(data.slide));
+    });
   }, []);
 
   useEffect(() => {
@@ -187,7 +189,7 @@ function PresentPresentation() {
                   <Badge
                     color="primary"
                     badgeContent={
-                      presentationDetail?.totalStudents === 0
+                      presentationDetail?.totalStudents
                         ? "0"
                         : presentationDetail?.totalStudents
                     }
