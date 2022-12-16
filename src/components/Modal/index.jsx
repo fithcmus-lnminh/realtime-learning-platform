@@ -65,12 +65,7 @@ function Modal(prop) {
   const isShowCancelButton = actions?.includes("Cancel");
 
   return (
-    <BootstrapDialog
-      onClose={onCloseModal}
-      aria-labelledby="customized-dialog-title"
-      open={show}
-      maxWidth={false}
-    >
+    <BootstrapDialog onClose={onCloseModal} open={show} maxWidth={false}>
       <BootstrapDialogTitle id="customized-dialog-title" onClose={onCloseModal}>
         <span className="modal__title">{title}</span>
       </BootstrapDialogTitle>

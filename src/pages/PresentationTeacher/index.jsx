@@ -11,11 +11,10 @@ import {
   Badge,
   Box,
   CircularProgress,
-  DialogContent,
   OutlinedInput,
   Popover,
   Typography,
-  Modal,
+  Modal as MUIModal,
   Avatar
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,6 +30,7 @@ import {
   updateTitleOption
 } from "../../redux/actions/presentationAction";
 import { stringAvatar } from "../../utils/stringAvatar";
+import Modal from "../../components/Modal";
 
 const style = {
   position: "absolute",
@@ -53,7 +53,7 @@ function PresentationTeacher() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [totalStudent, setTotalStudent] = useState(0);
-  const [openModal, setOpenModal] = useState(false);
+  const [open, setOpenModal] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
   const [isAddCollab, setIsAddCollab] = useState(false);
 
@@ -188,7 +188,7 @@ function PresentationTeacher() {
               >
                 <FiShare2 /> Collaborators
               </button>
-              <Modal
+              <MUIModal
                 open={isOpenShareModal}
                 onClose={() => setIsOpenShareModal(false)}
                 aria-labelledby="modal-modal-title"
@@ -262,7 +262,7 @@ function PresentationTeacher() {
                     </div>
                   </div>
                 </Box>
-              </Modal>
+              </MUIModal>
               <button
                 type="button"
                 className="button__primary"
@@ -332,31 +332,36 @@ function PresentationTeacher() {
                   </div>
                   <div className="presentation__slide-item">
                     {currentSlide?.slideType === "MultipleChoice" && (
-                      <div className="presentation__slide-item-container">
-                        <SlChart size={20} />
-                        <p
-                          style={{
-                            color: "#000",
-                            wordWrap: "anywhere",
-                            padding: "0 4px"
-                          }}
-                        >
-                          {slide.content.question || "Multiple Choice"}
-                        </p>
-                        <MdClose
-                          className="presentation__slide-delete"
-                          color="rgb(147, 148, 151)"
-                          cursor="pointer"
-                          onClick={() => {
-                            setOpenModal(true);
-                          }}
-                        />
+                      <div>
+                        <div className="presentation__slide-item-container">
+                          <SlChart size={20} />
+                          <p
+                            style={{
+                              color: "#000",
+                              wordWrap: "anywhere",
+                              padding: "0 4px"
+                            }}
+                          >
+                            {slide.content.question || "Multiple Choice"}
+                          </p>
+                          <MdClose
+                            className="presentation__slide-delete"
+                            color="rgb(147, 148, 151)"
+                            cursor="pointer"
+                            onClick={() => {
+                              setOpenModal(true);
+                            }}
+                          />
+                        </div>
                         <Modal
                           title="Delete slide"
                           loading={loading}
                           actions={["Cancel", "OK"]}
-                          show={openModal}
-                          onCloseModal={() => setOpenModal(false)}
+                          actionText="Yes, Delete it"
+                          show={open}
+                          onCloseModal={() => {
+                            setOpenModal(false);
+                          }}
                           onActionClick={() => {
                             handleDeleteSlide(
                               presentationDetail?.id,
@@ -365,11 +370,7 @@ function PresentationTeacher() {
                             setOpenModal(false);
                           }}
                         >
-                          <DialogContent>
-                            <Typography variant="body2">
-                              Do you really want to delete this slide?
-                            </Typography>
-                          </DialogContent>
+                          Do you really want to delete this slide?
                         </Modal>
                       </div>
                     )}
