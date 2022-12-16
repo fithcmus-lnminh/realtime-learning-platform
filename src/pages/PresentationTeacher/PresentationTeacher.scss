@@ -127,6 +127,18 @@
     right: 32px;
   }
 
+  &__collaborator {
+    color: rgba(16, 24, 52, 0.75);
+
+    &-item {
+      display: flex;
+      gap: 12px;
+      margin: 20px 0;
+      align-items: center;
+      font-size: 15px;
+    }
+  }
+
   &__customize {
     background-color: #fff;
     flex: 2;

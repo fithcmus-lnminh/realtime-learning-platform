@@ -14,6 +14,7 @@ import { FullScreen, useFullScreenHandle } from "react-full-screen";
 // import { getPresentationById } from "../../redux/actions/presentationAction";
 import "./PresentPresentation.scss";
 import { socket } from "../../utils/socket";
+import { toCamel } from "../../utils/normalizer";
 
 function PresentPresentation() {
   const param = useParams();
@@ -55,16 +56,7 @@ function PresentPresentation() {
       }
     );
     socket.on("get-slide", (data) => {
-      setCurrentSlide({
-        ...currentSlide,
-        slideType: data.slide.slide_type,
-        content: {
-          // eslint-disable-next-line no-underscore-dangle
-          id: data.slide.content._id,
-          options: data.slide.content.options,
-          question: data.slide.content.question
-        }
-      });
+      setCurrentSlide(toCamel(data.slide));
     });
   }, []);
 
@@ -197,7 +189,7 @@ function PresentPresentation() {
                   <Badge
                     color="primary"
                     badgeContent={
-                      presentationDetail?.totalStudents === 0
+                      presentationDetail?.totalStudents
                         ? "0"
                         : presentationDetail?.totalStudents
                     }
