@@ -332,46 +332,25 @@ function PresentationTeacher() {
                   </div>
                   <div className="presentation__slide-item">
                     {currentSlide?.slideType === "MultipleChoice" && (
-                      <div>
-                        <div className="presentation__slide-item-container">
-                          <SlChart size={20} />
-                          <p
-                            style={{
-                              color: "#000",
-                              wordWrap: "anywhere",
-                              padding: "0 4px"
-                            }}
-                          >
-                            {slide.content.question || "Multiple Choice"}
-                          </p>
-                          <MdClose
-                            className="presentation__slide-delete"
-                            color="rgb(147, 148, 151)"
-                            cursor="pointer"
-                            onClick={() => {
-                              setOpenModal(true);
-                            }}
-                          />
-                        </div>
-                        <Modal
-                          title="Delete slide"
-                          loading={loading}
-                          actions={["Cancel", "OK"]}
-                          actionText="Yes, Delete it"
-                          show={open}
-                          onCloseModal={() => {
-                            setOpenModal(false);
-                          }}
-                          onActionClick={() => {
-                            handleDeleteSlide(
-                              presentationDetail?.id,
-                              currentSlide?.content?.id
-                            );
-                            setOpenModal(false);
+                      <div className="presentation__slide-item-container">
+                        <SlChart size={20} />
+                        <p
+                          style={{
+                            color: "#000",
+                            wordWrap: "anywhere",
+                            padding: "0 4px"
                           }}
                         >
-                          Do you really want to delete this slide?
-                        </Modal>
+                          {slide.content.question || "Multiple Choice"}
+                        </p>
+                        <MdClose
+                          className="presentation__slide-delete"
+                          color="rgb(147, 148, 151)"
+                          cursor="pointer"
+                          onClick={() => {
+                            setOpenModal(true);
+                          }}
+                        />
                       </div>
                     )}
                   </div>
@@ -521,6 +500,22 @@ function PresentationTeacher() {
           </div>
         </div>
       )}
+      <Modal
+        title="Delete slide"
+        loading={loading}
+        actions={["Cancel", "OK"]}
+        actionText="Yes, Delete it"
+        show={open}
+        onCloseModal={() => {
+          setOpenModal(false);
+        }}
+        onActionClick={() => {
+          handleDeleteSlide(presentationDetail?.id, currentSlide?.content?.id);
+          setOpenModal(false);
+        }}
+      >
+        Do you really want to delete this slide?
+      </Modal>
     </div>
   );
 }
