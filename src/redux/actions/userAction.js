@@ -198,3 +198,100 @@ export const changeUserPassword =
       });
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const forgotUserPassword =
+  (data, setLoading, setMessage, reset) => async () => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/reset-password`,
+        toSnake(data)
+      );
+
+      if (res.code === ApiResposeCodeNumber.Success) {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "A password reset link has been sent to your email"
+          });
+        }
+        if (reset) {
+          reset();
+        }
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error?.message || error?.response?.data?.message || ""
+        });
+      }
+    }
+  };
+
+/* eslint-disable import/prefer-default-export */
+export const resetUserPassword =
+  (data, token, setLoading, setMessage, reset) => async () => {
+    try {
+      const res = await $axios.post(
+        `${API_URL}/api/reset-password/${token}`,
+        toSnake(data)
+      );
+
+      if (res.code === ApiResposeCodeNumber.Success) {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: true,
+            data: "Reset password successfully"
+          });
+        }
+        if (reset) {
+          reset();
+        }
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      } else {
+        if (setLoading) {
+          setLoading(false);
+        }
+        if (setMessage) {
+          setMessage({
+            success: false,
+            data: res.message
+          });
+        }
+      }
+    } catch (error) {
+      console.log("error:", error);
+      if (setLoading) {
+        setLoading(false);
+      }
+      if (setMessage) {
+        setMessage({
+          success: false,
+          data: error?.message || error?.response?.data?.message || ""
+        });
+      }
+    }
+  };

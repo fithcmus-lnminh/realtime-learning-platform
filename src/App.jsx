@@ -19,6 +19,8 @@ import PresentationTeacher from "./pages/PresentationTeacher";
 import PresentPresentation from "./pages/PresentPresentation";
 import PresentationJoin from "./pages/Presentations/PresentationJoin";
 import PresentationPlay from "./pages/Presentations/PresentationPlay";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const theme = createTheme({
@@ -44,6 +46,8 @@ function App() {
         location.pathname.startsWith("/verify") ||
         location.pathname.startsWith("/invite") ||
         location.pathname.startsWith("/play") ||
+        location.pathname.startsWith("/forgot-password") ||
+        location.pathname.startsWith("/reset-password") ||
         location.pathname === "/google-login"
       )
     )
@@ -63,6 +67,8 @@ function App() {
           element={isAuthenticated() ? <Navigate to="/" /> : <Register />}
         />
         <Route path="/verify/:token" element={<Verify />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/groups" element={<Groups />} />
         <Route path="/group/:id" element={<GroupDetails />} />

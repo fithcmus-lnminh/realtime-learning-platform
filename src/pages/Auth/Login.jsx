@@ -111,6 +111,11 @@ function Login() {
                       Login
                     </button>
                   </div>
+                  <div className="auth__alert">
+                    <NavLink to="/forgot-password">
+                      Forgot your password?
+                    </NavLink>
+                  </div>
                 </div>
               </form>
             </div>
@@ -132,7 +137,7 @@ function Login() {
             </div>
 
             <div className="auth__alert">
-              Dont&apos;t have an account?{" "}
+              Don&apos;t have an account?{" "}
               <NavLink to="/register">Sign up</NavLink>
             </div>
           </div>
