@@ -412,7 +412,7 @@ function PresentationTeacher() {
                     )}
                     {slide?.slideType === "Heading" && (
                       <div className="presentation__slide-item-container">
-                        <SlChart size={20} />
+                        <BsCardHeading size={20} />
                         <p
                           style={{
                             color: "#000",
@@ -420,7 +420,7 @@ function PresentationTeacher() {
                             padding: "0 4px"
                           }}
                         >
-                          {slide?.content.heading}
+                          {slide?.content.heading || "Heading"}
                         </p>
                         <MdClose
                           className="presentation__slide-delete"
@@ -434,7 +434,7 @@ function PresentationTeacher() {
                     )}
                     {slide?.slideType === "Paragraph" && (
                       <div className="presentation__slide-item-container">
-                        <SlChart size={20} />
+                        <BsTextParagraph size={20} />
                         <p
                           style={{
                             color: "#000",
@@ -442,7 +442,7 @@ function PresentationTeacher() {
                             padding: "0 4px"
                           }}
                         >
-                          {slide?.content.heading}
+                          {slide?.content.heading || "Paragraph"}
                         </p>
                         <MdClose
                           className="presentation__slide-delete"
