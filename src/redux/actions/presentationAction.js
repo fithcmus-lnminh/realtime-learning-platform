@@ -5,6 +5,7 @@ import {
   SET_TOTAL_STUDENTS
 } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
+import { isAuthenticated } from "../../utils/isAuthenticated";
 import { toSnake } from "../../utils/normalizer";
 import { socket } from "../../utils/socket";
 
@@ -417,24 +418,96 @@ export const studentJoinPresentation =
           }
         }
       } else {
-        if (res.code === ApiResposeCodeNumber.Success) {
-          if (setIsAuth) {
-            setIsAuth(false);
+        if (isAuthenticated()) {
+          if (res.code === ApiResposeCodeNumber.Success) {
+            const resTokenGoogle = await $axios.get(
+              `${API_URL}/auth/google/token`
+            );
+
+            if (resTokenGoogle.code === ApiResposeCodeNumber.Success) {
+              socket.io.opts.extraHeaders = {
+                token: resTokenGoogle?.data?.token
+              };
+
+              socket.emit(
+                "student-join-presentation",
+                { access_code: data.accessCode },
+                (res2) => {
+                  if (res2.code === ApiResposeCodeNumber.Success) {
+                    if (setLoading) {
+                      setLoading(false);
+                    }
+                    if (setMessage) {
+                      setMessage({
+                        success: true,
+                        data: "Join presentation successfully",
+                        open: true
+                      });
+                    }
+                    if (navigate) {
+                      navigate(`/play/${data.accessCode}`);
+                    }
+                  } else {
+                    if (setLoading) {
+                      setLoading(false);
+                    }
+                    if (setMessage) {
+                      setMessage({
+                        success: false,
+                        data: res2.message || "Join presentation failed",
+                        open: true
+                      });
+                    }
+                  }
+                }
+              );
+            } else {
+              if (setLoading) {
+                setLoading(false);
+              }
+              if (setMessage) {
+                setMessage({
+                  success: false,
+                  data: resTokenGoogle.message,
+                  open: true
+                });
+              }
+            }
+          } else {
+            if (setLoading) {
+              setLoading(false);
+            }
+            if (setMessage) {
+              setMessage({
+                success: false,
+                data: res.message,
+                open: true
+              });
+            }
           }
         } else {
-          if (setIsAuth) {
-            setIsAuth(true);
+          if (res.code === ApiResposeCodeNumber.Success) {
+            if (setLoading) {
+              setLoading(false);
+            }
+            if (setIsAuth) {
+              setIsAuth(false);
+            }
+          } else {
+            if (setLoading) {
+              setLoading(false);
+            }
+            if (setIsAuth) {
+              setIsAuth(true);
+            }
+            if (setMessage) {
+              setMessage({
+                success: false,
+                data: res.message,
+                open: true
+              });
+            }
           }
-          if (setMessage) {
-            setMessage({
-              success: false,
-              data: res.message,
-              open: true
-            });
-          }
-        }
-        if (setLoading) {
-          setLoading(false);
         }
       }
     } catch (error) {

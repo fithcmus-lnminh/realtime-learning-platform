@@ -14,7 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   studentJoinPresentation,
   studentVoteOption
@@ -32,7 +32,6 @@ const schema = yup
   .required();
 
 function PresentationPlay() {
-  const navigate = useNavigate();
   const accessToken = localStorage.getItem("accessToken");
   const [options, setOptions] = useState([]);
   const [slide, setSlide] = useState({});
@@ -42,7 +41,7 @@ function PresentationPlay() {
   const dispatch = useDispatch();
   const [isEnding, setIsEnding] = useState(false);
   const [isVote, setIsVote] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({
     success: true,
     data: "",
@@ -105,8 +104,9 @@ function PresentationPlay() {
     socket.on("end-presentation", () => {
       setIsEnding(true);
 
-      if (!isAuthenticated()) {
+      if (accessToken && !isAuthenticated()) {
         localStorage.removeItem("accessToken");
+        window.open(`/play`, "_self");
       }
     });
   }, []);
@@ -118,7 +118,14 @@ function PresentationPlay() {
         studentJoinPresentation({ accessCode: params.code }, setLoading)
       );
     } else {
-      navigate("/play");
+      /* eslint-disable no-lonely-if */
+      if (isAuthenticated()) {
+        dispatch(
+          studentJoinPresentation({ accessCode: params.code }, setLoading)
+        );
+      } else {
+        window.open(`/play`, "_self");
+      }
     }
   }, [params?.code]);
 
