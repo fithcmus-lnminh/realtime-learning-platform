@@ -49,6 +49,22 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 0 0 32px 0;
+
+      &-heading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 250px;
+
+        & h1 {
+          font-size: 52px;
+        }
+
+        & p {
+          font-size: 20px;
+        }
+      }
     }
   }
   &__badge {

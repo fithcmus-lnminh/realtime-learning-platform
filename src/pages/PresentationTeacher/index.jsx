@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FiArrowLeft, FiShare2 } from "react-icons/fi";
-import { BsPlayFill, BsPersonCircle, BsPeople } from "react-icons/bs";
+import {
+  BsPlayFill,
+  BsPersonCircle,
+  BsPeople,
+  BsCardHeading,
+  BsTextParagraph
+} from "react-icons/bs";
 import { AiOutlinePlus } from "react-icons/ai";
 import { SlChart } from "react-icons/sl";
 import { MdClose } from "react-icons/md";
@@ -15,18 +21,27 @@ import {
   Popover,
   Typography,
   Modal as MUIModal,
-  Avatar
+  Avatar,
+  TextareaAutosize
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../utils/socket";
 import {
+  createHeadingSlide,
   createMultipleChoiceSlide,
   createNewOption,
+  createParagraphSlide,
+  deleteHeadingSlide,
   deleteMultipleChoiceSlide,
   deleteOption,
+  deleteParagraphSlide,
   getPresentationById,
   setTotalStudents,
+  updateHeadingHeading,
+  updateHeadingParagraph,
   updateMultipleChoiceSlideQuestion,
+  updateParagraphParagraph,
+  updateSubHeadingHeading,
   updateTitleOption
 } from "../../redux/actions/presentationAction";
 import { stringAvatar } from "../../utils/stringAvatar";
@@ -109,6 +124,18 @@ function PresentationTeacher() {
     setAnchorEl(null);
   };
 
+  const handleAddHeadingSlide = () => {
+    dispatch(createHeadingSlide(param.id));
+
+    setAnchorEl(null);
+  };
+
+  const handleAddParagraphSlide = () => {
+    dispatch(createParagraphSlide(param.id));
+
+    setAnchorEl(null);
+  };
+
   const getPresentationDetail = async () => {
     setLoading(true);
     await dispatch(getPresentationById(param.id));
@@ -122,7 +149,19 @@ function PresentationTeacher() {
   };
 
   const handleDeleteSlide = (preId, slideId) => {
-    dispatch(deleteMultipleChoiceSlide(preId, slideId));
+    switch (currentSlide.slideType) {
+      case "MultipleChoice":
+        dispatch(deleteMultipleChoiceSlide(preId, slideId));
+        break;
+      case "Heading":
+        dispatch(deleteHeadingSlide(preId, slideId));
+        break;
+      case "Paragraph":
+        dispatch(deleteParagraphSlide(preId, slideId));
+        break;
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
@@ -300,13 +339,31 @@ function PresentationTeacher() {
                 >
                   Popular question types
                 </p>
-                <div
-                  className="slide__card"
-                  role="presentation"
-                  onClick={handleAddMultipleChoiceSlide}
-                >
-                  <SlChart size={30} />
-                  <p>Multiple Choice</p>
+                <div className="slide__card-wrapper">
+                  <div
+                    className="slide__card"
+                    role="presentation"
+                    onClick={handleAddMultipleChoiceSlide}
+                  >
+                    <SlChart size={30} />
+                    <p>Multiple Choice</p>
+                  </div>
+                  <div
+                    className="slide__card"
+                    role="presentation"
+                    onClick={handleAddHeadingSlide}
+                  >
+                    <BsCardHeading size={30} />
+                    <p>Heading</p>
+                  </div>
+                  <div
+                    className="slide__card"
+                    role="presentation"
+                    onClick={handleAddParagraphSlide}
+                  >
+                    <BsTextParagraph size={30} />
+                    <p>Paragraph</p>
+                  </div>
                 </div>
               </div>
             </Popover>
@@ -331,7 +388,7 @@ function PresentationTeacher() {
                     )}
                   </div>
                   <div className="presentation__slide-item">
-                    {currentSlide?.slideType === "MultipleChoice" && (
+                    {slide?.slideType === "MultipleChoice" && (
                       <div className="presentation__slide-item-container">
                         <SlChart size={20} />
                         <p
@@ -342,6 +399,50 @@ function PresentationTeacher() {
                           }}
                         >
                           {slide.content.question || "Multiple Choice"}
+                        </p>
+                        <MdClose
+                          className="presentation__slide-delete"
+                          color="rgb(147, 148, 151)"
+                          cursor="pointer"
+                          onClick={() => {
+                            setOpenModal(true);
+                          }}
+                        />
+                      </div>
+                    )}
+                    {slide?.slideType === "Heading" && (
+                      <div className="presentation__slide-item-container">
+                        <SlChart size={20} />
+                        <p
+                          style={{
+                            color: "#000",
+                            wordWrap: "anywhere",
+                            padding: "0 4px"
+                          }}
+                        >
+                          {slide?.content.heading}
+                        </p>
+                        <MdClose
+                          className="presentation__slide-delete"
+                          color="rgb(147, 148, 151)"
+                          cursor="pointer"
+                          onClick={() => {
+                            setOpenModal(true);
+                          }}
+                        />
+                      </div>
+                    )}
+                    {slide?.slideType === "Paragraph" && (
+                      <div className="presentation__slide-item-container">
+                        <SlChart size={20} />
+                        <p
+                          style={{
+                            color: "#000",
+                            wordWrap: "anywhere",
+                            padding: "0 4px"
+                          }}
+                        >
+                          {slide?.content.heading}
                         </p>
                         <MdClose
                           className="presentation__slide-delete"
@@ -392,6 +493,22 @@ function PresentationTeacher() {
                   )}
                 </div>
               )}
+              {currentSlide?.slideType === "Heading" && (
+                <div className="presentation__content-main-heading">
+                  <h1>
+                    {currentSlide?.content.heading || "Slide with Heading"}
+                  </h1>
+                  <p>{currentSlide?.content.subheading || "Subheading"}</p>
+                </div>
+              )}
+              {currentSlide?.slideType === "Paragraph" && (
+                <div className="presentation__content-main-heading">
+                  <h1>
+                    {currentSlide?.content.heading || "Slide with Paragraph"}
+                  </h1>
+                  <p>{currentSlide?.content.paragraph || "Paragraph"}</p>
+                </div>
+              )}
               <div className="presentation__badge">
                 <Badge
                   color="primary"
@@ -406,21 +523,114 @@ function PresentationTeacher() {
               </div>
             </div>
             <div className="presentation__customize">
-              {presentationDetail?.slides?.length > 0 && (
+              {currentSlide?.slideType === "MultipleChoice" && (
+                <div>
+                  {presentationDetail?.slides?.length > 0 && (
+                    <div>
+                      <div style={{ marginBottom: "20px" }}>
+                        <p className="presentation__customize-label">
+                          Your question
+                        </p>
+                        <OutlinedInput
+                          placeholder="Enter your question"
+                          value={currentSlide?.content.question || ""}
+                          onBlur={() => {
+                            dispatch(
+                              updateMultipleChoiceSlideQuestion(
+                                presentationDetail?.id,
+                                currentSlide?.content.id,
+                                currentSlide?.content.question
+                              )
+                            );
+                          }}
+                          onChange={(e) => {
+                            setCurrentSlide({
+                              ...currentSlide,
+                              content: {
+                                ...currentSlide?.content,
+                                question: e.target.value
+                              }
+                            });
+                          }}
+                          fullWidth
+                        />
+                      </div>
+                      <div>
+                        <p className="presentation__customize-label">Options</p>
+                        {currentSlide?.content.options?.map((option) => (
+                          <div
+                            className="presentation__customize-option"
+                            key={option.id}
+                          >
+                            <OutlinedInput
+                              placeholder="Enter your option"
+                              value={option.content}
+                              fullWidth
+                              onChange={(e) => onChangeOptionTitle(e, option)}
+                              onBlur={() => {
+                                dispatch(
+                                  updateTitleOption(
+                                    presentationDetail?.id,
+                                    currentSlide?.content.id,
+                                    option.id,
+                                    currentSlide?.content.options.find(
+                                      (opt) => opt.id === option.id
+                                    ).content
+                                  )
+                                );
+                              }}
+                              sx={{ mb: 1 }}
+                            />
+                            <MdClose
+                              color="rgb(180, 181, 184)"
+                              cursor="pointer"
+                              onClick={() => {
+                                setCurrentSlide({
+                                  ...currentSlide,
+                                  content: {
+                                    ...currentSlide?.content,
+                                    options:
+                                      currentSlide.content.options.filter(
+                                        (item) => item.id !== option.id
+                                      )
+                                  }
+                                });
+                                dispatch(
+                                  deleteOption(
+                                    presentationDetail?.id,
+                                    currentSlide?.content.id,
+                                    option.id
+                                  )
+                                );
+                              }}
+                            />
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          className="button__share button__add-option"
+                          onClick={addOptionHandler}
+                        >
+                          <AiOutlinePlus /> Add option
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              {currentSlide?.slideType === "Heading" && (
                 <div>
                   <div style={{ marginBottom: "20px" }}>
-                    <p className="presentation__customize-label">
-                      Your question
-                    </p>
+                    <p className="presentation__customize-label">Heading</p>
                     <OutlinedInput
-                      placeholder="Enter your question"
-                      value={currentSlide?.content.question || ""}
+                      placeholder="Slide with Heading"
+                      value={currentSlide?.content.heading || ""}
                       onBlur={() => {
                         dispatch(
-                          updateMultipleChoiceSlideQuestion(
+                          updateHeadingHeading(
                             presentationDetail?.id,
                             currentSlide?.content.id,
-                            currentSlide?.content.question
+                            currentSlide?.content.heading
                           )
                         );
                       }}
@@ -429,70 +639,96 @@ function PresentationTeacher() {
                           ...currentSlide,
                           content: {
                             ...currentSlide?.content,
-                            question: e.target.value
+                            heading: e.target.value
                           }
                         });
                       }}
                       fullWidth
                     />
                   </div>
-                  <div>
-                    <p className="presentation__customize-label">Options</p>
-                    {currentSlide?.content.options?.map((option) => (
-                      <div
-                        className="presentation__customize-option"
-                        key={option.id}
-                      >
-                        <OutlinedInput
-                          placeholder="Enter your option"
-                          value={option.content}
-                          fullWidth
-                          onChange={(e) => onChangeOptionTitle(e, option)}
-                          onBlur={() => {
-                            dispatch(
-                              updateTitleOption(
-                                presentationDetail?.id,
-                                currentSlide?.content.id,
-                                option.id,
-                                currentSlide?.content.options.find(
-                                  (opt) => opt.id === option.id
-                                ).content
-                              )
-                            );
-                          }}
-                          sx={{ mb: 1 }}
-                        />
-                        <MdClose
-                          color="rgb(180, 181, 184)"
-                          cursor="pointer"
-                          onClick={() => {
-                            setCurrentSlide({
-                              ...currentSlide,
-                              content: {
-                                ...currentSlide?.content,
-                                options: currentSlide.content.options.filter(
-                                  (item) => item.id !== option.id
-                                )
-                              }
-                            });
-                            dispatch(
-                              deleteOption(
-                                presentationDetail?.id,
-                                currentSlide?.content.id,
-                                option.id
-                              )
-                            );
-                          }}
-                        />
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      className="button__share button__add-option"
-                      onClick={addOptionHandler}
-                    >
-                      <AiOutlinePlus /> Add option
-                    </button>
+                  <div style={{ marginBottom: "20px" }}>
+                    <p className="presentation__customize-label">Subheading</p>
+                    <TextareaAutosize
+                      className="presentation__text-area"
+                      placeholder="Subheading"
+                      minRows={3}
+                      value={currentSlide?.content.subheading || ""}
+                      onBlur={() => {
+                        dispatch(
+                          updateSubHeadingHeading(
+                            presentationDetail?.id,
+                            currentSlide?.content.id,
+                            currentSlide?.content.subheading
+                          )
+                        );
+                      }}
+                      onChange={(e) => {
+                        setCurrentSlide({
+                          ...currentSlide,
+                          content: {
+                            ...currentSlide?.content,
+                            subheading: e.target.value
+                          }
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              {currentSlide?.slideType === "Paragraph" && (
+                <div>
+                  <div style={{ marginBottom: "20px" }}>
+                    <p className="presentation__customize-label">Heading</p>
+                    <OutlinedInput
+                      placeholder="Slide with Paragraph"
+                      value={currentSlide?.content.heading || ""}
+                      onBlur={() => {
+                        dispatch(
+                          updateHeadingParagraph(
+                            presentationDetail?.id,
+                            currentSlide?.content.id,
+                            currentSlide?.content.heading
+                          )
+                        );
+                      }}
+                      onChange={(e) => {
+                        setCurrentSlide({
+                          ...currentSlide,
+                          content: {
+                            ...currentSlide?.content,
+                            heading: e.target.value
+                          }
+                        });
+                      }}
+                      fullWidth
+                    />
+                  </div>
+                  <div style={{ marginBottom: "20px" }}>
+                    <p className="presentation__customize-label">Paragraph</p>
+                    <TextareaAutosize
+                      className="presentation__text-area"
+                      placeholder="Subheading"
+                      minRows={3}
+                      value={currentSlide?.content.paragraph || ""}
+                      onBlur={() => {
+                        dispatch(
+                          updateParagraphParagraph(
+                            presentationDetail?.id,
+                            currentSlide?.content.id,
+                            currentSlide?.content.paragraph
+                          )
+                        );
+                      }}
+                      onChange={(e) => {
+                        setCurrentSlide({
+                          ...currentSlide,
+                          content: {
+                            ...currentSlide?.content,
+                            paragraph: e.target.value
+                          }
+                        });
+                      }}
+                    />
                   </div>
                 </div>
               )}

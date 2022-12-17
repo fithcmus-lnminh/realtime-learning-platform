@@ -180,6 +180,22 @@ function PresentPresentation() {
                     )}
                   </div>
                 )}
+                {currentSlide?.slideType === "Heading" && (
+                  <div className="present__content-main-heading">
+                    <h1>
+                      {currentSlide?.content.heading || "Slide with Heading"}
+                    </h1>
+                    <p>{currentSlide?.content.subheading || "Subheading"}</p>
+                  </div>
+                )}
+                {currentSlide?.slideType === "Paragraph" && (
+                  <div className="present__content-main-heading">
+                    <h1>
+                      {currentSlide?.content.heading || "Slide with Paragraph"}
+                    </h1>
+                    <p>{currentSlide?.content.paragraph || "Paragraph"}</p>
+                  </div>
+                )}
                 <div className="present__badge">
                   <Badge
                     color="primary"
