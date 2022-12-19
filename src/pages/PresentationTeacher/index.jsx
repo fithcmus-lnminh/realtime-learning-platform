@@ -22,8 +22,10 @@ import {
   Typography,
   Modal as MUIModal,
   Avatar,
-  TextareaAutosize
+  TextareaAutosize,
+  Button
 } from "@mui/material";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../utils/socket";
 import {
@@ -70,7 +72,17 @@ function PresentationTeacher() {
   const [totalStudent, setTotalStudent] = useState(0);
   const [open, setOpenModal] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
-  const [isAddCollab, setIsAddCollab] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isDirty },
+    reset
+  } = useForm({
+    defaultValues: {
+      collabEmail: ""
+    }
+  });
 
   const { presentationDetail } = useSelector((state) => state.presentation);
   const { userInfo } = useSelector((state) => state.user);
@@ -162,6 +174,12 @@ function PresentationTeacher() {
       default:
         break;
     }
+  };
+
+  const addCollabHandler = (data) => {
+    console.log(data);
+
+    reset();
   };
 
   useEffect(() => {
@@ -276,28 +294,48 @@ function PresentationTeacher() {
                     <div className="presentation__collaborator-item">
                       <Avatar
                         /* eslint-disable react/jsx-props-no-spreading */
-                        {...stringAvatar(
-                          `${userInfo?.firstName} ${userInfo?.lastName}`
-                        )}
+                        {...stringAvatar("Le Nhat Minh")}
                       />
                       <div>
-                        <p style={{ fontWeight: "bold" }}>
-                          {`${userInfo?.firstName} ${userInfo?.lastName}`} (me)
-                        </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px"
+                          }}
+                        >
+                          <p style={{ fontWeight: "bold" }}>Le Nhat Minh</p>
+                          <Box
+                            sx={{
+                              bgcolor: "#F43F3F",
+                              borderRadius: "50%",
+                              padding: "2px",
+                              cursor: "pointer"
+                            }}
+                          >
+                            <MdClose color="white" size={12} />
+                          </Box>
+                        </div>
                         <p>{userInfo?.email}</p>
                       </div>
                     </div>
-                    <div>
-                      {isAddCollab ? (
-                        "input"
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setIsAddCollab(true)}
-                        >
-                          +Add
-                        </button>
-                      )}
+                    <div className="presentation__collaborator-add">
+                      <OutlinedInput
+                        sx={{ height: 40, width: "80%" }}
+                        placeholder="Add a collaborator"
+                        defaultValue=""
+                        /* eslint-disable react/jsx-props-no-spreading */
+                        {...register("collabEmail")}
+                      />
+                      <Button
+                        className="button__add-collaborator"
+                        color="primary"
+                        variant="contained"
+                        disabled={!isDirty}
+                        onClick={handleSubmit(addCollabHandler)}
+                      >
+                        Add
+                      </Button>
                     </div>
                   </div>
                 </Box>
