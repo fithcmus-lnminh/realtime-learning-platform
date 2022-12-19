@@ -349,7 +349,7 @@ function PresentationTeacher() {
                     </div>
                     {errors.collabEmail?.message && (
                       <FormHelperText
-                        sx={{ mb: 2, mt: 0 }}
+                        sx={{ mb: 0, mt: 0 }}
                         id="component-error-text"
                         error
                       >
