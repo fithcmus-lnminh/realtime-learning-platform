@@ -23,9 +23,12 @@ import {
   Modal as MUIModal,
   Avatar,
   TextareaAutosize,
-  Button
+  Button,
+  FormHelperText
 } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../utils/socket";
 import {
@@ -62,6 +65,12 @@ const style = {
   p: 4
 };
 
+const schema = yup
+  .object({
+    collabEmail: yup.string().email("Please enter valid email address")
+  })
+  .required();
+
 function PresentationTeacher() {
   const param = useParams();
   const dispatch = useDispatch();
@@ -76,12 +85,13 @@ function PresentationTeacher() {
   const {
     register,
     handleSubmit,
-    formState: { isDirty },
+    formState: { errors, isDirty },
     reset
   } = useForm({
     defaultValues: {
       collabEmail: ""
-    }
+    },
+    resolver: yupResolver(schema)
   });
 
   const { presentationDetail } = useSelector((state) => state.presentation);
@@ -323,7 +333,7 @@ function PresentationTeacher() {
                       <OutlinedInput
                         sx={{ height: 40, width: "80%" }}
                         placeholder="Add a collaborator"
-                        defaultValue=""
+                        error={!!errors.collabEmail}
                         /* eslint-disable react/jsx-props-no-spreading */
                         {...register("collabEmail")}
                       />
@@ -337,6 +347,15 @@ function PresentationTeacher() {
                         Add
                       </Button>
                     </div>
+                    {errors.collabEmail?.message && (
+                      <FormHelperText
+                        sx={{ mb: 2, mt: 0 }}
+                        id="component-error-text"
+                        error
+                      >
+                        {errors.collabEmail?.message}
+                      </FormHelperText>
+                    )}
                   </div>
                 </Box>
               </MUIModal>
