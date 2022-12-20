@@ -51,6 +51,10 @@ import {
 } from "../../redux/actions/presentationAction";
 import { stringAvatar } from "../../utils/stringAvatar";
 import Modal from "../../components/Modal";
+import {
+  getCollaborators,
+  inviteCollaborator
+} from "../../redux/actions/collaboratorAction";
 
 const style = {
   position: "absolute",
@@ -78,6 +82,7 @@ function PresentationTeacher() {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingCollaborator, setLoadingCollaborator] = useState(false);
   const [totalStudent, setTotalStudent] = useState(0);
   const [open, setOpenModal] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
@@ -95,7 +100,7 @@ function PresentationTeacher() {
   });
 
   const { presentationDetail } = useSelector((state) => state.presentation);
-  const { userInfo } = useSelector((state) => state.user);
+  const { collaborators } = useSelector((state) => state.collaborator);
 
   const [currentSlide, setCurrentSlide] = useState(
     presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
@@ -188,6 +193,7 @@ function PresentationTeacher() {
 
   const addCollabHandler = (data) => {
     console.log(data);
+    dispatch(inviteCollaborator(data.collabEmail));
 
     reset();
   };
@@ -195,6 +201,15 @@ function PresentationTeacher() {
   useEffect(() => {
     getPresentationDetail();
   }, []);
+
+  useEffect(() => {
+    if (presentationDetail.id) {
+      console.log(loadingCollaborator);
+      dispatch(
+        getCollaborators(presentationDetail?.id, setLoadingCollaborator)
+      );
+    }
+  }, [presentationDetail.id]);
 
   useEffect(() => {
     if (presentationDetail?.slides) {
@@ -287,48 +302,59 @@ function PresentationTeacher() {
                         presentation.
                       </span>
                     </Typography>
-                    <div className="presentation__collaborator-item">
-                      <Avatar
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...stringAvatar(
-                          `${userInfo?.firstName} ${userInfo?.lastName}`
-                        )}
-                      />
-                      <div>
-                        <p style={{ fontWeight: "bold" }}>
-                          {`${userInfo?.firstName} ${userInfo?.lastName}`} (me)
-                        </p>
-                        <p>{userInfo?.email}</p>
-                      </div>
-                    </div>
-                    <div className="presentation__collaborator-item">
-                      <Avatar
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...stringAvatar("Le Nhat Minh")}
-                      />
-                      <div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "12px"
-                          }}
-                        >
-                          <p style={{ fontWeight: "bold" }}>Le Nhat Minh</p>
-                          <Box
-                            sx={{
-                              bgcolor: "#F43F3F",
-                              borderRadius: "50%",
-                              padding: "2px",
-                              cursor: "pointer"
-                            }}
-                          >
-                            <MdClose color="white" size={12} />
-                          </Box>
+                    {collaborators?.map((collab) =>
+                      collab.role === "Owner" ? (
+                        <div className="presentation__collaborator-item">
+                          <Avatar
+                            /* eslint-disable react/jsx-props-no-spreading */
+                            {...stringAvatar(
+                              `${collab.userId?.firstName} ${collab.userId?.lastName}`
+                            )}
+                          />
+                          <div>
+                            <p style={{ fontWeight: "bold" }}>
+                              {`${collab.userId?.firstName} ${collab.userId?.lastName}`}{" "}
+                              (owner)
+                            </p>
+                            <p>{collab?.userId.email}</p>
+                          </div>
                         </div>
-                        <p>{userInfo?.email}</p>
-                      </div>
-                    </div>
+                      ) : (
+                        <div className="presentation__collaborator-item">
+                          <Avatar
+                            /* eslint-disable react/jsx-props-no-spreading */
+                            {...stringAvatar(
+                              `${collab.userId?.firstName} ${collab.userId?.lastName}`
+                            )}
+                          />
+                          <div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px"
+                              }}
+                            >
+                              <p
+                                style={{ fontWeight: "bold" }}
+                              >{`${collab.userId?.firstName} ${collab.userId?.lastName}`}</p>
+                              <Box
+                                sx={{
+                                  bgcolor: "#F43F3F",
+                                  borderRadius: "50%",
+                                  padding: "2px",
+                                  cursor: "pointer"
+                                }}
+                              >
+                                <MdClose color="white" size={12} />
+                              </Box>
+                            </div>
+                            <p>{collab?.userId.email}</p>
+                          </div>
+                        </div>
+                      )
+                    )}
+
                     <div className="presentation__collaborator-add">
                       <OutlinedInput
                         sx={{ height: 40, width: "80%" }}
