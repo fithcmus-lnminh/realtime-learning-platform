@@ -2,22 +2,27 @@ import {
   FormHelperText,
   Grid,
   OutlinedInput,
-  DialogContent
+  DialogContent,
+  Select,
+  MenuItem
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-// import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { isEqual } from "lodash";
 import "./PresentationUpdate.scss";
-import { useDispatch } from "react-redux";
 import { updatePresentation } from "../../../redux/actions/presentationAction";
+import { getAllGroups } from "../../../redux/actions/groupAction";
 import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
+import { isObjectData } from "../../../utils/generator";
 
 const schema = yup
   .object({
-    title: yup.string().required("Please enter presentation title")
+    title: yup.string().required("Please enter presentation title"),
+    type: yup.string().required("Please select type of presentation")
   })
   .required();
 
@@ -30,15 +35,23 @@ function PresentationUpdate(prop) {
     setLoading
   } = prop;
   const dispatch = useDispatch();
+  const groups = useSelector(
+    (state) => {
+      return state.group.groups;
+    },
+    (prev, next) => isEqual(prev, next)
+  );
   const {
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors },
     control,
     reset,
+    watch,
     setValue
   } = useForm({
     resolver: yupResolver(schema)
   });
+  const [errorGroup, setErrorGroup] = useState("");
   const [message, setMessage] = useState({
     success: true,
     data: "",
@@ -50,12 +63,30 @@ function PresentationUpdate(prop) {
     reset();
   };
 
+  const typePresentation = watch("type");
+
   const onSubmit = async (data) => {
+    let newData = "";
+    if (data.type === "public") {
+      newData = {
+        title: data.title
+      };
+    } else if (data.type === "private") {
+      if (data.groupId === "") {
+        setErrorGroup("Please select group of presentation");
+        return;
+      }
+      newData = {
+        title: data.title,
+        groupId: data.groupId
+      };
+    }
+
     setLoading(true);
     dispatch(
       updatePresentation(
         presentationDetail?.id,
-        data,
+        newData,
         handleClose,
         setLoading,
         reset,
@@ -73,7 +104,20 @@ function PresentationUpdate(prop) {
 
   useEffect(() => {
     setValue("title", presentationDetail?.title);
+    if (
+      isObjectData(presentationDetail) &&
+      isObjectData(presentationDetail?.group)
+    ) {
+      setValue("type", "private");
+      setValue("groupId", presentationDetail?.group?.id);
+    } else {
+      setValue("type", "public");
+    }
   }, [open]);
+
+  useEffect(() => {
+    dispatch(getAllGroups("own"));
+  }, [groups]);
 
   return (
     <>
@@ -82,7 +126,6 @@ function PresentationUpdate(prop) {
       <Modal
         title="Update presentation"
         loading={loading}
-        disableAction={!isDirty}
         actions={["Cancel", "OK"]}
         actionText="Save"
         show={open}
@@ -120,6 +163,97 @@ function PresentationUpdate(prop) {
                 );
               }}
             />
+            <Controller
+              name="type"
+              defaultValue=""
+              control={control}
+              render={({ field }) => {
+                return (
+                  <Grid item xs={12}>
+                    <p className="required form__label">Type</p>
+                    <Select
+                      id="type"
+                      sx={{ width: 500, mb: 1, mt: 1 }}
+                      fullWidth
+                      error={!!errors.type?.message}
+                      /* eslint-disable react/jsx-props-no-spreading */
+                      {...field}
+                      onChange={(e) => {
+                        if (e.target.value === "public") {
+                          setValue("groupId", "");
+                          setErrorGroup("");
+                        }
+                        field.onChange(e);
+                      }}
+                    >
+                      <MenuItem value="private">Private</MenuItem>
+                      <MenuItem value="public">Public</MenuItem>
+                    </Select>
+                    {errors.type?.message && (
+                      <FormHelperText
+                        sx={{ mb: 2, mt: 0 }}
+                        id="component-error-text"
+                        error
+                      >
+                        {errors.type.message}
+                      </FormHelperText>
+                    )}
+                  </Grid>
+                );
+              }}
+            />
+            {typePresentation === "private" && (
+              <Controller
+                name="groupId"
+                defaultValue=""
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <Grid item xs={12}>
+                      <p className="required form__label">Group</p>
+                      <Select
+                        id="groupId"
+                        sx={{ width: 500, mb: 1, mt: 1 }}
+                        fullWidth
+                        error={!!errorGroup}
+                        /* eslint-disable react/jsx-props-no-spreading */
+                        {...field}
+                        onChange={(e) => {
+                          if (e.target.value === "") {
+                            setErrorGroup(
+                              "Please select group of presentation"
+                            );
+                          } else {
+                            setErrorGroup("");
+                          }
+                          field.onChange(e);
+                        }}
+                      >
+                        {groups.length > 0
+                          ? groups.map((group) => (
+                              <MenuItem
+                                value={group?.groupId.id}
+                                key={group?.groupId?.id}
+                              >
+                                {group?.groupId?.name}
+                              </MenuItem>
+                            ))
+                          : null}
+                      </Select>
+                      {errorGroup && (
+                        <FormHelperText
+                          sx={{ mb: 2, mt: 0 }}
+                          id="component-error-text"
+                          error
+                        >
+                          {errorGroup}
+                        </FormHelperText>
+                      )}
+                    </Grid>
+                  );
+                }}
+              />
+            )}
           </Grid>
         </DialogContent>
       </Modal>
