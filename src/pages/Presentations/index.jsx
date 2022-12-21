@@ -316,28 +316,34 @@ function Presentations() {
           </Box>
         )}
 
-        <PresentationAddNew
-          open={open}
-          handleClose={handleClose}
-          loading={loading}
-          setLoading={setLoading}
-        />
+        {open && (
+          <PresentationAddNew
+            open={open}
+            handleClose={handleClose}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        )}
 
-        <PresentationUpdate
-          open={openUpdate}
-          handleClose={handleCloseUpdate}
-          presentationDetail={presentationDetail}
-          loading={loading}
-          setLoading={setLoading}
-        />
+        {openUpdate && (
+          <PresentationUpdate
+            open={openUpdate}
+            handleClose={handleCloseUpdate}
+            presentationDetail={presentationDetail}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        )}
 
-        <PresentationDelete
-          open={openDelete}
-          handleClose={handleCloseDelete}
-          presentationDetail={presentationDetail}
-          loading={loading}
-          setLoading={setLoading}
-        />
+        {openDelete && (
+          <PresentationDelete
+            open={openDelete}
+            handleClose={handleCloseDelete}
+            presentationDetail={presentationDetail}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        )}
       </Box>
     </Layout>
   );
