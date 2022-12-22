@@ -75,25 +75,32 @@ function PresentationPlay() {
     socket.on("get-slide", (data) => {
       const { slide: slideInfo, current_slide, total_slides } = data;
       setSlide(slideInfo);
-      setOptions(slideInfo?.content?.options);
       setCurrentSlide(current_slide);
       setTotalSlide(total_slides);
       setIsEnding(false);
 
-      socket.emit("student-check-vote", { access_code: params.code }, (res) => {
-        if (res.code === ApiResposeCodeNumber.Success) {
-          if (res?.data?.option_id) {
-            setValue("answer", res?.data?.option_id);
+      if (slideInfo?.slide_type === "MultipleChoice") {
+        setOptions(slideInfo?.content?.options);
+
+        socket.emit(
+          "student-check-vote",
+          { access_code: params.code },
+          (res) => {
+            if (res.code === ApiResposeCodeNumber.Success) {
+              if (res?.data?.option_id) {
+                setValue("answer", res?.data?.option_id);
+              }
+              setIsVote(res?.data?.is_voted);
+            } else {
+              setMessage({
+                success: false,
+                data: res.message,
+                open: true
+              });
+            }
           }
-          setIsVote(res?.data?.is_voted);
-        } else {
-          setMessage({
-            success: false,
-            data: res.message,
-            open: true
-          });
-        }
-      });
+        );
+      }
     });
 
     socket.on("get-score", (data) => {
@@ -138,7 +145,9 @@ function PresentationPlay() {
         <Alert message={message} onClose={handleCloseAlert} />
         {!isEnding && (
           <h2 className="presentation__play__title">
-            {slide?.content?.question}
+            {slide?.slide_type === "MultipleChoice" && slide?.content?.question}
+            {slide?.slide_type === "Heading" && slide?.content?.heading}
+            {slide?.slide_type === "Paragraph" && slide?.content?.heading}
           </h2>
         )}
         {loading ? (
@@ -197,92 +206,120 @@ function PresentationPlay() {
                 Object.keys(slide.content).length > 0 &&
                 slide.content ? (
                   <>
-                    <div className="presentation__play__form">
-                      <Controller
-                        name="answer"
-                        control={control}
-                        render={({ field }) => {
-                          return (
-                            <Grid item xs={12}>
-                              <FormControl>
-                                <RadioGroup
-                                  aria-labelledby="radio-buttons-answer"
-                                  name="answer"
-                                  sx={{ minWidth: "500px", mb: 1, mt: 1 }}
-                                  /* eslint-disable react/jsx-props-no-spreading */
-                                  {...field}
-                                >
-                                  {slide?.content?.options.length > 0 &&
-                                    slide?.content?.options.map((option) => (
-                                      <FormControlLabel
-                                        /* eslint-disable no-underscore-dangle */
-                                        key={option._id}
-                                        /* eslint-disable no-underscore-dangle */
-                                        value={option._id}
-                                        control={<Radio />}
-                                        label={option.content}
-                                        /* eslint-disable no-underscore-dangle */
-                                        checked={
-                                          getValues("answer") === option._id
-                                        }
-                                        disabled={isVote}
-                                      />
-                                    ))}
-                                </RadioGroup>
-                                {errors.answer?.message && (
-                                  <FormHelperText
-                                    sx={{
-                                      minWidth: "500px",
-                                      mb: 2,
-                                      mt: 2,
-                                      ml: 0,
-                                      mr: 0,
-                                      fontSize: 14
-                                    }}
-                                    id="component-error-text"
-                                    error
+                    {slide?.slide_type === "MultipleChoice" && (
+                      <div className="presentation__play__form">
+                        <Controller
+                          name="answer"
+                          control={control}
+                          render={({ field }) => {
+                            return (
+                              <Grid item xs={12}>
+                                <FormControl>
+                                  <RadioGroup
+                                    aria-labelledby="radio-buttons-answer"
+                                    name="answer"
+                                    sx={{ minWidth: "500px", mb: 1, mt: 1 }}
+                                    /* eslint-disable react/jsx-props-no-spreading */
+                                    {...field}
                                   >
-                                    {errors.answer.message}
-                                  </FormHelperText>
-                                )}
-                                {isVote && (
-                                  <FormHelperText
-                                    sx={{
-                                      minWidth: "500px",
-                                      mb: 2,
-                                      mt: 2,
-                                      ml: 0,
-                                      mr: 0,
-                                      fontSize: 14
-                                    }}
-                                    id="component-info-text"
-                                  >
-                                    You have already voted on this question.
-                                    Please wait for the presenter to show the
-                                    next slide.
-                                  </FormHelperText>
-                                )}
-                              </FormControl>
-                            </Grid>
-                          );
+                                    {slide?.content?.options.length > 0 &&
+                                      slide?.content?.options.map((option) => (
+                                        <FormControlLabel
+                                          /* eslint-disable no-underscore-dangle */
+                                          key={option._id}
+                                          /* eslint-disable no-underscore-dangle */
+                                          value={option._id}
+                                          control={<Radio />}
+                                          label={option.content}
+                                          /* eslint-disable no-underscore-dangle */
+                                          checked={
+                                            getValues("answer") === option._id
+                                          }
+                                          disabled={isVote}
+                                        />
+                                      ))}
+                                  </RadioGroup>
+                                  {errors.answer?.message && (
+                                    <FormHelperText
+                                      sx={{
+                                        minWidth: "500px",
+                                        mb: 2,
+                                        mt: 2,
+                                        ml: 0,
+                                        mr: 0,
+                                        fontSize: 14
+                                      }}
+                                      id="component-error-text"
+                                      error
+                                    >
+                                      {errors.answer.message}
+                                    </FormHelperText>
+                                  )}
+                                  {isVote && (
+                                    <FormHelperText
+                                      sx={{
+                                        minWidth: "500px",
+                                        mb: 2,
+                                        mt: 2,
+                                        ml: 0,
+                                        mr: 0,
+                                        fontSize: 14
+                                      }}
+                                      id="component-info-text"
+                                    >
+                                      You have already voted on this question.
+                                      Please wait for the presenter to show the
+                                      next slide.
+                                    </FormHelperText>
+                                  )}
+                                </FormControl>
+                              </Grid>
+                            );
+                          }}
+                        />
+
+                        <button
+                          type="button"
+                          className="presentation__play__button"
+                          onClick={isVote ? () => {} : handleSubmit(onSubmit)}
+                          style={
+                            isVote
+                              ? { cursor: "not-allowed", opacity: "0.7" }
+                              : {}
+                          }
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    )}
+
+                    {slide?.slide_type === "Heading" && (
+                      <div
+                        className="presentation__play-content-heading"
+                        style={{
+                          width: "500px"
                         }}
-                      />
-
-                      <button
-                        type="button"
-                        className="presentation__play__button"
-                        onClick={isVote ? () => {} : handleSubmit(onSubmit)}
-                        style={
-                          isVote
-                            ? { cursor: "not-allowed", opacity: "0.7" }
-                            : {}
-                        }
                       >
-                        Submit
-                      </button>
-                    </div>
+                        <Typography variant="subtitle1" gutterBottom>
+                          {slide?.content?.subheading}
+                        </Typography>
+                      </div>
+                    )}
 
-                    {isVote && (
+                    {slide?.slide_type === "Paragraph" && (
+                      <div
+                        className="presentation__play-content-paragraph"
+                        style={{
+                          width: "500px"
+                        }}
+                      >
+                        <Typography variant="" gutterBottom>
+                          {slide?.content?.paragraph}
+                        </Typography>
+                      </div>
+                    )}
+
+                    {slide?.slide_type === "MultipleChoice" && isVote && (
                       <div
                         style={{
                           display: "flex",
