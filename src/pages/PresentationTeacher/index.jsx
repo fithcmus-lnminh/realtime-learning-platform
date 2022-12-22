@@ -22,8 +22,13 @@ import {
   Typography,
   Modal as MUIModal,
   Avatar,
-  TextareaAutosize
+  TextareaAutosize,
+  Button,
+  FormHelperText
 } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../utils/socket";
 import {
@@ -46,6 +51,11 @@ import {
 } from "../../redux/actions/presentationAction";
 import { stringAvatar } from "../../utils/stringAvatar";
 import Modal from "../../components/Modal";
+import {
+  getCollaborators,
+  inviteCollaborator,
+  removeCollaborator
+} from "../../redux/actions/collaboratorAction";
 
 const style = {
   position: "absolute",
@@ -60,6 +70,12 @@ const style = {
   p: 4
 };
 
+const schema = yup
+  .object({
+    collabEmail: yup.string().email("Please enter valid email address")
+  })
+  .required();
+
 function PresentationTeacher() {
   const param = useParams();
   const dispatch = useDispatch();
@@ -67,13 +83,30 @@ function PresentationTeacher() {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingCollaborator, setLoadingCollaborator] = useState(false);
   const [totalStudent, setTotalStudent] = useState(0);
   const [open, setOpenModal] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
-  const [isAddCollab, setIsAddCollab] = useState(false);
+  const [isOpenRemoveCollabModal, setIsOpenRemoveCollabModal] = useState(false);
+  const [inviteCollabMessage, setInviteCollabMessage] = useState({
+    success: false,
+    message: ""
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset
+  } = useForm({
+    defaultValues: {
+      collabEmail: ""
+    },
+    resolver: yupResolver(schema)
+  });
 
   const { presentationDetail } = useSelector((state) => state.presentation);
-  const { userInfo } = useSelector((state) => state.user);
+  const { collaborators } = useSelector((state) => state.collaborator);
 
   const [currentSlide, setCurrentSlide] = useState(
     presentationDetail?.slides?.filter((slide) => slide.active === true)[0]
@@ -164,9 +197,30 @@ function PresentationTeacher() {
     }
   };
 
+  const addCollabHandler = (data) => {
+    dispatch(
+      inviteCollaborator(
+        presentationDetail?.id,
+        data.collabEmail,
+        setLoadingCollaborator,
+        setInviteCollabMessage
+      )
+    );
+
+    reset();
+  };
+
   useEffect(() => {
     getPresentationDetail();
   }, []);
+
+  useEffect(() => {
+    if (presentationDetail.id) {
+      dispatch(
+        getCollaborators(presentationDetail?.id, setLoadingCollaborator)
+      );
+    }
+  }, [presentationDetail.id]);
 
   useEffect(() => {
     if (presentationDetail?.slides) {
@@ -259,46 +313,141 @@ function PresentationTeacher() {
                         presentation.
                       </span>
                     </Typography>
-                    <div className="presentation__collaborator-item">
-                      <Avatar
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...stringAvatar(
-                          `${userInfo?.firstName} ${userInfo?.lastName}`
-                        )}
-                      />
-                      <div>
-                        <p style={{ fontWeight: "bold" }}>
-                          {`${userInfo?.firstName} ${userInfo?.lastName}`} (me)
-                        </p>
-                        <p>{userInfo?.email}</p>
-                      </div>
-                    </div>
-                    <div className="presentation__collaborator-item">
-                      <Avatar
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...stringAvatar(
-                          `${userInfo?.firstName} ${userInfo?.lastName}`
-                        )}
-                      />
-                      <div>
-                        <p style={{ fontWeight: "bold" }}>
-                          {`${userInfo?.firstName} ${userInfo?.lastName}`} (me)
-                        </p>
-                        <p>{userInfo?.email}</p>
-                      </div>
-                    </div>
-                    <div>
-                      {isAddCollab ? (
-                        "input"
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setIsAddCollab(true)}
+                    {collaborators?.map((collab) =>
+                      collab.role === "Owner" ? (
+                        <div
+                          className="presentation__collaborator-item"
+                          key={collab?.userId.id}
                         >
-                          +Add
-                        </button>
-                      )}
+                          <Avatar
+                            /* eslint-disable react/jsx-props-no-spreading */
+                            {...stringAvatar(
+                              `${collab.userId?.firstName} ${collab.userId?.lastName}`
+                            )}
+                          />
+                          <div>
+                            <p style={{ fontWeight: "bold" }}>
+                              {`${collab.userId?.firstName} ${collab.userId?.lastName}`}{" "}
+                              (owner)
+                            </p>
+                            <p>{collab?.userId.email}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className="presentation__collaborator-item"
+                          key={collab?.userId.id}
+                        >
+                          <Avatar
+                            /* eslint-disable react/jsx-props-no-spreading */
+                            {...stringAvatar(
+                              `${collab.userId?.firstName} ${collab.userId?.lastName}`
+                            )}
+                          />
+                          <div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px"
+                              }}
+                            >
+                              <p
+                                style={{ fontWeight: "bold" }}
+                              >{`${collab.userId?.firstName} ${collab.userId?.lastName}`}</p>
+                              {presentationDetail?.presentationRole ===
+                                "Owner" && (
+                                <Box
+                                  sx={{
+                                    bgcolor: "#F43F3F",
+                                    borderRadius: "50%",
+                                    padding: "2px",
+                                    cursor: "pointer"
+                                  }}
+                                  onClick={() =>
+                                    setIsOpenRemoveCollabModal(true)
+                                  }
+                                >
+                                  <MdClose color="white" size={12} />
+                                </Box>
+                              )}
+                            </div>
+                            <p>{collab?.userId.email}</p>
+                          </div>
+                          <Modal
+                            title="Remove collaborator?"
+                            actions={["Cancel", "OK"]}
+                            actionText="Remove"
+                            show={isOpenRemoveCollabModal}
+                            onCloseModal={() => {
+                              setIsOpenRemoveCollabModal(false);
+                            }}
+                            onActionClick={() => {
+                              dispatch(
+                                removeCollaborator(
+                                  presentationDetail.id,
+                                  collab.userId.id
+                                )
+                              );
+                              setIsOpenRemoveCollabModal(false);
+                            }}
+                          >
+                            Do you really want to remove{" "}
+                            <span style={{ fontWeight: "bold" }}>
+                              {collab.userId?.firstName}{" "}
+                              {collab.userId?.lastName}
+                            </span>
+                            ?
+                          </Modal>
+                        </div>
+                      )
+                    )}
+
+                    <div className="presentation__collaborator-add">
+                      <OutlinedInput
+                        sx={{ height: 40, width: "80%" }}
+                        placeholder="Add a collaborator"
+                        error={!!errors.collabEmail}
+                        /* eslint-disable react/jsx-props-no-spreading */
+                        {...register("collabEmail")}
+                      />
+                      {loadingCollaborator}
+                      <Button
+                        className="button__add-collaborator"
+                        color="primary"
+                        variant="contained"
+                        disabled={!isDirty || loadingCollaborator}
+                        onClick={handleSubmit(addCollabHandler)}
+                      >
+                        {loadingCollaborator ? (
+                          <CircularProgress size={20} color="secondary" />
+                        ) : (
+                          "Add"
+                        )}
+                      </Button>
                     </div>
+                    {errors.collabEmail?.message && (
+                      <FormHelperText
+                        sx={{ mb: 0, mt: 0 }}
+                        id="component-error-text"
+                        error
+                      >
+                        {errors.collabEmail?.message}
+                      </FormHelperText>
+                    )}
+                    {inviteCollabMessage.message && (
+                      <FormHelperText
+                        sx={{
+                          mb: 0,
+                          mt: 1,
+                          color: inviteCollabMessage.success ? "green" : "red",
+                          fontSize: 13
+                        }}
+                        id="component-success-text"
+                      >
+                        {inviteCollabMessage.message}
+                      </FormHelperText>
+                    )}
                   </div>
                 </Box>
               </MUIModal>

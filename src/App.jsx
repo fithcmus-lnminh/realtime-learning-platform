@@ -21,6 +21,7 @@ import PresentationJoin from "./pages/Presentations/PresentationJoin";
 import PresentationPlay from "./pages/Presentations/PresentationPlay";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import VerifyCollaborator from "./pages/VerifyCollaborator";
 
 function App() {
   const theme = createTheme({
@@ -48,6 +49,7 @@ function App() {
         location.pathname.startsWith("/play") ||
         location.pathname.startsWith("/forgot-password") ||
         location.pathname.startsWith("/reset-password") ||
+        location.pathname.startsWith("/collaborator") ||
         location.pathname === "/google-login"
       )
     )
@@ -69,6 +71,7 @@ function App() {
         <Route path="/verify/:token" element={<Verify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/collaborator/:token" element={<VerifyCollaborator />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/groups" element={<Groups />} />
         <Route path="/group/:id" element={<GroupDetails />} />

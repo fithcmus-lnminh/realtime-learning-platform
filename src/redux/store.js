@@ -7,12 +7,14 @@ import { userReducer } from "./reducers/userReducer";
 import { groupReducer } from "./reducers/groupReducer";
 import { redirectReducer } from "./reducers/redirectReducer";
 import { presentationReducer } from "./reducers/presentationReducer";
+import { collaboratorReducer } from "./reducers/collaboratorReducer";
 
 const reducer = combineReducers({
   user: userReducer,
   group: groupReducer,
   redirect: redirectReducer,
-  presentation: presentationReducer
+  presentation: presentationReducer,
+  collaborator: collaboratorReducer
 });
 
 const persistConfig = {
