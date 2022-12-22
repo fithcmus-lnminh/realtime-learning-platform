@@ -372,7 +372,7 @@ export const studentJoinPresentation =
 
       if (accessToken) {
         if (res.code === ApiResposeCodeNumber.Success) {
-          socket.io.opts.extraHeaders = { token: accessToken };
+          socket.io.opts.extraHeaders.token = accessToken;
           socket.emit(
             "student-join-presentation",
             { access_code: data.accessCode },
@@ -425,9 +425,7 @@ export const studentJoinPresentation =
             );
 
             if (resTokenGoogle.code === ApiResposeCodeNumber.Success) {
-              socket.io.opts.extraHeaders = {
-                token: resTokenGoogle?.data?.token
-              };
+              socket.io.opts.extraHeaders.token = resTokenGoogle?.data?.token;
 
               socket.emit(
                 "student-join-presentation",

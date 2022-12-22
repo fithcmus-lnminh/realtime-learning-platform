@@ -53,7 +53,8 @@ import { stringAvatar } from "../../utils/stringAvatar";
 import Modal from "../../components/Modal";
 import {
   getCollaborators,
-  inviteCollaborator
+  inviteCollaborator,
+  removeCollaborator
 } from "../../redux/actions/collaboratorAction";
 
 const style = {
@@ -86,6 +87,11 @@ function PresentationTeacher() {
   const [totalStudent, setTotalStudent] = useState(0);
   const [open, setOpenModal] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
+  const [isOpenRemoveCollabModal, setIsOpenRemoveCollabModal] = useState(false);
+  const [inviteCollabMessage, setInviteCollabMessage] = useState({
+    success: false,
+    message: ""
+  });
 
   const {
     register,
@@ -192,8 +198,14 @@ function PresentationTeacher() {
   };
 
   const addCollabHandler = (data) => {
-    console.log(data);
-    dispatch(inviteCollaborator(data.collabEmail));
+    dispatch(
+      inviteCollaborator(
+        presentationDetail?.id,
+        data.collabEmail,
+        setLoadingCollaborator,
+        setInviteCollabMessage
+      )
+    );
 
     reset();
   };
@@ -204,7 +216,6 @@ function PresentationTeacher() {
 
   useEffect(() => {
     if (presentationDetail.id) {
-      console.log(loadingCollaborator);
       dispatch(
         getCollaborators(presentationDetail?.id, setLoadingCollaborator)
       );
@@ -304,7 +315,10 @@ function PresentationTeacher() {
                     </Typography>
                     {collaborators?.map((collab) =>
                       collab.role === "Owner" ? (
-                        <div className="presentation__collaborator-item">
+                        <div
+                          className="presentation__collaborator-item"
+                          key={collab?.userId.id}
+                        >
                           <Avatar
                             /* eslint-disable react/jsx-props-no-spreading */
                             {...stringAvatar(
@@ -320,7 +334,10 @@ function PresentationTeacher() {
                           </div>
                         </div>
                       ) : (
-                        <div className="presentation__collaborator-item">
+                        <div
+                          className="presentation__collaborator-item"
+                          key={collab?.userId.id}
+                        >
                           <Avatar
                             /* eslint-disable react/jsx-props-no-spreading */
                             {...stringAvatar(
@@ -338,19 +355,50 @@ function PresentationTeacher() {
                               <p
                                 style={{ fontWeight: "bold" }}
                               >{`${collab.userId?.firstName} ${collab.userId?.lastName}`}</p>
-                              <Box
-                                sx={{
-                                  bgcolor: "#F43F3F",
-                                  borderRadius: "50%",
-                                  padding: "2px",
-                                  cursor: "pointer"
-                                }}
-                              >
-                                <MdClose color="white" size={12} />
-                              </Box>
+                              {presentationDetail?.presentationRole ===
+                                "Owner" && (
+                                <Box
+                                  sx={{
+                                    bgcolor: "#F43F3F",
+                                    borderRadius: "50%",
+                                    padding: "2px",
+                                    cursor: "pointer"
+                                  }}
+                                  onClick={() =>
+                                    setIsOpenRemoveCollabModal(true)
+                                  }
+                                >
+                                  <MdClose color="white" size={12} />
+                                </Box>
+                              )}
                             </div>
                             <p>{collab?.userId.email}</p>
                           </div>
+                          <Modal
+                            title="Remove collaborator?"
+                            actions={["Cancel", "OK"]}
+                            actionText="Remove"
+                            show={isOpenRemoveCollabModal}
+                            onCloseModal={() => {
+                              setIsOpenRemoveCollabModal(false);
+                            }}
+                            onActionClick={() => {
+                              dispatch(
+                                removeCollaborator(
+                                  presentationDetail.id,
+                                  collab.userId.id
+                                )
+                              );
+                              setIsOpenRemoveCollabModal(false);
+                            }}
+                          >
+                            Do you really want to remove{" "}
+                            <span style={{ fontWeight: "bold" }}>
+                              {collab.userId?.firstName}{" "}
+                              {collab.userId?.lastName}
+                            </span>
+                            ?
+                          </Modal>
                         </div>
                       )
                     )}
@@ -363,14 +411,19 @@ function PresentationTeacher() {
                         /* eslint-disable react/jsx-props-no-spreading */
                         {...register("collabEmail")}
                       />
+                      {loadingCollaborator}
                       <Button
                         className="button__add-collaborator"
                         color="primary"
                         variant="contained"
-                        disabled={!isDirty}
+                        disabled={!isDirty || loadingCollaborator}
                         onClick={handleSubmit(addCollabHandler)}
                       >
-                        Add
+                        {loadingCollaborator ? (
+                          <CircularProgress size={20} color="secondary" />
+                        ) : (
+                          "Add"
+                        )}
                       </Button>
                     </div>
                     {errors.collabEmail?.message && (
@@ -380,6 +433,19 @@ function PresentationTeacher() {
                         error
                       >
                         {errors.collabEmail?.message}
+                      </FormHelperText>
+                    )}
+                    {inviteCollabMessage.message && (
+                      <FormHelperText
+                        sx={{
+                          mb: 0,
+                          mt: 1,
+                          color: inviteCollabMessage.success ? "green" : "red",
+                          fontSize: 13
+                        }}
+                        id="component-success-text"
+                      >
+                        {inviteCollabMessage.message}
                       </FormHelperText>
                     )}
                   </div>
