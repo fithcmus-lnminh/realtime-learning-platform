@@ -1,7 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate
+} from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { notificationSocket } from "./utils/socket";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Verify from "./pages/Auth/Verify";
@@ -36,8 +44,22 @@ function App() {
   });
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const location = useLocation();
+
+  const [presentationInfo, setPresentationInfo] = useState({});
+  const [message, setMessage] = useState({
+    data: "",
+    open: false
+  });
+
+  const handleCloseAlert = () => {
+    setMessage({
+      data: "",
+      open: false
+    });
+  };
 
   useEffect(() => {
     if (
@@ -52,8 +74,25 @@ function App() {
         location.pathname.startsWith("/collaborator") ||
         location.pathname === "/google-login"
       )
-    )
+    ) {
       dispatch(getCurrentUser());
+
+      notificationSocket.on("new-notification", (notification) => {
+        const { message: messageTitle, data } = notification;
+
+        setMessage({
+          data: messageTitle,
+          open: true
+        });
+
+        if (data.type === "presentation") {
+          setPresentationInfo(data);
+        }
+      });
+    }
+    return () => {
+      notificationSocket.off("new-notification");
+    };
   }, []);
 
   return (
@@ -88,6 +127,49 @@ function App() {
         <Route path="/403" element={<PermissionDeniedPage />} />
         <Route path="/*" element={<Navigate to="/" />} />
       </Routes>
+
+      <Snackbar
+        open={message.open}
+        autoHideDuration={5000}
+        onClose={handleCloseAlert}
+      >
+        <Alert
+          variant="filled"
+          onClose={handleCloseAlert}
+          severity="info"
+          sx={{ width: "100%", display: "flex", alignItems: "center" }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px"
+            }}
+          >
+            <Typography variant="body2">
+              {message.data}. Do you want to join?
+            </Typography>
+            <Button
+              size="small"
+              sx={{
+                width: "100px",
+                backgroundColor: "#fff",
+                "&:hover": {
+                  backgroundColor: "#fff"
+                }
+              }}
+              onClick={() => {
+                if (presentationInfo.presentation_id) {
+                  handleCloseAlert();
+                  navigate(`/play/${presentationInfo.access_code}`);
+                }
+              }}
+            >
+              Join now
+            </Button>
+          </Box>
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }
