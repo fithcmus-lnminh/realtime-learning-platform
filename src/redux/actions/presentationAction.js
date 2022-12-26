@@ -485,11 +485,27 @@ export const studentJoinPresentation =
           }
         } else {
           if (res.code === ApiResposeCodeNumber.Success) {
-            if (setLoading) {
-              setLoading(false);
-            }
-            if (setIsAuth) {
-              setIsAuth(false);
+            if (!res.data?.groupId) {
+              if (setLoading) {
+                setLoading(false);
+              }
+              if (setIsAuth) {
+                setIsAuth(false);
+              }
+            } else {
+              if (setLoading) {
+                setLoading(false);
+              }
+              if (setIsAuth) {
+                setIsAuth(true);
+              }
+              if (setMessage) {
+                setMessage({
+                  success: false,
+                  data: "Only logged-in account can participate in a private presentation",
+                  open: true
+                });
+              }
             }
           } else {
             if (setLoading) {
