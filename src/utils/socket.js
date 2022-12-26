@@ -20,3 +20,11 @@ export const notificationSocket = io(
     }
   }
 );
+
+/* eslint-disable import/prefer-default-export */
+export const groupSocket = io(`${process.env.REACT_APP_SERVER_URL}/group`, {
+  withCredentials: true,
+  extraHeaders: {
+    token: accessToken
+  }
+});

@@ -1,8 +1,10 @@
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { isEqual } from "lodash";
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { BiCopy, BiEditAlt } from "react-icons/bi";
+import { groupSocket } from "../../../../utils/socket";
 import Alert from "../../../../components/Alert";
 import GroupUpdate from "../../GroupUpdate/GroupUpdate";
 import { getGroupUsers } from "../../../../redux/actions/groupAction";
@@ -36,6 +38,9 @@ function GroupInfo(prop) {
     open: false
   });
 
+  const [messagePresentation, setMessagePresentation] = useState("");
+  const [presentationInfo, setPresentationInfo] = useState({});
+
   const handleCloseAlert = () => {
     setMessage({
       ...message,
@@ -59,7 +64,24 @@ function GroupInfo(prop) {
   useEffect(() => {
     setLoading(true);
     dispatch(getGroupUsers(groupId, setLoading));
+
+    groupSocket.emit("join-group", { group_id: groupId }, (data) => {
+      console.log(data);
+    });
   }, [groupId]);
+
+  useEffect(() => {
+    groupSocket.on("start-presentation", (notification) => {
+      const { message: messageTitle, data } = notification;
+
+      setMessagePresentation(messageTitle);
+      setPresentationInfo(data);
+    });
+
+    return () => {
+      groupSocket.off("start-presentation");
+    };
+  }, []);
 
   return (
     <Box
@@ -96,6 +118,21 @@ function GroupInfo(prop) {
           !Array.isArray(groupDetail) &&
           Object.keys(groupDetail).length > 0 ? (
             <div>
+              {messagePresentation && (
+                <Typography
+                  variant="body2"
+                  gutterBottom
+                  sx={{ marginBottom: "12px" }}
+                >
+                  {messagePresentation}.{" "}
+                  <NavLink to={`/play/${presentationInfo.access_code}`}>
+                    <Typography variant="span" sx={{ fontWeight: 600 }}>
+                      Join now
+                    </Typography>
+                  </NavLink>{" "}
+                  !!!
+                </Typography>
+              )}
               <Typography variant="h4" gutterBottom>
                 {groupDetail?.name || ""}
               </Typography>
