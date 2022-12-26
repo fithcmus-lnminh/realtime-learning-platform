@@ -15,6 +15,10 @@
     min-height: 370px;
     box-shadow: 0 2px 25px rgba(0, 0, 0, 0.5);
     min-width: 700px;
+    min-height: 50vh;
+    max-height: 80vh;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   &__title {
