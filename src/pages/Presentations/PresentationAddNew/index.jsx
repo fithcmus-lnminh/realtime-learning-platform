@@ -38,13 +38,10 @@ function PresentationAddNew(prop) {
     handleSubmit,
     formState: { errors },
     control,
-    reset,
-    watch,
-    setValue
+    reset
   } = useForm({
     resolver: yupResolver(schema)
   });
-  const [errorGroup, setErrorGroup] = useState("");
   const [message, setMessage] = useState({
     success: true,
     data: "",
@@ -56,22 +53,17 @@ function PresentationAddNew(prop) {
     reset();
   };
 
-  const typePresentation = watch("type");
-
   const onSubmit = async (data) => {
     let newData = "";
     if (data.type === "public") {
       newData = {
-        title: data.title
+        title: data.title,
+        isPublic: true
       };
     } else if (data.type === "private") {
-      if (data.groupId === "") {
-        setErrorGroup("Please select group of presentation");
-        return;
-      }
       newData = {
         title: data.title,
-        groupId: data.groupId
+        isPublic: false
       };
     }
 
@@ -153,10 +145,6 @@ function PresentationAddNew(prop) {
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...field}
                       onChange={(e) => {
-                        if (e.target.value === "public") {
-                          setValue("groupId", "");
-                          setErrorGroup("");
-                        }
                         field.onChange(e);
                       }}
                     >
@@ -176,58 +164,6 @@ function PresentationAddNew(prop) {
                 );
               }}
             />
-            {typePresentation === "private" && (
-              <Controller
-                name="groupId"
-                defaultValue=""
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <Grid item xs={12}>
-                      <p className="required form__label">Group</p>
-                      <Select
-                        id="groupId"
-                        sx={{ width: 500, mb: 1, mt: 1 }}
-                        fullWidth
-                        error={!!errorGroup}
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...field}
-                        onChange={(e) => {
-                          if (e.target.value === "") {
-                            setErrorGroup(
-                              "Please select group of presentation"
-                            );
-                          } else {
-                            setErrorGroup("");
-                          }
-                          field.onChange(e);
-                        }}
-                      >
-                        {groups.length > 0
-                          ? groups.map((group) => (
-                              <MenuItem
-                                value={group?.groupId.id}
-                                key={group?.groupId?.id}
-                              >
-                                {group?.groupId?.name}
-                              </MenuItem>
-                            ))
-                          : null}
-                      </Select>
-                      {errorGroup && (
-                        <FormHelperText
-                          sx={{ mb: 2, mt: 0 }}
-                          id="component-error-text"
-                          error
-                        >
-                          {errorGroup}
-                        </FormHelperText>
-                      )}
-                    </Grid>
-                  );
-                }}
-              />
-            )}
           </Grid>
         </DialogContent>
       </Modal>
