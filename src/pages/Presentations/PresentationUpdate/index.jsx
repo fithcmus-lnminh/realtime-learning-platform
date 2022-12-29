@@ -17,7 +17,6 @@ import { updatePresentation } from "../../../redux/actions/presentationAction";
 import { getAllGroups } from "../../../redux/actions/groupAction";
 import Alert from "../../../components/Alert";
 import Modal from "../../../components/Modal";
-import { isObjectData } from "../../../utils/generator";
 
 const schema = yup
   .object({
@@ -46,12 +45,10 @@ function PresentationUpdate(prop) {
     formState: { errors },
     control,
     reset,
-    watch,
     setValue
   } = useForm({
     resolver: yupResolver(schema)
   });
-  const [errorGroup, setErrorGroup] = useState("");
   const [message, setMessage] = useState({
     success: true,
     data: "",
@@ -63,22 +60,17 @@ function PresentationUpdate(prop) {
     reset();
   };
 
-  const typePresentation = watch("type");
-
   const onSubmit = async (data) => {
     let newData = "";
     if (data.type === "public") {
       newData = {
-        title: data.title
+        title: data.title,
+        isPublic: true
       };
     } else if (data.type === "private") {
-      if (data.groupId === "") {
-        setErrorGroup("Please select group of presentation");
-        return;
-      }
       newData = {
         title: data.title,
-        groupId: data.groupId
+        isPublic: false
       };
     }
 
@@ -104,14 +96,10 @@ function PresentationUpdate(prop) {
 
   useEffect(() => {
     setValue("title", presentationDetail?.title);
-    if (
-      isObjectData(presentationDetail) &&
-      isObjectData(presentationDetail?.group)
-    ) {
-      setValue("type", "private");
-      setValue("groupId", presentationDetail?.group?.id);
-    } else {
+    if (presentationDetail?.isPublic) {
       setValue("type", "public");
+    } else {
+      setValue("type", "private");
     }
   }, [open]);
 
@@ -179,10 +167,6 @@ function PresentationUpdate(prop) {
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...field}
                       onChange={(e) => {
-                        if (e.target.value === "public") {
-                          setValue("groupId", "");
-                          setErrorGroup("");
-                        }
                         field.onChange(e);
                       }}
                     >
@@ -202,58 +186,6 @@ function PresentationUpdate(prop) {
                 );
               }}
             />
-            {typePresentation === "private" && (
-              <Controller
-                name="groupId"
-                defaultValue=""
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <Grid item xs={12}>
-                      <p className="required form__label">Group</p>
-                      <Select
-                        id="groupId"
-                        sx={{ width: 500, mb: 1, mt: 1 }}
-                        fullWidth
-                        error={!!errorGroup}
-                        /* eslint-disable react/jsx-props-no-spreading */
-                        {...field}
-                        onChange={(e) => {
-                          if (e.target.value === "") {
-                            setErrorGroup(
-                              "Please select group of presentation"
-                            );
-                          } else {
-                            setErrorGroup("");
-                          }
-                          field.onChange(e);
-                        }}
-                      >
-                        {groups.length > 0
-                          ? groups.map((group) => (
-                              <MenuItem
-                                value={group?.groupId.id}
-                                key={group?.groupId?.id}
-                              >
-                                {group?.groupId?.name}
-                              </MenuItem>
-                            ))
-                          : null}
-                      </Select>
-                      {errorGroup && (
-                        <FormHelperText
-                          sx={{ mb: 2, mt: 0 }}
-                          id="component-error-text"
-                          error
-                        >
-                          {errorGroup}
-                        </FormHelperText>
-                      )}
-                    </Grid>
-                  );
-                }}
-              />
-            )}
           </Grid>
         </DialogContent>
       </Modal>
