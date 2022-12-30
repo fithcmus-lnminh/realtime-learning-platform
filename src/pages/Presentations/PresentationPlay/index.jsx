@@ -144,11 +144,19 @@ function PresentationPlay() {
       >
         <Alert message={message} onClose={handleCloseAlert} />
         {!isEnding && (
-          <h2 className="presentation__play__title">
-            {slide?.slide_type === "MultipleChoice" && slide?.content?.question}
-            {slide?.slide_type === "Heading" && slide?.content?.heading}
-            {slide?.slide_type === "Paragraph" && slide?.content?.heading}
-          </h2>
+          <>
+            <h2 className="presentation__play__title">
+              {slide?.slide_type === "MultipleChoice" &&
+                slide?.content?.question}
+            </h2>
+            <h2
+              className="presentation__play__title"
+              style={{ textAlign: "center" }}
+            >
+              {slide?.slide_type === "Heading" && slide?.content?.heading}
+              {slide?.slide_type === "Paragraph" && slide?.content?.heading}
+            </h2>
+          </>
         )}
         {loading ? (
           <div
@@ -297,7 +305,9 @@ function PresentationPlay() {
                       <div
                         className="presentation__play-content-heading"
                         style={{
-                          width: "500px"
+                          textAlign: "center",
+                          minWidth: "500px",
+                          maxWidth: "700px"
                         }}
                       >
                         <Typography variant="subtitle1" gutterBottom>
@@ -310,7 +320,9 @@ function PresentationPlay() {
                       <div
                         className="presentation__play-content-paragraph"
                         style={{
-                          width: "500px"
+                          textAlign: "center",
+                          minWidth: "500px",
+                          maxWidth: "700px"
                         }}
                       >
                         <Typography variant="" gutterBottom>
