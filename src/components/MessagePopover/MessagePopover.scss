@@ -1,0 +1,41 @@
+.MuiPopover-paper {
+  margin-top: 4px;
+  border: 1px solid #2a518f;
+  box-shadow: 0px 5px 5px -3px rgba(66, 130, 202, 0.2),
+    0px 8px 10px 1px rgba(67, 125, 201, 0.14),
+    0px 3px 14px 2px rgba(57, 100, 194, 0.12) !important;
+  color: #2a518f !important;
+}
+
+.chat {
+  &__header {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  &__content {
+    max-height: 400px;
+    overflow-y: scroll;
+  }
+  &__name {
+    font-weight: bold;
+  }
+  &__message {
+    &-container {
+      margin: 2px 0;
+    }
+  }
+  &__send {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  &__textbox {
+    height: 40px;
+    width: 100%;
+    border-radius: 20px !important;
+    border: 1px solid #2a518f;
+  }
+}
