@@ -351,7 +351,7 @@ function Presentations() {
                   <BiCommentAdd /> New Presentation
                 </Button>
               </Box>
-              {presentations.length > 0 ? (
+              {presentations?.length > 0 ? (
                 <Box>
                   <Table
                     dataSource={presentations}
@@ -425,10 +425,10 @@ function Presentations() {
               </Typography>
             </div>
             <Box my={2}>
-              {presentationGroups.length <= 0 ? (
+              {presentationGroups?.length <= 0 ? (
                 <span>This presentation is not shared for any groups.</span>
               ) : (
-                presentationGroups.map((p) => (
+                presentationGroups?.map((p) => (
                   <Box my={1}>
                     <Chip
                       label={p.groupId.name}
