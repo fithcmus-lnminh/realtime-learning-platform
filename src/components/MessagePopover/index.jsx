@@ -51,6 +51,9 @@ function MassagePopover(prop) {
         }
       });
       setMessage("");
+      const chatContentElement = document.querySelector(".chat__content");
+      if (chatContentElement?.scrollTop)
+        chatContentElement.scrollTop = chatContentElement.scrollHeight;
     }
   };
 
