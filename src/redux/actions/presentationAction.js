@@ -1,6 +1,7 @@
 import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
+  GET_PRESENTATION_GROUPS,
   GET_PRESENTATION_SUCCESS,
   SET_TOTAL_STUDENTS
 } from "../../constants/presentationConstants";
@@ -861,3 +862,48 @@ export const deleteParagraphSlide =
       });
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const getPresentationGroups = (id) => async (dispatch) => {
+  try {
+    console.log(id);
+    const res = await $axios.get(`${API_URL}/api/presentation/${id}/group`);
+
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch({ type: GET_PRESENTATION_GROUPS, payload: res.data });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const createPresentationGroups = (id, groupId) => async (dispatch) => {
+  try {
+    const res = await $axios.post(
+      `${API_URL}/api/presentation/${id}/group`,
+      toSnake({ groupId })
+    );
+
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch(getPresentationGroups(id));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const deletePresentationGroups = (id, groupId) => async (dispatch) => {
+  try {
+    const res = await $axios.delete(
+      `${API_URL}/api/presentation/${id}/group/${groupId}`
+    );
+
+    if (res.code === ApiResposeCodeNumber.Success) {
+      dispatch(getPresentationGroups(id));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
