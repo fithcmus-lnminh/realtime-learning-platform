@@ -6,7 +6,7 @@ import {
 } from "../../constants/presentationConstants";
 import $axios from "../../utils/axios";
 import { isAuthenticated } from "../../utils/isAuthenticated";
-import { toSnake } from "../../utils/normalizer";
+import { toQueryString, toSnake } from "../../utils/normalizer";
 import { socket } from "../../utils/socket";
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
@@ -389,7 +389,7 @@ export const studentJoinPresentation =
                   });
                 }
                 if (navigate) {
-                  navigate(`/play/${data.accessCode}`);
+                  window.location.href = `/play/${data.accessCode}`;
                 }
               } else {
                 if (setLoading) {
@@ -443,7 +443,7 @@ export const studentJoinPresentation =
                       });
                     }
                     if (navigate) {
-                      navigate(`/play/${data.accessCode}`);
+                      window.location.href = `/play/${data.accessCode}`;
                     }
                   } else {
                     if (setLoading) {
@@ -861,3 +861,14 @@ export const deleteParagraphSlide =
       });
     }
   };
+
+/* eslint-disable import/prefer-default-export */
+export const getMessages = (queryObj) => async () => {
+  const query = `?${toQueryString(toSnake(queryObj))}`;
+  const res = await $axios.get(`${API_URL}/api/message${query}`);
+
+  if (res.code === ApiResposeCodeNumber.Success) {
+    return res.data;
+  }
+  return [];
+};

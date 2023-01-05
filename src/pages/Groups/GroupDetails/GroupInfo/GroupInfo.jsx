@@ -1,7 +1,6 @@
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { isEqual } from "lodash";
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { BiCopy, BiEditAlt } from "react-icons/bi";
 import { groupSocket } from "../../../../utils/socket";
@@ -125,11 +124,11 @@ function GroupInfo(prop) {
                   sx={{ marginBottom: "12px" }}
                 >
                   {messagePresentation}.{" "}
-                  <NavLink to={`/play/${presentationInfo.access_code}`}>
+                  <a href={`/play/${presentationInfo.access_code}`}>
                     <Typography variant="span" sx={{ fontWeight: 600 }}>
                       Join now
                     </Typography>
-                  </NavLink>{" "}
+                  </a>{" "}
                   !!!
                 </Typography>
               )}

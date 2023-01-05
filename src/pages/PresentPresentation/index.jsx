@@ -117,6 +117,7 @@ function PresentPresentation() {
                   id={idMessagePopover}
                   open={isOpenMessagePopover}
                   anchorEl={messageAnchorEl}
+                  presentationId={presentationDetail?.id}
                   onClose={() => setMessageAnchorEl(null)}
                 />
               </div>

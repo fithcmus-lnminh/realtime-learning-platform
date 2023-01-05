@@ -7,6 +7,10 @@
   color: #2a518f !important;
 }
 
+.MuiTooltip-popper {
+  margin-top: -12px !important;
+}
+
 .chat {
   &__header {
     margin-bottom: 16px;
@@ -15,8 +19,9 @@
     gap: 12px;
   }
   &__content {
-    max-height: 400px;
+    max-height: 350px;
     overflow-y: scroll;
+    padding-right: 12px;
   }
   &__name {
     font-weight: bold;
@@ -37,5 +42,10 @@
     width: 100%;
     border-radius: 20px !important;
     border: 1px solid #2a518f;
+  }
+  &__time {
+    color: rgb(107, 107, 107);
+    font-size: 10px;
+    margin-left: 8px;
   }
 }

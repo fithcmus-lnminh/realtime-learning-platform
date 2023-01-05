@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
-import {
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate
-} from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { notificationSocket } from "./utils/socket";
 import Login from "./pages/Auth/Login";
@@ -44,7 +38,6 @@ function App() {
   });
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const location = useLocation();
 
@@ -161,7 +154,7 @@ function App() {
               onClick={() => {
                 if (presentationInfo.presentation_id) {
                   handleCloseAlert();
-                  navigate(`/play/${presentationInfo.access_code}`);
+                  window.location.href = `/play/${presentationInfo.access_code}`;
                 }
               }}
             >
