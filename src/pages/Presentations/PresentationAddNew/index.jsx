@@ -138,10 +138,11 @@ function PresentationAddNew(prop) {
                   <Grid item xs={12}>
                     <p className="required form__label">Type</p>
                     <Select
-                      id="type"
                       sx={{ width: 500, mb: 1, mt: 1 }}
+                      id="type"
                       fullWidth
                       error={!!errors.type?.message}
+                      placeholder="Choose presentation type"
                       /* eslint-disable react/jsx-props-no-spreading */
                       {...field}
                       onChange={(e) => {

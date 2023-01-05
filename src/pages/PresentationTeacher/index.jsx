@@ -11,6 +11,7 @@ import {
 import { AiOutlinePlus } from "react-icons/ai";
 import { SlChart } from "react-icons/sl";
 import { MdClose } from "react-icons/md";
+import { GrLineChart } from "react-icons/gr";
 import { BarChart, XAxis, YAxis, Bar, LabelList } from "recharts";
 import "./PresentationTeacher.scss";
 import {
@@ -59,7 +60,7 @@ import {
 
 const style = {
   position: "absolute",
-  top: "20%",
+  top: "30%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 600,
@@ -92,6 +93,7 @@ function PresentationTeacher() {
     success: false,
     message: ""
   });
+  const [isShowResults, setIsShowResults] = useState(false);
 
   const {
     register,
@@ -227,6 +229,18 @@ function PresentationTeacher() {
       setCurrentSlide(
         presentationDetail.slides.filter((slide) => slide.active === true)[0]
       );
+      setIsShowResults(false);
+      let isShow = false;
+      presentationDetail.slides.forEach((slide) => {
+        slide.content.options?.forEach((opt) => {
+          if (opt.upvotes.length > 0) {
+            isShow = true;
+            return true;
+          }
+          return false;
+        });
+      });
+      if (isShow) setIsShowResults(true);
     }
   }, [presentationDetail.slides]);
 
@@ -607,70 +621,89 @@ function PresentationTeacher() {
                 </div>
               ))}
             </div>
-            <div className="presentation__content">
-              <p className="presentation__content-header">
-                Go to{" "}
-                <span style={{ fontStyle: "italic" }}>
-                  {process.env.REACT_APP_CLIENT_URL}/play
-                </span>{" "}
-                and enter code{" "}
-                <span style={{ fontWeight: "bold" }}>
-                  {presentationDetail?.accessCode}
-                </span>
-              </p>
-              {currentSlide?.slideType === "MultipleChoice" && (
-                <div className="presentation__content-main">
-                  <h1 style={{ marginTop: 16, wordWrap: "anywhere" }}>
-                    {currentSlide?.content.question || "Multiple Choice"}
-                  </h1>
-                  {currentSlide?.content?.options.length > 0 && (
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                      <BarChart
-                        width={750}
-                        height={350}
-                        data={currentSlide?.content.options}
-                        barSize={90}
-                        margin={{ top: 20 }}
+            <div className="presentation__content-container">
+              {isShowResults && (
+                <div className="presentation__result">
+                  <div className="presentation__result-left">
+                    <GrLineChart className="presentation__result-icon" />
+                    <span>This presentation has results</span>
+                  </div>
+                  <button type="button" className="presentation__result-button">
+                    View Results
+                  </button>
+                </div>
+              )}
+              <div
+                className="presentation__content"
+                style={{ marginTop: isShowResults ? 0 : "56px" }}
+              >
+                <p className="presentation__content-header">
+                  Go to{" "}
+                  <span style={{ fontStyle: "italic" }}>
+                    {process.env.REACT_APP_CLIENT_URL}/play
+                  </span>{" "}
+                  and enter code{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    {presentationDetail?.accessCode}
+                  </span>
+                </p>
+                {currentSlide?.slideType === "MultipleChoice" && (
+                  <div className="presentation__content-main">
+                    <h1 style={{ marginTop: 16, wordWrap: "anywhere" }}>
+                      {currentSlide?.content.question || "Multiple Choice"}
+                    </h1>
+                    {currentSlide?.content?.options.length > 0 && (
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
                       >
-                        <XAxis dataKey="content" />
-                        <YAxis tick={false} axisLine={false} />
-                        <Bar dataKey="numUpvote" fill="#2a518f">
-                          <LabelList dataKey="numUpvote" position="top" />
-                        </Bar>
-                      </BarChart>
-                    </div>
-                  )}
+                        <BarChart
+                          width={750}
+                          height={350}
+                          data={currentSlide?.content.options}
+                          barSize={90}
+                          margin={{ top: 20 }}
+                        >
+                          <XAxis dataKey="content" />
+                          <YAxis tick={false} axisLine={false} />
+                          <Bar dataKey="numUpvote" fill="#2a518f">
+                            <LabelList dataKey="numUpvote" position="top" />
+                          </Bar>
+                        </BarChart>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {currentSlide?.slideType === "Heading" && (
+                  <div className="presentation__content-main-heading">
+                    <h1>
+                      {currentSlide?.content.heading || "Slide with Heading"}
+                    </h1>
+                    <p>{currentSlide?.content.subheading || "Subheading"}</p>
+                  </div>
+                )}
+                {currentSlide?.slideType === "Paragraph" && (
+                  <div className="presentation__content-main-heading">
+                    <h1>
+                      {currentSlide?.content.heading || "Slide with Paragraph"}
+                    </h1>
+                    <p>{currentSlide?.content.paragraph || "Paragraph"}</p>
+                  </div>
+                )}
+                <div className="presentation__badge">
+                  <Badge
+                    color="primary"
+                    badgeContent={totalStudent === 0 ? "0" : totalStudent}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "left"
+                    }}
+                  >
+                    <BsPersonCircle size={30} />
+                  </Badge>
                 </div>
-              )}
-              {currentSlide?.slideType === "Heading" && (
-                <div className="presentation__content-main-heading">
-                  <h1>
-                    {currentSlide?.content.heading || "Slide with Heading"}
-                  </h1>
-                  <p>{currentSlide?.content.subheading || "Subheading"}</p>
-                </div>
-              )}
-              {currentSlide?.slideType === "Paragraph" && (
-                <div className="presentation__content-main-heading">
-                  <h1>
-                    {currentSlide?.content.heading || "Slide with Paragraph"}
-                  </h1>
-                  <p>{currentSlide?.content.paragraph || "Paragraph"}</p>
-                </div>
-              )}
-              <div className="presentation__badge">
-                <Badge
-                  color="primary"
-                  badgeContent={totalStudent === 0 ? "0" : totalStudent}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left"
-                  }}
-                >
-                  <BsPersonCircle size={30} />
-                </Badge>
               </div>
             </div>
+
             <div className="presentation__customize">
               {currentSlide?.slideType === "MultipleChoice" && (
                 <div>
