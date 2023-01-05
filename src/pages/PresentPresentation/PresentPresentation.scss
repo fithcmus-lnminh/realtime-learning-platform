@@ -16,6 +16,30 @@
     top: 32px;
     left: 32px;
   }
+  &__message {
+    position: absolute;
+    top: 32px;
+    right: 84px;
+    &-button {
+      padding: 12px;
+      border-radius: 50%;
+      background-color: #3478e6;
+      color: #fff;
+      border: none;
+    }
+  }
+  &__question {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    &-button {
+      padding: 12px;
+      border-radius: 50%;
+      background-color: #fff;
+      color: #3478e6;
+      border: solid 1px #3478e6;
+    }
+  }
   &__controller {
     position: absolute;
     bottom: 32px;

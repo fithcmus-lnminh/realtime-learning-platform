@@ -11,3 +11,11 @@ export const toSnake = (data) => {
   }
   return SnakecaseKeys(data, { deep: true });
 };
+
+export const toQueryString = (obj) => {
+  const params = new URLSearchParams();
+  Object.keys(obj).map((key) =>
+    params.append(key.toString(), String(obj[key]))
+  );
+  return params.toString();
+};

@@ -15,6 +15,7 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import { useParams } from "react-router-dom";
+import { BsFillChatDotsFill, BsQuestionLg } from "react-icons/bs";
 import {
   studentJoinPresentation,
   studentVoteOption
@@ -24,6 +25,7 @@ import Alert from "../../../components/Alert";
 import { socket } from "../../../utils/socket";
 import { ApiResposeCodeNumber } from "../../../constants/api";
 import { isAuthenticated } from "../../../utils/isAuthenticated";
+import MessagePopover from "../../../components/MessagePopover";
 
 const schema = yup
   .object({
@@ -47,6 +49,9 @@ function PresentationPlay() {
     data: "",
     open: false
   });
+  const [messageAnchorEl, setMessageAnchorEl] = useState(null);
+  const [presentationId, setPresentationId] = useState(null);
+
   const {
     handleSubmit,
     formState: { errors },
@@ -73,11 +78,17 @@ function PresentationPlay() {
     document.title = "Voting - RLP";
 
     socket.on("get-slide", (data) => {
-      const { slide: slideInfo, current_slide, total_slides } = data;
+      const {
+        slide: slideInfo,
+        current_slide,
+        total_slides,
+        presentation_id
+      } = data;
       setSlide(slideInfo);
       setCurrentSlide(current_slide);
       setTotalSlide(total_slides);
       setIsEnding(false);
+      setPresentationId(presentation_id);
 
       if (slideInfo?.slide_type === "MultipleChoice") {
         setOptions(slideInfo?.content?.options);
@@ -135,6 +146,9 @@ function PresentationPlay() {
       }
     }
   }, [params?.code]);
+
+  const isOpenMessagePopover = Boolean(messageAnchorEl);
+  const idMessagePopover = isOpenMessagePopover ? "simple-popover" : undefined;
 
   return (
     <div className="presentation__play__container">
@@ -359,6 +373,34 @@ function PresentationPlay() {
                     <p className="presentation__play__progress">
                       {currentSlide}/{totalSlides}
                     </p>
+
+                    <div>
+                      <div className="present__message">
+                        <button
+                          aria-describedby={idMessagePopover}
+                          type="button"
+                          className="present__message-button"
+                          onClick={(e) => setMessageAnchorEl(e.currentTarget)}
+                        >
+                          <BsFillChatDotsFill />
+                        </button>
+                        <MessagePopover
+                          id={idMessagePopover}
+                          open={isOpenMessagePopover}
+                          anchorEl={messageAnchorEl}
+                          presentationId={presentationId}
+                          onClose={() => setMessageAnchorEl(null)}
+                        />
+                      </div>
+                      <div className="present__question">
+                        <button
+                          type="button"
+                          className="present__question-button"
+                        >
+                          <BsQuestionLg />
+                        </button>
+                      </div>
+                    </div>
                   </>
                 ) : (
                   <div

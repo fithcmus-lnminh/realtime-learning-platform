@@ -7,10 +7,15 @@ import {
   MdOutlineArrowForwardIos,
   MdClose
 } from "react-icons/md";
-import { BsPersonCircle } from "react-icons/bs";
+import {
+  BsFillChatDotsFill,
+  BsPersonCircle,
+  BsQuestionLg
+} from "react-icons/bs";
 import { BiExpand, BiCollapse } from "react-icons/bi";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import MessagePopover from "../../components/MessagePopover";
 // import { getPresentationById } from "../../redux/actions/presentationAction";
 import "./PresentPresentation.scss";
 import { socket } from "../../utils/socket";
@@ -25,6 +30,8 @@ function PresentPresentation() {
 
   const [currentSlide, setCurrentSlide] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  const [messageAnchorEl, setMessageAnchorEl] = useState(null);
 
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
@@ -68,6 +75,9 @@ function PresentPresentation() {
     });
   }, [currentSlide]);
 
+  const isOpenMessagePopover = Boolean(messageAnchorEl);
+  const idMessagePopover = isOpenMessagePopover ? "simple-popover" : undefined;
+
   return (
     <div>
       {loading ? (
@@ -92,6 +102,28 @@ function PresentPresentation() {
                   onClick={handleExitPresent}
                 >
                   <MdClose />
+                </button>
+              </div>
+              <div className="present__message">
+                <button
+                  aria-describedby={idMessagePopover}
+                  type="button"
+                  className="present__message-button"
+                  onClick={(e) => setMessageAnchorEl(e.currentTarget)}
+                >
+                  <BsFillChatDotsFill />
+                </button>
+                <MessagePopover
+                  id={idMessagePopover}
+                  open={isOpenMessagePopover}
+                  anchorEl={messageAnchorEl}
+                  presentationId={presentationDetail?.id}
+                  onClose={() => setMessageAnchorEl(null)}
+                />
+              </div>
+              <div className="present__question">
+                <button type="button" className="present__question-button">
+                  <BsQuestionLg />
                 </button>
               </div>
               <div className="present__controller">
