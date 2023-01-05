@@ -77,6 +77,11 @@ function GroupInfo(prop) {
       setPresentationInfo(data);
     });
 
+    groupSocket.on("end-presentation", () => {
+      setMessagePresentation("");
+      setPresentationInfo({});
+    });
+
     return () => {
       groupSocket.off("start-presentation");
     };
@@ -124,7 +129,7 @@ function GroupInfo(prop) {
                   sx={{ marginBottom: "12px" }}
                 >
                   {messagePresentation}.{" "}
-                  <a href={`/play/${presentationInfo.access_code}`}>
+                  <a href={`/play/${presentationInfo?.access_code}`}>
                     <Typography variant="span" sx={{ fontWeight: 600 }}>
                       Join now
                     </Typography>
