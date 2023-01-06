@@ -45,10 +45,6 @@ function MassagePopover(prop) {
 
   useEffect(() => {
     getPresentationMessages();
-
-    const chatContentElement = document.querySelector(".chat__content");
-    console.log(chatContentElement);
-    chatContentElement.scrollTop = chatContentElement.scrollHeight;
   }, []);
 
   return (

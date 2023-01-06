@@ -1,4 +1,3 @@
-import { ApiResposeCodeNumber } from "../../constants/api";
 import {
   GET_ALL_PRESENTATIONS_SUCCESS,
   GET_PRESENTATION_GROUPS,
@@ -9,6 +8,7 @@ import $axios from "../../utils/axios";
 import { isAuthenticated } from "../../utils/isAuthenticated";
 import { toQueryString, toSnake } from "../../utils/normalizer";
 import { socket } from "../../utils/socket";
+import { ApiResposeCodeNumber } from "../../constants/api";
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -872,7 +872,9 @@ export const getMessages = (queryObj) => async () => {
     return res.data;
   }
   return [];
+};
 
+/* eslint-disable import/prefer-default-export */
 export const getPresentationGroups = (id) => async (dispatch) => {
   try {
     console.log(id);
