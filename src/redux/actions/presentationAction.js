@@ -872,7 +872,9 @@ export const getMessages = (queryObj) => async () => {
     return res.data;
   }
   return [];
+};
 
+/* eslint-disable import/prefer-default-export */
 export const getPresentationGroups = (id) => async (dispatch) => {
   try {
     console.log(id);
