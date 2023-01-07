@@ -71,6 +71,7 @@ function App() {
       dispatch(getCurrentUser());
 
       notificationSocket.on("new-notification", (notification) => {
+        console.log("notification:", notification);
         const { message: messageTitle, data } = notification;
 
         setMessage({

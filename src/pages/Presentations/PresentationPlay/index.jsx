@@ -26,6 +26,7 @@ import { socket } from "../../../utils/socket";
 import { ApiResposeCodeNumber } from "../../../constants/api";
 import { isAuthenticated } from "../../../utils/isAuthenticated";
 import MessagePopover from "../../../components/MessagePopover";
+import QuestionPopover from "../../../components/QuestionPopover";
 
 const schema = yup
   .object({
@@ -50,6 +51,7 @@ function PresentationPlay() {
     open: false
   });
   const [messageAnchorEl, setMessageAnchorEl] = useState(null);
+  const [questionAnchorEl, setQuestionAnchorEl] = useState(null);
   const [presentationId, setPresentationId] = useState(null);
 
   const {
@@ -149,6 +151,18 @@ function PresentationPlay() {
 
   const isOpenMessagePopover = Boolean(messageAnchorEl);
   const idMessagePopover = isOpenMessagePopover ? "simple-popover" : undefined;
+  const isOpenQuestionPopover = Boolean(questionAnchorEl);
+  const idQuestionPopover = isOpenQuestionPopover
+    ? "simple-popover"
+    : undefined;
+
+  console.log("** isOpenMessagePopover:", isOpenMessagePopover);
+  console.log("idMessagePopover:", idMessagePopover);
+  console.log("messageAnchorEl:", messageAnchorEl);
+
+  console.log("** isOpenQuestionPopover:", isOpenQuestionPopover);
+  console.log("idQuestionPopover:", idQuestionPopover);
+  console.log("questionAnchorEl:", questionAnchorEl);
 
   return (
     <div className="presentation__play__container">
@@ -394,11 +408,20 @@ function PresentationPlay() {
                       </div>
                       <div className="present__question">
                         <button
+                          aria-describedby={idQuestionPopover}
                           type="button"
                           className="present__question-button"
+                          onClick={(e) => setQuestionAnchorEl(e.currentTarget)}
                         >
                           <BsQuestionLg />
                         </button>
+                        <QuestionPopover
+                          id={idQuestionPopover}
+                          open={isOpenQuestionPopover}
+                          anchorEl={questionAnchorEl}
+                          presentationId={presentationId}
+                          onClose={() => setQuestionAnchorEl(null)}
+                        />
                       </div>
                     </div>
                   </>
