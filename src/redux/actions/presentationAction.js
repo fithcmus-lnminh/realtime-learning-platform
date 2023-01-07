@@ -918,3 +918,14 @@ export const deletePresentationGroups = (id, groupId) => async (dispatch) => {
     console.log(error);
   }
 };
+
+/* eslint-disable import/prefer-default-export */
+export const getQuestions = (queryObj) => async () => {
+  const query = `?${toQueryString(toSnake(queryObj))}`;
+  const res = await $axios.get(`${API_URL}/api/question${query}`);
+
+  if (res.code === ApiResposeCodeNumber.Success) {
+    return res.data;
+  }
+  return [];
+};

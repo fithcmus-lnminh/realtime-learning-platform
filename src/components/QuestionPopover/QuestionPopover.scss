@@ -29,6 +29,31 @@
     font-weight: bold;
   }
 
+  &__action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    &-comment {
+      color: #2a518f;
+      cursor: pointer;
+    }
+
+    &-vote {
+      color: #2a518f;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+
+      &>span {
+        font-size: 16px;
+        line-height: 1;
+      }
+    }
+  }
+
   &__message {
     &-container {
       margin: 2px 0;

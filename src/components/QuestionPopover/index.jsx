@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Popover, Box, OutlinedInput, Tooltip } from "@mui/material";
 import "./QuestionPopover.scss";
-import { BsChatRightTextFill } from "react-icons/bs";
+import {
+  BsChatLeftDots,
+  BsChatRightTextFill,
+  BsHandThumbsUp
+  // BsHandThumbsUpFill
+} from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../utils/socket";
@@ -99,40 +104,64 @@ import { toCamel } from "../../utils/normalizer";
 function QuestionPopover(prop) {
   const { id, open, anchorEl, onClose, presentationId } = prop;
 
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [question, setQuestion] = useState("");
+  const [questions, setQuestions] = useState([]);
 
   const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state) => state.user);
 
-  const getPresentationMessages = async () => {
+  const getPresentationQuestions = async () => {
     const data = await dispatch(getMessages({ presentationId, limit: 20 }));
-    setMessages(data);
+    setQuestions(data);
 
     socket.on("message-received", (res) => {
-      setMessages([...data, toCamel(res.message)]);
+      setQuestions([...data, toCamel(res.message)]);
     });
+    // socket.on("question-received", (res) => {
+    //   setQuestions([...data, toCamel(res.message)]);
+    // });
   };
 
-  const onSendMessage = (e) => {
+  const onSendQuestion = (e) => {
     e.preventDefault();
 
-    if (message) {
-      socket.emit("send-message", { content: message }, (res) => {
+    if (question) {
+      socket.emit("send-message", { content: question }, (res) => {
         if (res.code === ApiResposeCodeNumber.Success) {
-          getPresentationMessages();
+          getPresentationQuestions();
         }
       });
-      setMessage("");
+      // socket.emit("send-question", { content: question }, (res) => {
+      //   if (res.code === ApiResposeCodeNumber.Success) {
+      //     getPresentationQuestions();
+      //   }
+      // });
+      setQuestion("");
       const chatContentElement = document.querySelector(".question__content");
       if (chatContentElement?.scrollTop)
         chatContentElement.scrollTop = chatContentElement.scrollHeight;
     }
   };
 
+  // const onSendAnswer = (e) => {
+  //   e.preventDefault();
+
+  //   if (question) {
+  //     socket.emit("send-answer", { content: { question_id, answer } }, (res) => {
+  //       if (res.code === ApiResposeCodeNumber.Success) {
+  //         getPresentationQuestions();
+  //       }
+  //     });
+  //     setAnswer("");
+  //     const chatContentElement = document.querySelector(".question__content");
+  //     if (chatContentElement?.scrollTop)
+  //       chatContentElement.scrollTop = chatContentElement.scrollHeight;
+  //   }
+  // };
+
   useEffect(() => {
-    getPresentationMessages();
+    getPresentationQuestions();
 
     const chatContentElement = document.querySelector(".question__content");
     console.log(chatContentElement);
@@ -140,7 +169,7 @@ function QuestionPopover(prop) {
       chatContentElement.scrollTop = chatContentElement.scrollHeight;
   }, []);
 
-  console.log("messages:", messages);
+  console.log("questions:", questions);
 
   return (
     <Popover
@@ -162,7 +191,7 @@ function QuestionPopover(prop) {
           <BsChatRightTextFill /> QUESTION BOX
         </h3>
         <div className="question__content">
-          {messages?.map((m) => (
+          {questions?.map((m) => (
             <div
               style={{
                 // textAlign: m.senderId.id === userInfo?.id ? "right" : "left",
@@ -183,20 +212,29 @@ function QuestionPopover(prop) {
                 </span>
               </Tooltip>
               {m.content}
+              <p className="question__action">
+                <span className="question__action-vote">
+                  <span>1</span>
+                  <BsHandThumbsUp />
+                </span>
+                <span className="question__action-comment">
+                  <BsChatLeftDots />
+                </span>
+              </p>
             </div>
           ))}
         </div>
 
         <div className="question__send">
-          <form style={{ width: "100%" }} onSubmit={onSendMessage}>
+          <form style={{ width: "100%" }} onSubmit={onSendQuestion}>
             <OutlinedInput
-              value={message}
+              value={question}
               className="question__textbox"
-              placeholder="Type a message..."
-              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type a question..."
+              onChange={(e) => setQuestion(e.target.value)}
             />
           </form>
-          <IoMdSend size={30} onClick={onSendMessage} />
+          <IoMdSend size={30} onClick={onSendQuestion} />
         </div>
       </Box>
     </Popover>
