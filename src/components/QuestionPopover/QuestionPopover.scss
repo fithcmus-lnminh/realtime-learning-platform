@@ -32,13 +32,7 @@
   &__action {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-
-    &-comment {
-      color: #2a518f;
-      cursor: pointer;
-    }
+    margin-bottom: 8px;
 
     &-vote {
       color: #2a518f;
@@ -52,12 +46,44 @@
         line-height: 1;
       }
     }
+
+    &-comment {
+      color: #2a518f;
+      cursor: pointer;
+    }
+
+    &-mark {
+      color: #2a518f;
+      cursor: pointer;
+    }
   }
 
   &__message {
     &-container {
       margin: 2px 0;
     }
+  }
+
+  &__wrapper {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #ddd;
+
+    &>p {
+      color: #2a518f;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  &__send-answer {
+    display: flex;
+    gap: 12px;
+    align-items: center;
   }
 
   &__send {

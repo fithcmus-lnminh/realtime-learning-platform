@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Popover, Box, OutlinedInput, Tooltip } from "@mui/material";
+import {
+  Popover,
+  Box,
+  OutlinedInput,
+  Tooltip,
+  Chip,
+  IconButton
+} from "@mui/material";
 import "./QuestionPopover.scss";
 import {
+  BsBookmarkCheckFill,
   BsChatLeftDots,
   BsChatRightTextFill,
   BsHandThumbsUp
@@ -105,11 +113,24 @@ function QuestionPopover(prop) {
   const { id, open, anchorEl, onClose, presentationId } = prop;
 
   const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [questionReply, setQuestionReply] = useState("");
+  const [isQuestion, setIsQuestion] = useState(true);
 
   const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state) => state.user);
+
+  const handleClickAnswer = (data) => {
+    setIsQuestion(false);
+    setQuestionReply(data);
+  };
+
+  const handleClickCancelAnswer = () => {
+    setIsQuestion(true);
+    setQuestionReply("");
+  };
 
   const getPresentationQuestions = async () => {
     const data = await dispatch(getMessages({ presentationId, limit: 20 }));
@@ -144,21 +165,25 @@ function QuestionPopover(prop) {
     }
   };
 
-  // const onSendAnswer = (e) => {
-  //   e.preventDefault();
+  const onSendAnswer = (e) => {
+    e.preventDefault();
 
-  //   if (question) {
-  //     socket.emit("send-answer", { content: { question_id, answer } }, (res) => {
-  //       if (res.code === ApiResposeCodeNumber.Success) {
-  //         getPresentationQuestions();
-  //       }
-  //     });
-  //     setAnswer("");
-  //     const chatContentElement = document.querySelector(".question__content");
-  //     if (chatContentElement?.scrollTop)
-  //       chatContentElement.scrollTop = chatContentElement.scrollHeight;
-  //   }
-  // };
+    if (question) {
+      socket.emit(
+        "send-answer",
+        { content: { questionId: questionReply.id, answer } },
+        (res) => {
+          if (res.code === ApiResposeCodeNumber.Success) {
+            getPresentationQuestions();
+          }
+        }
+      );
+      setAnswer("");
+      const chatContentElement = document.querySelector(".question__content");
+      if (chatContentElement?.scrollTop)
+        chatContentElement.scrollTop = chatContentElement.scrollHeight;
+    }
+  };
 
   useEffect(() => {
     getPresentationQuestions();
@@ -169,7 +194,11 @@ function QuestionPopover(prop) {
       chatContentElement.scrollTop = chatContentElement.scrollHeight;
   }, []);
 
-  console.log("questions:", questions);
+  console.log("*** questions:", questions);
+  console.log("question:", question);
+  console.log("answer:", answer);
+  console.log("questionReply:", questionReply);
+  console.log("isQuestion:", isQuestion);
 
   return (
     <Popover
@@ -213,29 +242,87 @@ function QuestionPopover(prop) {
               </Tooltip>
               {m.content}
               <p className="question__action">
-                <span className="question__action-vote">
-                  <span>1</span>
-                  <BsHandThumbsUp />
-                </span>
-                <span className="question__action-comment">
-                  <BsChatLeftDots />
-                </span>
+                <Tooltip title="Upvote">
+                  <IconButton
+                    sx={{
+                      fontSize: "16px"
+                    }}
+                    onClick={() => {}}
+                  >
+                    <span className="question__action-vote">
+                      <span>1</span>
+                      <BsHandThumbsUp />
+                    </span>
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Answer">
+                  <IconButton
+                    sx={{
+                      fontSize: "16px"
+                    }}
+                    onClick={() => handleClickAnswer(m)}
+                  >
+                    <span className="question__action-comment">
+                      <BsChatLeftDots />
+                    </span>
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Mark">
+                  <IconButton
+                    sx={{
+                      fontSize: "16px"
+                    }}
+                    onClick={() => {}}
+                  >
+                    <span className="question__action-mark">
+                      <BsBookmarkCheckFill />
+                    </span>
+                  </IconButton>
+                </Tooltip>
               </p>
             </div>
           ))}
         </div>
 
-        <div className="question__send">
-          <form style={{ width: "100%" }} onSubmit={onSendQuestion}>
-            <OutlinedInput
-              value={question}
-              className="question__textbox"
-              placeholder="Type a question..."
-              onChange={(e) => setQuestion(e.target.value)}
-            />
-          </form>
-          <IoMdSend size={30} onClick={onSendQuestion} />
-        </div>
+        {isQuestion ? (
+          <div className="question__send">
+            <form style={{ width: "100%" }} onSubmit={onSendQuestion}>
+              <OutlinedInput
+                value={question}
+                className="question__textbox"
+                placeholder="Type a question..."
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+            </form>
+            <IoMdSend size={30} onClick={onSendQuestion} />
+          </div>
+        ) : (
+          <div className="question__wrapper">
+            <p>
+              <span>
+                Replying to{" "}
+                <b>
+                  {questionReply?.senderId?.firstName}{" "}
+                  {questionReply?.senderId?.lastName}
+                </b>
+              </span>
+              <Chip label="Cancel" onDelete={handleClickCancelAnswer} />
+            </p>
+            <div className="question__send-answer">
+              <form style={{ width: "100%" }} onSubmit={onSendAnswer}>
+                <OutlinedInput
+                  value={answer}
+                  className="question__textbox"
+                  placeholder="Type a answer..."
+                  onChange={(e) => setAnswer(e.target.value)}
+                />
+              </form>
+              <IoMdSend size={30} onClick={onSendAnswer} />
+            </div>
+          </div>
+        )}
       </Box>
     </Popover>
   );

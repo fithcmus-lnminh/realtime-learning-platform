@@ -156,14 +156,6 @@ function PresentationPlay() {
     ? "simple-popover"
     : undefined;
 
-  console.log("** isOpenMessagePopover:", isOpenMessagePopover);
-  console.log("idMessagePopover:", idMessagePopover);
-  console.log("messageAnchorEl:", messageAnchorEl);
-
-  console.log("** isOpenQuestionPopover:", isOpenQuestionPopover);
-  console.log("idQuestionPopover:", idQuestionPopover);
-  console.log("questionAnchorEl:", questionAnchorEl);
-
   return (
     <div className="presentation__play__container">
       <div
