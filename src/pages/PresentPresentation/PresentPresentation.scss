@@ -38,7 +38,17 @@
       background-color: #fff;
       color: #3478e6;
       border: solid 1px #3478e6;
+      position: relative;
     }
+  }
+  &__notifier {
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
   &__controller {
     position: absolute;

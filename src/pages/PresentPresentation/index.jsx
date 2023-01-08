@@ -1,5 +1,5 @@
 import { Badge, Box, CircularProgress } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -21,6 +21,7 @@ import "./PresentPresentation.scss";
 import { socket } from "../../utils/socket";
 import { toCamel } from "../../utils/normalizer";
 import QuestionPopover from "../../components/QuestionPopover";
+import NotificationSound from "../../assets/audio/mixkit-software-interface-back-2575.wav";
 
 function PresentPresentation() {
   const param = useParams();
@@ -34,6 +35,13 @@ function PresentPresentation() {
 
   const [messageAnchorEl, setMessageAnchorEl] = useState(null);
   const [questionAnchorEl, setQuestionAnchorEl] = useState(null);
+  const [isNewMessage, setIsNewMessage] = useState(false);
+
+  const audioPlayer = useRef(null);
+
+  const playAudio = () => {
+    audioPlayer.current.play();
+  };
 
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
@@ -84,6 +92,12 @@ function PresentPresentation() {
     ? "simple-popover"
     : undefined;
 
+  useEffect(() => {
+    if (isNewMessage && !isOpenMessagePopover) {
+      playAudio();
+    }
+  }, [isNewMessage]);
+
   return (
     <div>
       {loading ? (
@@ -115,15 +129,25 @@ function PresentPresentation() {
                   aria-describedby={idMessagePopover}
                   type="button"
                   className="present__message-button"
-                  onClick={(e) => setMessageAnchorEl(e.currentTarget)}
+                  onClick={(e) => {
+                    setMessageAnchorEl(e.currentTarget);
+                    setIsNewMessage(false);
+                  }}
                 >
                   <BsFillChatDotsFill />
+                  {isNewMessage && !isOpenMessagePopover && (
+                    <div className="present__notifier" />
+                  )}
                 </button>
+                <audio ref={audioPlayer} src={NotificationSound}>
+                  <track default kind="captions" />
+                </audio>
                 <MessagePopover
                   id={idMessagePopover}
                   open={isOpenMessagePopover}
                   anchorEl={messageAnchorEl}
                   presentationId={presentationDetail?.id}
+                  setIsNewMessage={setIsNewMessage}
                   onClose={() => setMessageAnchorEl(null)}
                 />
               </div>

@@ -10,7 +10,15 @@ import { ApiResposeCodeNumber } from "../../constants/api";
 import { deepEqual } from "../../utils/objectHelper";
 
 function MassagePopover(prop) {
-  const { id, open, anchorEl, onClose, presentationId, isPlay = false } = prop;
+  const {
+    id,
+    open,
+    anchorEl,
+    onClose,
+    presentationId,
+    isPlay = false,
+    setIsNewMessage
+  } = prop;
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -66,6 +74,7 @@ function MassagePopover(prop) {
       const chatContentElement = document.querySelector(".chat__content");
       if (chatContentElement)
         chatContentElement.scrollTop = chatContentElement.scrollHeight;
+      setIsNewMessage(true);
     });
   }, []);
 

@@ -8,7 +8,7 @@ import {
   RadioGroup,
   Typography
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -27,6 +27,7 @@ import { ApiResposeCodeNumber } from "../../../constants/api";
 import { isAuthenticated } from "../../../utils/isAuthenticated";
 import MessagePopover from "../../../components/MessagePopover";
 import QuestionPopover from "../../../components/QuestionPopover";
+import NotificationSound from "../../../assets/audio/mixkit-software-interface-back-2575.wav";
 
 const schema = yup
   .object({
@@ -54,6 +55,13 @@ function PresentationPlay() {
   const [messageAnchorEl, setMessageAnchorEl] = useState(null);
   const [questionAnchorEl, setQuestionAnchorEl] = useState(null);
   const [presentationId, setPresentationId] = useState(null);
+  const [isNewMessage, setIsNewMessage] = useState(false);
+
+  const audioPlayer = useRef(null);
+
+  const playAudio = () => {
+    audioPlayer.current.play();
+  };
 
   const {
     handleSubmit,
@@ -132,6 +140,15 @@ function PresentationPlay() {
     });
   }, []);
 
+  const isOpenMessagePopover = Boolean(messageAnchorEl);
+  const idMessagePopover = isOpenMessagePopover ? "simple-popover" : undefined;
+
+  useEffect(() => {
+    if (isNewMessage && !isOpenMessagePopover) {
+      playAudio();
+    }
+  }, [isNewMessage]);
+
   useEffect(() => {
     setLoading(true);
     if (accessToken && params?.code) {
@@ -158,8 +175,6 @@ function PresentationPlay() {
     }
   }, [params?.code]);
 
-  const isOpenMessagePopover = Boolean(messageAnchorEl);
-  const idMessagePopover = isOpenMessagePopover ? "simple-popover" : undefined;
   const isOpenQuestionPopover = Boolean(questionAnchorEl);
   const idQuestionPopover = isOpenQuestionPopover
     ? "simple-popover"
@@ -395,15 +410,25 @@ function PresentationPlay() {
                           aria-describedby={idMessagePopover}
                           type="button"
                           className="present__message-button"
-                          onClick={(e) => setMessageAnchorEl(e.currentTarget)}
+                          onClick={(e) => {
+                            setMessageAnchorEl(e.currentTarget);
+                            setIsNewMessage(false);
+                          }}
                         >
                           <BsFillChatDotsFill />
+                          {isNewMessage && !isOpenMessagePopover && (
+                            <div className="present__notifier" />
+                          )}
                         </button>
+                        <audio ref={audioPlayer} src={NotificationSound}>
+                          <track default kind="captions" />
+                        </audio>
                         <MessagePopover
                           id={idMessagePopover}
                           open={isOpenMessagePopover}
                           anchorEl={messageAnchorEl}
                           presentationId={presentationId}
+                          setIsNewMessage={setIsNewMessage}
                           onClose={() => setMessageAnchorEl(null)}
                           /* eslint-disable react/jsx-boolean-value */
                           isPlay={true}
