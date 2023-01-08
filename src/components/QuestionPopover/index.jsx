@@ -5,7 +5,9 @@ import {
   OutlinedInput,
   Tooltip,
   Chip,
-  IconButton
+  IconButton,
+  Select,
+  MenuItem
 } from "@mui/material";
 import "./QuestionPopover.scss";
 import {
@@ -40,21 +42,21 @@ function QuestionPopover(prop) {
   const [questions, setQuestions] = useState([]);
   const [questionReply, setQuestionReply] = useState("");
   const [isQuestion, setIsQuestion] = useState(true);
+  const [sort, setSort] = useState("newest");
 
   const dispatch = useDispatch();
 
-  const getPresentationQuestions = async () => {
-    const data = await dispatch(getQuestions({ presentationId, limit: 20 }));
+  const getPresentationQuestions = async (sortOption) => {
+    const sortChoice = sortOption || sort;
+    const data = await dispatch(
+      getQuestions({ presentationId, limit: 20, sort: sortChoice })
+    );
     setQuestions(data);
 
-    console.log("data:", data);
-
     socket.on("question-received", (res) => {
-      console.log("res question-received", res);
       setQuestions([...data, toCamel(res.question)]);
     });
     socket.on("question-updated", (res) => {
-      console.log("res question-updated", res);
       const questionUpdated = toCamel(res.question);
       if (data.length > 0) {
         const newData = data.map((item) => {
@@ -66,11 +68,37 @@ function QuestionPopover(prop) {
           }
           return item;
         });
-        console.log("newData:", newData);
         setQuestions(newData);
       }
     });
   };
+
+  const sortOptions = [
+    {
+      key: "newest",
+      name: "Newest"
+    },
+    {
+      key: "oldest",
+      name: "Oldest"
+    },
+    {
+      key: "most-votes",
+      name: "Most votes"
+    },
+    {
+      key: "least-votes",
+      name: "Least votes"
+    },
+    {
+      key: "marked",
+      name: "Marked"
+    },
+    {
+      key: "unmarked",
+      name: "Unmarked"
+    }
+  ];
 
   const handleClickAnswer = (data) => {
     setIsQuestion(false);
@@ -84,7 +112,6 @@ function QuestionPopover(prop) {
 
   const handleClickUpvote = (idVote) => {
     socket.emit("vote-question", { question_id: idVote }, (res) => {
-      console.log("res vote-question:", res);
       if (res.code === ApiResposeCodeNumber.Success) {
         getPresentationQuestions();
       }
@@ -93,7 +120,6 @@ function QuestionPopover(prop) {
 
   const handleClickMark = (idMark) => {
     socket.emit("mark-answer", { question_id: idMark }, (res) => {
-      console.log("res mark-answer:", res);
       if (res.code === ApiResposeCodeNumber.Success) {
         getPresentationQuestions();
       }
@@ -105,7 +131,6 @@ function QuestionPopover(prop) {
 
     if (question) {
       socket.emit("send-question", { question }, (res) => {
-        console.log("res send-question:", res);
         if (res.code === ApiResposeCodeNumber.Success) {
           getPresentationQuestions();
         }
@@ -125,7 +150,6 @@ function QuestionPopover(prop) {
         "send-answer",
         { question_id: questionReply.id, answer },
         (res) => {
-          console.log("res send-answer:", res);
           if (res.code === ApiResposeCodeNumber.Success) {
             getPresentationQuestions();
           }
@@ -152,14 +176,6 @@ function QuestionPopover(prop) {
     };
   }, []);
 
-  console.log("*** questions:", questions);
-  console.log("isTeacher:", isTeacher);
-  // console.log("question:", question);
-  // console.log("answer:", answer);
-  // console.log("questionReply:", questionReply);
-  // console.log("userInfo:", userInfo);
-  // console.log("isQuestion:", isQuestion);
-
   return (
     <Popover
       id={id}
@@ -177,7 +193,36 @@ function QuestionPopover(prop) {
     >
       <Box p={2} width={500}>
         <h3 className="question__header">
-          <BsChatRightTextFill /> QUESTION BOX
+          <span className="question__heading">
+            <BsChatRightTextFill /> QUESTION BOX
+          </span>
+          <Select
+            sx={{
+              fontSize: "13px",
+              width: "120px",
+              "& > div": {
+                padding: "6px 8px"
+              }
+            }}
+            id="type"
+            defaultValue="newest"
+            placeholder="Add a filter"
+            onChange={(e) => {
+              console.log("e.target.value:", e.target.value);
+              setSort(e.target.value);
+              getPresentationQuestions(e.target.value);
+            }}
+          >
+            {sortOptions?.map((option) => (
+              <MenuItem
+                value={option.key}
+                key={option.key}
+                sx={{ fontSize: "13px" }}
+              >
+                {option.name}
+              </MenuItem>
+            ))}
+          </Select>
         </h3>
         <div
           className="question__content"
@@ -203,9 +248,13 @@ function QuestionPopover(prop) {
                   arrow
                 >
                   <span className="question__name">
-                    {m.questionerId.firstName} {m.questionerId.lastName}:{" "}
+                    {m?.questionerType === "User" &&
+                      `${m?.questionerId?.firstName} ${m?.questionerId?.lastName}`}
+                    {m?.questionerType === "Anonymous" &&
+                      `${m?.questionerId?.name}`}
                   </span>
                 </Tooltip>
+                {": "}
                 {m.question}
                 <p className="question__action">
                   <span className="question__action-vote">
@@ -309,8 +358,10 @@ function QuestionPopover(prop) {
               <span>
                 Replying to{" "}
                 <b>
-                  {questionReply?.questionerId?.firstName}{" "}
-                  {questionReply?.questionerId?.lastName}
+                  {questionReply?.questionerType === "User" &&
+                    `${questionReply?.questionerId?.firstName} ${questionReply?.questionerId?.lastName}`}
+                  {questionReply?.questionerType === "Anonymous" &&
+                    `${questionReply?.questionerId?.name}`}
                 </b>
               </span>
               <Chip label="Cancel" onDelete={handleClickCancelAnswer} />
