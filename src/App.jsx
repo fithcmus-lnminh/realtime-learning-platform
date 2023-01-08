@@ -160,7 +160,7 @@ function App() {
                 }
               }}
               onClick={() => {
-                if (presentationInfo.presentation_id) {
+                if (presentationInfo.access_code) {
                   handleCloseAlert();
                   window.location.href = `/play/${presentationInfo.access_code}`;
                 }

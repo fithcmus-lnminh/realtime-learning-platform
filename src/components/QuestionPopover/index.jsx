@@ -17,9 +17,9 @@ import {
   BsHandThumbsUpFill
 } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { socket } from "../../utils/socket";
-import { getMessages } from "../../redux/actions/presentationAction";
+import { getQuestions } from "../../redux/actions/presentationAction";
 import { ApiResposeCodeNumber } from "../../constants/api";
 import { toCamel } from "../../utils/normalizer";
 
@@ -121,8 +121,6 @@ function QuestionPopover(prop) {
 
   const dispatch = useDispatch();
 
-  const { userInfo } = useSelector((state) => state.user);
-
   const handleClickAnswer = (data) => {
     setIsQuestion(false);
     setQuestionReply(data);
@@ -134,31 +132,33 @@ function QuestionPopover(prop) {
   };
 
   const getPresentationQuestions = async () => {
-    const data = await dispatch(getMessages({ presentationId, limit: 20 }));
+    // const data = await dispatch(getMessages({ presentationId, limit: 20 }));
+    const data = await dispatch(getQuestions({ presentationId, limit: 20 }));
     setQuestions(data);
+    console.log("data getPresentationQuestions:", data);
 
-    socket.on("message-received", (res) => {
+    socket.on("question-received", (res) => {
+      console.log("res question-received", res);
+
       setQuestions([...data, toCamel(res.message)]);
     });
-    // socket.on("question-received", (res) => {
-    //   setQuestions([...data, toCamel(res.message)]);
-    // });
+    socket.on("question-updated", (res) => {
+      console.log("res question-updated", res);
+
+      // setQuestions([...data, toCamel(res.message)]);
+    });
   };
 
   const onSendQuestion = (e) => {
     e.preventDefault();
 
     if (question) {
-      socket.emit("send-message", { content: question }, (res) => {
+      socket.emit("send-question", { question }, (res) => {
+        console.log("res send-question:", res);
         if (res.code === ApiResposeCodeNumber.Success) {
           getPresentationQuestions();
         }
       });
-      // socket.emit("send-question", { content: question }, (res) => {
-      //   if (res.code === ApiResposeCodeNumber.Success) {
-      //     getPresentationQuestions();
-      //   }
-      // });
       setQuestion("");
       const chatContentElement = document.querySelector(".question__content");
       if (chatContentElement?.scrollTop)
@@ -169,17 +169,19 @@ function QuestionPopover(prop) {
   const onSendAnswer = (e) => {
     e.preventDefault();
 
-    if (question) {
+    if (answer) {
       socket.emit(
         "send-answer",
-        { content: { questionId: questionReply.id, answer } },
+        { question_id: questionReply.id, answer },
         (res) => {
+          console.log("res send-answer:", res);
           if (res.code === ApiResposeCodeNumber.Success) {
             getPresentationQuestions();
           }
         }
       );
       setAnswer("");
+      handleClickCancelAnswer();
       const chatContentElement = document.querySelector(".question__content");
       if (chatContentElement?.scrollTop)
         chatContentElement.scrollTop = chatContentElement.scrollHeight;
@@ -190,16 +192,16 @@ function QuestionPopover(prop) {
     getPresentationQuestions();
 
     const chatContentElement = document.querySelector(".question__content");
-    console.log(chatContentElement);
     if (chatContentElement?.scrollTop)
       chatContentElement.scrollTop = chatContentElement.scrollHeight;
   }, []);
 
   console.log("*** questions:", questions);
-  console.log("question:", question);
-  console.log("answer:", answer);
+  // console.log("question:", question);
+  // console.log("answer:", answer);
   console.log("questionReply:", questionReply);
-  console.log("isQuestion:", isQuestion);
+  // console.log("userInfo:", userInfo);
+  // console.log("isQuestion:", isQuestion);
 
   return (
     <Popover
@@ -222,69 +224,88 @@ function QuestionPopover(prop) {
         </h3>
         <div className="question__content">
           {questions?.map((m) => (
-            <div
-              style={{
-                // textAlign: m.senderId.id === userInfo?.id ? "right" : "left",
-                marginLeft: m.senderId.id === userInfo?.id ? "0px" : "16px"
-              }}
-              className="question__message-container"
-              key={m.id}
-            >
-              <Tooltip
-                title={new Date(m.createdAt).toLocaleString("vi-VN", {
-                  dateStyle: "short",
-                  timeStyle: "short"
-                })}
-                arrow
-              >
-                <span className="question__name">
-                  {m.senderId.firstName} {m.senderId.lastName}:{" "}
-                </span>
-              </Tooltip>
-              {m.content}
-              <p className="question__action">
-                <span className="question__action-vote">
-                  <span>1</span>
-                  <Tooltip title="Upvote">
+            <>
+              <div className="question__message-container" key={m.id}>
+                <Tooltip
+                  title={new Date(m.createdAt).toLocaleString("vi-VN", {
+                    dateStyle: "short",
+                    timeStyle: "short"
+                  })}
+                  arrow
+                >
+                  <span className="question__name">
+                    {m.questionerId.firstName} {m.questionerId.lastName}:{" "}
+                  </span>
+                </Tooltip>
+                {m.question}
+                <p className="question__action">
+                  <span className="question__action-vote">
+                    <span>{m?.totalVotes ? m.totalVotes : "0"}</span>
+                    <Tooltip title="Upvote">
+                      <IconButton
+                        sx={{
+                          fontSize: "16px"
+                        }}
+                        onClick={() => {}}
+                      >
+                        {m.isVoted ? (
+                          <BsHandThumbsUpFill />
+                        ) : (
+                          <BsHandThumbsUp />
+                        )}
+                      </IconButton>
+                    </Tooltip>
+                  </span>
+
+                  <Tooltip title="Answer">
                     <IconButton
                       sx={{
-                        fontSize: "16px",
-                        marginLeft: "-2px"
+                        fontSize: "16px"
+                      }}
+                      onClick={() => handleClickAnswer(m)}
+                    >
+                      <span className="question__action-comment">
+                        <BsChatLeftDots />
+                      </span>
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Mark">
+                    <IconButton
+                      sx={{
+                        fontSize: "16px"
                       }}
                       onClick={() => {}}
                     >
-                      {m.isVoted ? <BsHandThumbsUpFill /> : <BsHandThumbsUp />}
+                      <span className="question__action-mark">
+                        {m.isAnswered ? (
+                          <BsBookmarkCheckFill />
+                        ) : (
+                          <BsBookmarkX />
+                        )}
+                      </span>
                     </IconButton>
                   </Tooltip>
-                </span>
+                </p>
+              </div>
 
-                <Tooltip title="Answer">
-                  <IconButton
-                    sx={{
-                      fontSize: "16px"
-                    }}
-                    onClick={() => handleClickAnswer(m)}
+              {m.answer && (
+                <div className="question__answer-container">
+                  <Tooltip
+                    title={new Date(m.createdAt).toLocaleString("vi-VN", {
+                      dateStyle: "short",
+                      timeStyle: "short"
+                    })}
+                    arrow
                   >
-                    <span className="question__action-comment">
-                      <BsChatLeftDots />
+                    <span className="question__name">
+                      {m?.answererId?.firstName} {m?.answererId?.lastName}:{" "}
                     </span>
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Mark">
-                  <IconButton
-                    sx={{
-                      fontSize: "16px"
-                    }}
-                    onClick={() => {}}
-                  >
-                    <span className="question__action-mark">
-                      {m.mark ? <BsBookmarkCheckFill /> : <BsBookmarkX />}
-                    </span>
-                  </IconButton>
-                </Tooltip>
-              </p>
-            </div>
+                  </Tooltip>
+                  {m.answer}
+                </div>
+              )}
+            </>
           ))}
         </div>
 
@@ -298,7 +319,11 @@ function QuestionPopover(prop) {
                 onChange={(e) => setQuestion(e.target.value)}
               />
             </form>
-            <IoMdSend size={30} onClick={onSendQuestion} />
+            <IoMdSend
+              size={30}
+              onClick={onSendQuestion}
+              style={{ cursor: "pointer" }}
+            />
           </div>
         ) : (
           <div className="question__wrapper">
@@ -306,8 +331,8 @@ function QuestionPopover(prop) {
               <span>
                 Replying to{" "}
                 <b>
-                  {questionReply?.senderId?.firstName}{" "}
-                  {questionReply?.senderId?.lastName}
+                  {questionReply?.questionerId?.firstName}{" "}
+                  {questionReply?.questionerId?.lastName}
                 </b>
               </span>
               <Chip label="Cancel" onDelete={handleClickCancelAnswer} />
@@ -321,7 +346,11 @@ function QuestionPopover(prop) {
                   onChange={(e) => setAnswer(e.target.value)}
                 />
               </form>
-              <IoMdSend size={30} onClick={onSendAnswer} />
+              <IoMdSend
+                size={30}
+                onClick={onSendAnswer}
+                style={{ cursor: "pointer" }}
+              />
             </div>
           </div>
         )}

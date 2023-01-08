@@ -60,7 +60,13 @@
 
   &__message {
     &-container {
-      margin: 2px 0;
+      margin: 8px 0 2px;
+    }
+  }
+
+  &__answer {
+    &-container {
+      margin: 6px 0 2px 16px;
     }
   }
 
