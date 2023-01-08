@@ -363,7 +363,8 @@ export const setTotalStudents = (data) => (dispatch) => {
 
 /* eslint-disable import/prefer-default-export */
 export const studentJoinPresentation =
-  (data, setLoading, setMessage, setIsAuth, navigate) => async () => {
+  (data, setLoading, setIsTeacher, setMessage, setIsAuth, navigate) =>
+  async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const res = await $axios.post(
@@ -388,6 +389,9 @@ export const studentJoinPresentation =
                     data: "Join presentation successfully",
                     open: true
                   });
+                }
+                if (setIsTeacher && res2?.data?.is_teacher) {
+                  setIsTeacher(true);
                 }
                 if (navigate) {
                   window.location.href = `/play/${data.accessCode}`;
@@ -554,6 +558,7 @@ export const studentJoinPresentationAnonymous =
           studentJoinPresentation(
             dataCode,
             setLoading,
+            () => {},
             setMessage,
             setIsAuth,
             navigate
@@ -917,4 +922,17 @@ export const deletePresentationGroups = (id, groupId) => async (dispatch) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+/* eslint-disable import/prefer-default-export */
+export const getQuestions = (queryObj) => async () => {
+  const query = `?${toQueryString(toSnake(queryObj))}`;
+  const res = await $axios.get(`${API_URL}/api/question${query}`);
+
+  console.log("res getQuestions:", res);
+
+  if (res.code === ApiResposeCodeNumber.Success) {
+    return res.data;
+  }
+  return [];
 };

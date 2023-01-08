@@ -20,6 +20,7 @@ import MessagePopover from "../../components/MessagePopover";
 import "./PresentPresentation.scss";
 import { socket } from "../../utils/socket";
 import { toCamel } from "../../utils/normalizer";
+import QuestionPopover from "../../components/QuestionPopover";
 
 function PresentPresentation() {
   const param = useParams();
@@ -32,6 +33,7 @@ function PresentPresentation() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   const [messageAnchorEl, setMessageAnchorEl] = useState(null);
+  const [questionAnchorEl, setQuestionAnchorEl] = useState(null);
 
   const handleGoToPreviousSlide = () => {
     setCurrentSlideIndex(currentSlideIndex - 1);
@@ -77,6 +79,10 @@ function PresentPresentation() {
 
   const isOpenMessagePopover = Boolean(messageAnchorEl);
   const idMessagePopover = isOpenMessagePopover ? "simple-popover" : undefined;
+  const isOpenQuestionPopover = Boolean(questionAnchorEl);
+  const idQuestionPopover = isOpenQuestionPopover
+    ? "simple-popover"
+    : undefined;
 
   return (
     <div>
@@ -122,9 +128,23 @@ function PresentPresentation() {
                 />
               </div>
               <div className="present__question">
-                <button type="button" className="present__question-button">
+                <button
+                  aria-describedby={idQuestionPopover}
+                  type="button"
+                  className="present__question-button"
+                  onClick={(e) => setQuestionAnchorEl(e.currentTarget)}
+                >
                   <BsQuestionLg />
                 </button>
+                <QuestionPopover
+                  id={idQuestionPopover}
+                  open={isOpenQuestionPopover}
+                  anchorEl={questionAnchorEl}
+                  presentationId={presentationDetail?.id}
+                  onClose={() => setQuestionAnchorEl(null)}
+                  /* eslint-disable react/jsx-boolean-value */
+                  isTeacher={true}
+                />
               </div>
               <div className="present__controller">
                 {handleFullScreen.active ? (

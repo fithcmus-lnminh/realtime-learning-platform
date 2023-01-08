@@ -50,7 +50,14 @@ function PresentationJoin() {
     setLoading(true);
 
     dispatch(
-      studentJoinPresentation(data, setLoading, setMessage, setIsAuth, navigate)
+      studentJoinPresentation(
+        data,
+        setLoading,
+        () => {},
+        setMessage,
+        setIsAuth,
+        navigate
+      )
     );
   };
 

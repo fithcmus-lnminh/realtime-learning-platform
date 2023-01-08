@@ -26,6 +26,7 @@ import { socket } from "../../../utils/socket";
 import { ApiResposeCodeNumber } from "../../../constants/api";
 import { isAuthenticated } from "../../../utils/isAuthenticated";
 import MessagePopover from "../../../components/MessagePopover";
+import QuestionPopover from "../../../components/QuestionPopover";
 
 const schema = yup
   .object({
@@ -49,7 +50,9 @@ function PresentationPlay() {
     data: "",
     open: false
   });
+  const [isTeacher, setIsTeacher] = useState(false);
   const [messageAnchorEl, setMessageAnchorEl] = useState(null);
+  const [questionAnchorEl, setQuestionAnchorEl] = useState(null);
   const [presentationId, setPresentationId] = useState(null);
 
   const {
@@ -133,13 +136,21 @@ function PresentationPlay() {
     setLoading(true);
     if (accessToken && params?.code) {
       dispatch(
-        studentJoinPresentation({ accessCode: params.code }, setLoading)
+        studentJoinPresentation(
+          { accessCode: params.code },
+          setLoading,
+          setIsTeacher
+        )
       );
     } else {
       /* eslint-disable no-lonely-if */
       if (isAuthenticated()) {
         dispatch(
-          studentJoinPresentation({ accessCode: params.code }, setLoading)
+          studentJoinPresentation(
+            { accessCode: params.code },
+            setLoading,
+            setIsTeacher
+          )
         );
       } else {
         window.open(`/play`, "_self");
@@ -149,6 +160,10 @@ function PresentationPlay() {
 
   const isOpenMessagePopover = Boolean(messageAnchorEl);
   const idMessagePopover = isOpenMessagePopover ? "simple-popover" : undefined;
+  const isOpenQuestionPopover = Boolean(questionAnchorEl);
+  const idQuestionPopover = isOpenQuestionPopover
+    ? "simple-popover"
+    : undefined;
 
   return (
     <div className="presentation__play__container">
@@ -390,15 +405,29 @@ function PresentationPlay() {
                           anchorEl={messageAnchorEl}
                           presentationId={presentationId}
                           onClose={() => setMessageAnchorEl(null)}
+                          /* eslint-disable react/jsx-boolean-value */
+                          isPlay={true}
                         />
                       </div>
                       <div className="present__question">
                         <button
+                          aria-describedby={idQuestionPopover}
                           type="button"
                           className="present__question-button"
+                          onClick={(e) => setQuestionAnchorEl(e.currentTarget)}
                         >
                           <BsQuestionLg />
                         </button>
+                        <QuestionPopover
+                          id={idQuestionPopover}
+                          open={isOpenQuestionPopover}
+                          anchorEl={questionAnchorEl}
+                          presentationId={presentationId}
+                          onClose={() => setQuestionAnchorEl(null)}
+                          isTeacher={isTeacher}
+                          /* eslint-disable react/jsx-boolean-value */
+                          isPlay={true}
+                        />
                       </div>
                     </div>
                   </>

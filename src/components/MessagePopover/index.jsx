@@ -10,7 +10,7 @@ import { ApiResposeCodeNumber } from "../../constants/api";
 import { deepEqual } from "../../utils/objectHelper";
 
 function MassagePopover(prop) {
-  const { id, open, anchorEl, onClose, presentationId } = prop;
+  const { id, open, anchorEl, onClose, presentationId, isPlay = false } = prop;
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -51,6 +51,9 @@ function MassagePopover(prop) {
         }
       });
       setMessage("");
+      const chatContentElement = document.querySelector(".chat__content");
+      if (chatContentElement?.scrollTop)
+        chatContentElement.scrollTop = chatContentElement.scrollHeight;
     }
   };
 
@@ -99,7 +102,11 @@ function MassagePopover(prop) {
         <h3 className="chat__header">
           <BsChatRightTextFill /> CHAT BOX
         </h3>
-        <div className="chat__content" onScroll={onScroll}>
+        <div
+          className="chat__content"
+          onScroll={onScroll}
+          style={isPlay ? { maxHeight: "260px" } : { maxHeight: "350px" }}
+        >
           {messages?.map((m) => (
             <div
               style={{

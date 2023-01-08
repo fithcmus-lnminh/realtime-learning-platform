@@ -1,0 +1,120 @@
+.MuiPopover-paper {
+  margin-top: 4px;
+  border: 1px solid #2a518f;
+  box-shadow: 0px 5px 5px -3px rgba(66, 130, 202, 0.2),
+    0px 8px 10px 1px rgba(67, 125, 201, 0.14),
+    0px 3px 14px 2px rgba(57, 100, 194, 0.12) !important;
+  color: #2a518f !important;
+}
+
+.MuiTooltip-popper {
+  margin-top: -12px !important;
+}
+
+.question {
+  &__header {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__content {
+    max-height: 350px;
+    overflow-y: scroll;
+    padding-right: 12px;
+  }
+
+  &__name {
+    font-weight: bold;
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 8px;
+
+    &-vote {
+      color: #2a518f;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      &>span {
+        font-size: 16px;
+        line-height: 1;
+      }
+    }
+
+    &-comment {
+      color: #2a518f;
+      cursor: pointer;
+    }
+
+    &-mark {
+      color: #2a518f;
+      cursor: pointer;
+    }
+  }
+
+  &__message {
+    &-container {
+      margin: 8px 0 2px;
+    }
+  }
+
+  &__answer {
+    &-container {
+      margin: 6px 0 2px 16px;
+    }
+  }
+
+  &__wrapper {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #ddd;
+
+    &>p {
+      color: #2a518f;
+      margin-top: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  &__send-answer {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  &__send {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  &__textbox {
+    height: 40px;
+    width: 100%;
+    border-radius: 20px !important;
+    border: 1px solid #2a518f;
+  }
+
+  &__time {
+    color: rgb(107, 107, 107);
+    font-size: 10px;
+    margin-left: 8px;
+  }
+}
