@@ -10,10 +10,11 @@ import {
 import "./QuestionPopover.scss";
 import {
   BsBookmarkCheckFill,
+  BsBookmarkX,
   BsChatLeftDots,
   BsChatRightTextFill,
-  BsHandThumbsUp
-  // BsHandThumbsUpFill
+  BsHandThumbsUp,
+  BsHandThumbsUpFill
 } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
@@ -242,19 +243,20 @@ function QuestionPopover(prop) {
               </Tooltip>
               {m.content}
               <p className="question__action">
-                <Tooltip title="Upvote">
-                  <IconButton
-                    sx={{
-                      fontSize: "16px"
-                    }}
-                    onClick={() => {}}
-                  >
-                    <span className="question__action-vote">
-                      <span>1</span>
-                      <BsHandThumbsUp />
-                    </span>
-                  </IconButton>
-                </Tooltip>
+                <span className="question__action-vote">
+                  <span>1</span>
+                  <Tooltip title="Upvote">
+                    <IconButton
+                      sx={{
+                        fontSize: "16px",
+                        marginLeft: "-2px"
+                      }}
+                      onClick={() => {}}
+                    >
+                      {m.isVoted ? <BsHandThumbsUpFill /> : <BsHandThumbsUp />}
+                    </IconButton>
+                  </Tooltip>
+                </span>
 
                 <Tooltip title="Answer">
                   <IconButton
@@ -277,7 +279,7 @@ function QuestionPopover(prop) {
                     onClick={() => {}}
                   >
                     <span className="question__action-mark">
-                      <BsBookmarkCheckFill />
+                      {m.mark ? <BsBookmarkCheckFill /> : <BsBookmarkX />}
                     </span>
                   </IconButton>
                 </Tooltip>

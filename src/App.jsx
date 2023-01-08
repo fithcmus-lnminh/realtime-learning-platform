@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { isEqual } from "lodash";
 import { notificationSocket } from "./utils/socket";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -39,6 +40,11 @@ function App() {
 
   const dispatch = useDispatch();
 
+  const userInfo = useSelector(
+    (state) => state.user.userInfo,
+    (prev, next) => isEqual(prev, next)
+  );
+
   const location = useLocation();
 
   const [presentationInfo, setPresentationInfo] = useState({});
@@ -71,16 +77,17 @@ function App() {
       dispatch(getCurrentUser());
 
       notificationSocket.on("new-notification", (notification) => {
-        console.log("notification:", notification);
         const { message: messageTitle, data } = notification;
 
-        setMessage({
-          data: messageTitle,
-          open: true
-        });
+        if (userInfo?.id !== data?.host_id) {
+          setMessage({
+            data: messageTitle,
+            open: true
+          });
 
-        if (data.type === "presentation") {
-          setPresentationInfo(data);
+          if (data.type === "presentation") {
+            setPresentationInfo(data?.access_code);
+          }
         }
       });
     }
