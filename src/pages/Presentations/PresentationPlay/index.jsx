@@ -50,6 +50,7 @@ function PresentationPlay() {
     data: "",
     open: false
   });
+  const [isTeacher, setIsTeacher] = useState(false);
   const [messageAnchorEl, setMessageAnchorEl] = useState(null);
   const [questionAnchorEl, setQuestionAnchorEl] = useState(null);
   const [presentationId, setPresentationId] = useState(null);
@@ -135,13 +136,21 @@ function PresentationPlay() {
     setLoading(true);
     if (accessToken && params?.code) {
       dispatch(
-        studentJoinPresentation({ accessCode: params.code }, setLoading)
+        studentJoinPresentation(
+          { accessCode: params.code },
+          setLoading,
+          setIsTeacher
+        )
       );
     } else {
       /* eslint-disable no-lonely-if */
       if (isAuthenticated()) {
         dispatch(
-          studentJoinPresentation({ accessCode: params.code }, setLoading)
+          studentJoinPresentation(
+            { accessCode: params.code },
+            setLoading,
+            setIsTeacher
+          )
         );
       } else {
         window.open(`/play`, "_self");
@@ -413,6 +422,7 @@ function PresentationPlay() {
                           anchorEl={questionAnchorEl}
                           presentationId={presentationId}
                           onClose={() => setQuestionAnchorEl(null)}
+                          isTeacher={isTeacher}
                         />
                       </div>
                     </div>

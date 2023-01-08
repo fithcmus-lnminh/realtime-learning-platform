@@ -142,6 +142,8 @@ function PresentPresentation() {
                   anchorEl={questionAnchorEl}
                   presentationId={presentationDetail?.id}
                   onClose={() => setQuestionAnchorEl(null)}
+                  /* eslint-disable react/jsx-boolean-value */
+                  isTeacher={true}
                 />
               </div>
               <div className="present__controller">

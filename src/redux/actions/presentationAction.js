@@ -363,7 +363,8 @@ export const setTotalStudents = (data) => (dispatch) => {
 
 /* eslint-disable import/prefer-default-export */
 export const studentJoinPresentation =
-  (data, setLoading, setMessage, setIsAuth, navigate) => async () => {
+  (data, setLoading, setIsTeacher, setMessage, setIsAuth, navigate) =>
+  async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const res = await $axios.post(
@@ -378,6 +379,7 @@ export const studentJoinPresentation =
             "student-join-presentation",
             { access_code: data.accessCode },
             (res2) => {
+              console.log("res2:", res2);
               if (res2.code === ApiResposeCodeNumber.Success) {
                 if (setLoading) {
                   setLoading(false);
@@ -388,6 +390,9 @@ export const studentJoinPresentation =
                     data: "Join presentation successfully",
                     open: true
                   });
+                }
+                if (setIsTeacher && res2?.data?.is_teacher) {
+                  setIsTeacher(true);
                 }
                 if (navigate) {
                   window.location.href = `/play/${data.accessCode}`;
@@ -554,6 +559,7 @@ export const studentJoinPresentationAnonymous =
           studentJoinPresentation(
             dataCode,
             setLoading,
+            () => {},
             setMessage,
             setIsAuth,
             navigate
