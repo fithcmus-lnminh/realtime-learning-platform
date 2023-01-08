@@ -22,9 +22,18 @@ import { socket } from "../../utils/socket";
 import { getQuestions } from "../../redux/actions/presentationAction";
 import { ApiResposeCodeNumber } from "../../constants/api";
 import { toCamel } from "../../utils/normalizer";
+import { isArrayData } from "../../utils/generator";
 
 function QuestionPopover(prop) {
-  const { id, open, anchorEl, onClose, presentationId, isTeacher } = prop;
+  const {
+    id,
+    open,
+    anchorEl,
+    onClose,
+    presentationId,
+    isTeacher,
+    isPlay = false
+  } = prop;
 
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -170,7 +179,19 @@ function QuestionPopover(prop) {
         <h3 className="question__header">
           <BsChatRightTextFill /> QUESTION BOX
         </h3>
-        <div className="question__content">
+        <div
+          className="question__content"
+          style={
+            /* eslint-disable no-nested-ternary */
+            isPlay
+              ? isQuestion
+                ? { maxHeight: "260px" }
+                : { maxHeight: "210px" }
+              : isQuestion
+              ? { maxHeight: "350px" }
+              : { maxHeight: "300px" }
+          }
+        >
           {questions?.map((m) => (
             <>
               <div className="question__message-container" key={m.id}>
@@ -205,18 +226,20 @@ function QuestionPopover(prop) {
                     </Tooltip>
                   </span>
 
-                  <Tooltip title="Answer">
-                    <IconButton
-                      sx={{
-                        fontSize: "16px"
-                      }}
-                      onClick={() => handleClickAnswer(m)}
-                    >
-                      <span className="question__action-comment">
-                        <BsChatLeftDots />
-                      </span>
-                    </IconButton>
-                  </Tooltip>
+                  {isTeacher && (
+                    <Tooltip title="Answer">
+                      <IconButton
+                        sx={{
+                          fontSize: "16px"
+                        }}
+                        onClick={() => handleClickAnswer(m)}
+                      >
+                        <span className="question__action-comment">
+                          <BsChatLeftDots />
+                        </span>
+                      </IconButton>
+                    </Tooltip>
+                  )}
 
                   <Tooltip title="Mark">
                     <IconButton
@@ -242,22 +265,24 @@ function QuestionPopover(prop) {
                 </p>
               </div>
 
-              {m.answer && (
-                <div className="question__answer-container">
-                  <Tooltip
-                    title={new Date(m.createdAt).toLocaleString("vi-VN", {
-                      dateStyle: "short",
-                      timeStyle: "short"
-                    })}
-                    arrow
-                  >
-                    <span className="question__name">
-                      {m?.answererId?.firstName} {m?.answererId?.lastName}:{" "}
-                    </span>
-                  </Tooltip>
-                  {m.answer}
-                </div>
-              )}
+              {isArrayData(m.answers) &&
+                m.answers.map((ans) => (
+                  <div className="question__answer-container">
+                    <Tooltip
+                      // title={new Date(ans?.createdAt).toLocaleString("vi-VN", {
+                      //   dateStyle: "short",
+                      //   timeStyle: "short"
+                      // })}
+                      arrow
+                    >
+                      <span className="question__name">
+                        {ans?.answererId?.firstName} {ans?.answererId?.lastName}
+                        :{" "}
+                      </span>
+                    </Tooltip>
+                    {ans?.answer}
+                  </div>
+                ))}
             </>
           ))}
         </div>

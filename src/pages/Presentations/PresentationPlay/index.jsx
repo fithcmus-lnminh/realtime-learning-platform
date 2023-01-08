@@ -405,6 +405,8 @@ function PresentationPlay() {
                           anchorEl={messageAnchorEl}
                           presentationId={presentationId}
                           onClose={() => setMessageAnchorEl(null)}
+                          /* eslint-disable react/jsx-boolean-value */
+                          isPlay={true}
                         />
                       </div>
                       <div className="present__question">
@@ -423,6 +425,8 @@ function PresentationPlay() {
                           presentationId={presentationId}
                           onClose={() => setQuestionAnchorEl(null)}
                           isTeacher={isTeacher}
+                          /* eslint-disable react/jsx-boolean-value */
+                          isPlay={true}
                         />
                       </div>
                     </div>
