@@ -67,12 +67,14 @@
   &__message {
     &-container {
       margin: 8px 0 2px;
+      padding-top: 10px;
+      box-shadow: 0px -3px 3px rgba(50, 50, 50, 0.1);
     }
   }
 
   &__answer {
     &-container {
-      margin: 6px 0 2px 16px;
+      margin: 6px 0 2px 28px;
     }
   }
 
