@@ -647,29 +647,64 @@ function PresentationTeacher() {
                         id="modal-modal-title"
                         variant="h6"
                         component="h2"
-                        sx={{ fontWeight: "bold" }}
+                        sx={{
+                          fontWeight: "bold",
+                          mb: 2,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1
+                        }}
                       >
+                        <GrLineChart size={20} />
                         Presentation results
                       </Typography>
                       <div className="presentation__collaborator">
-                        <Typography
-                          id="modal-modal-description"
-                          sx={{
-                            mt: 2,
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1
-                          }}
-                        >
-                          <BsPeople size={20} />
+                        <Typography id="modal-modal-description" sx={{ mb: 2 }}>
                           <span>
                             Results for Multiple Choice slides of{" "}
                             <span style={{ fontWeight: "bold" }}>
-                              {presentationDetail.title}.
-                            </span>
+                              {presentationDetail.title}
+                            </span>{" "}
+                            presentation.
                           </span>
                         </Typography>
                       </div>
+                      {presentationDetail?.slides
+                        ?.filter(
+                          (slide) => slide.slideType === "MultipleChoice"
+                        )
+                        .map((slide) => (
+                          <div key={slide.content.id}>
+                            <span style={{ fontWeight: "bold" }}>
+                              {slide.content.question || "Multiple Choice"}
+                            </span>
+                            {slide.content.options?.map(
+                              (opt) =>
+                                opt.upvotes.length > 0 && (
+                                  <div
+                                    style={{ marginLeft: "32px" }}
+                                    key={opt.id}
+                                  >
+                                    {opt.content}
+                                    {opt.upvotes.map((upvote) => (
+                                      <div
+                                        key={upvote.id}
+                                        style={{ marginLeft: "32px" }}
+                                      >
+                                        {upvote.userType === "Anonymous"
+                                          ? upvote.userId?.name
+                                          : `${upvote.userId?.firstName} ${upvote.userId?.lastName}`}{" "}
+                                        -{" "}
+                                        {new Date(
+                                          upvote.createdAt
+                                        ).toLocaleString("vi-VN")}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )
+                            )}
+                          </div>
+                        ))}
                     </Box>
                   </MUIModal>
                 </div>
