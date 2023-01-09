@@ -208,7 +208,6 @@ function QuestionPopover(prop) {
             defaultValue="newest"
             placeholder="Add a filter"
             onChange={(e) => {
-              console.log("e.target.value:", e.target.value);
               setSort(e.target.value);
               getPresentationQuestions(e.target.value);
             }}
@@ -290,40 +289,36 @@ function QuestionPopover(prop) {
                     </Tooltip>
                   )}
 
-                  <Tooltip title="Mark">
-                    <IconButton
-                      sx={{
-                        fontSize: "16px"
-                      }}
-                      onClick={() => (isTeacher ? handleClickMark(m.id) : {})}
-                    >
-                      <span
-                        className="question__action-mark"
-                        style={{
-                          cursor: `${isTeacher ? "pointer" : "default"}`
+                  {isTeacher && (
+                    <Tooltip title="Mark">
+                      <IconButton
+                        sx={{
+                          fontSize: "16px"
                         }}
+                        onClick={() => (isTeacher ? handleClickMark(m.id) : {})}
                       >
-                        {m.isAnswered ? (
-                          <BsBookmarkCheckFill />
-                        ) : (
-                          <BsBookmarkX />
-                        )}
-                      </span>
-                    </IconButton>
-                  </Tooltip>
+                        <span
+                          className="question__action-mark"
+                          style={{
+                            cursor: `${isTeacher ? "pointer" : "default"}`
+                          }}
+                        >
+                          {m.isAnswered ? (
+                            <BsBookmarkCheckFill />
+                          ) : (
+                            <BsBookmarkX />
+                          )}
+                        </span>
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </p>
               </div>
 
               {isArrayData(m.answers) &&
                 m.answers.map((ans) => (
                   <div className="question__answer-container">
-                    <Tooltip
-                      // title={new Date(ans?.createdAt).toLocaleString("vi-VN", {
-                      //   dateStyle: "short",
-                      //   timeStyle: "short"
-                      // })}
-                      arrow
-                    >
+                    <Tooltip arrow>
                       <span className="question__name">
                         {ans?.answererId?.firstName} {ans?.answererId?.lastName}
                         :{" "}
