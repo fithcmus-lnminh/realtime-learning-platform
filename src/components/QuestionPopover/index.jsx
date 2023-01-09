@@ -4,7 +4,6 @@ import {
   Box,
   OutlinedInput,
   Tooltip,
-  Chip,
   IconButton,
   Select,
   MenuItem
@@ -16,7 +15,8 @@ import {
   BsChatLeftDots,
   BsChatRightTextFill,
   BsHandThumbsUp,
-  BsHandThumbsUpFill
+  BsHandThumbsUpFill,
+  BsX
 } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 import { useDispatch } from "react-redux";
@@ -230,10 +230,10 @@ function QuestionPopover(prop) {
             isPlay
               ? isQuestion
                 ? { maxHeight: "260px" }
-                : { maxHeight: "210px" }
+                : { maxHeight: "200px" }
               : isQuestion
               ? { maxHeight: "350px" }
-              : { maxHeight: "300px" }
+              : { maxHeight: "290px" }
           }
         >
           {questions?.map((m) => (
@@ -359,7 +359,11 @@ function QuestionPopover(prop) {
                     `${questionReply?.questionerId?.name}`}
                 </b>
               </span>
-              <Chip label="Cancel" onDelete={handleClickCancelAnswer} />
+              <Tooltip title="Cancel">
+                <IconButton onClick={handleClickCancelAnswer}>
+                  <BsX style={{ cursor: "pointer" }} />
+                </IconButton>
+              </Tooltip>
             </p>
             <div className="question__send-answer">
               <form style={{ width: "100%" }} onSubmit={onSendAnswer}>
