@@ -1,0 +1,12 @@
+.group {
+  &__notification {
+    background-color: rgb(209, 226, 255);
+    border: 1px solid rgb(25, 108, 255);
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+}

@@ -60,7 +60,7 @@ import {
 
 const style = {
   position: "absolute",
-  top: "30%",
+  top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 600,
@@ -68,7 +68,9 @@ const style = {
   border: "none",
   borderRadius: 1,
   boxShadow: 24,
-  p: 4
+  p: 4,
+  maxHeight: "1000px",
+  overflowY: "scroll"
 };
 
 const schema = yup
