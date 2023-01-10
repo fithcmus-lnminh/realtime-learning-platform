@@ -111,6 +111,7 @@ function PresentationTeacher() {
   });
 
   const { presentationDetail } = useSelector((state) => state.presentation);
+
   const { collaborators } = useSelector((state) => state.collaborator);
 
   const [currentSlide, setCurrentSlide] = useState(
@@ -217,6 +218,7 @@ function PresentationTeacher() {
 
   useEffect(() => {
     getPresentationDetail();
+    dispatch(setTotalStudents(0));
   }, []);
 
   useEffect(() => {

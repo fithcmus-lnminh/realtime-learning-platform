@@ -28,7 +28,9 @@ function PresentPresentation() {
   const navigate = useNavigate();
   const handleFullScreen = useFullScreenHandle();
   const [loading] = useState(false);
-  const { presentationDetail } = useSelector((state) => state.presentation);
+  const { presentationDetail, totalStudents } = useSelector(
+    (state) => state.presentation
+  );
 
   const [currentSlide, setCurrentSlide] = useState(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -275,11 +277,7 @@ function PresentPresentation() {
                 <div className="present__badge">
                   <Badge
                     color="primary"
-                    badgeContent={
-                      presentationDetail?.totalStudents
-                        ? "0"
-                        : presentationDetail?.totalStudents
-                    }
+                    badgeContent={totalStudents || "0"}
                     anchorOrigin={{
                       vertical: "top",
                       horizontal: "left"

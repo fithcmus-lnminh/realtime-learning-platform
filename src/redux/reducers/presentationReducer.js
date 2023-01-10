@@ -8,7 +8,8 @@ import {
 const initialState = {
   presentations: [],
   presentationDetail: {},
-  presentationGroups: []
+  presentationGroups: [],
+  totalStudents: 0
 };
 
 /* eslint-disable import/prefer-default-export */
@@ -27,10 +28,7 @@ export const presentationReducer = (state = initialState, action = {}) => {
     case SET_TOTAL_STUDENTS:
       return {
         ...state,
-        presentationDetail: {
-          ...state.presentationDetail,
-          totalStudents: action.payload
-        }
+        totalStudents: action.payload
       };
     case GET_PRESENTATION_GROUPS:
       return {
