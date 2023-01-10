@@ -675,31 +675,51 @@ function PresentationTeacher() {
                         )
                         .map((slide) => (
                           <div key={slide.content.id}>
-                            <span style={{ fontWeight: "bold" }}>
+                            <span
+                              style={{
+                                fontWeight: "bold",
+                                color: "#2a518f",
+                                fontSize: "20px"
+                              }}
+                            >
                               {slide.content.question || "Multiple Choice"}
                             </span>
                             {slide.content.options?.map(
                               (opt) =>
-                                opt.upvotes.length > 0 && (
+                                opt.upvotes && (
                                   <div
                                     style={{ marginLeft: "32px" }}
                                     key={opt.id}
                                   >
-                                    {opt.content}
-                                    {opt.upvotes.map((upvote) => (
+                                    <span style={{ fontWeight: "bold" }}>
+                                      {opt.content}
+                                    </span>
+                                    {opt.upvotes.length > 0 ? (
+                                      opt.upvotes.map((upvote) => (
+                                        <div
+                                          key={upvote.id}
+                                          style={{ marginLeft: "32px" }}
+                                        >
+                                          {upvote.userType === "Anonymous"
+                                            ? upvote.userId?.name
+                                            : `${upvote.userId?.firstName} ${upvote.userId?.lastName}`}{" "}
+                                          -{" "}
+                                          {new Date(
+                                            upvote.createdAt
+                                          ).toLocaleString("vi-VN")}
+                                        </div>
+                                      ))
+                                    ) : (
                                       <div
-                                        key={upvote.id}
-                                        style={{ marginLeft: "32px" }}
+                                        style={{
+                                          marginLeft: "32px",
+                                          fontStyle: "italic",
+                                          color: "#ccc"
+                                        }}
                                       >
-                                        {upvote.userType === "Anonymous"
-                                          ? upvote.userId?.name
-                                          : `${upvote.userId?.firstName} ${upvote.userId?.lastName}`}{" "}
-                                        -{" "}
-                                        {new Date(
-                                          upvote.createdAt
-                                        ).toLocaleString("vi-VN")}
+                                        Nobody choose this option.
                                       </div>
-                                    ))}
+                                    )}
                                   </div>
                                 )
                             )}
