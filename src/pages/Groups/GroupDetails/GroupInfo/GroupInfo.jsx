@@ -7,6 +7,7 @@ import { groupSocket } from "../../../../utils/socket";
 import Alert from "../../../../components/Alert";
 import GroupUpdate from "../../GroupUpdate/GroupUpdate";
 import { getGroupUsers } from "../../../../redux/actions/groupAction";
+import "./GroupInfo.scss";
 
 function GroupInfo(prop) {
   const { groupId } = prop;
@@ -37,7 +38,9 @@ function GroupInfo(prop) {
     open: false
   });
 
-  const [messagePresentation, setMessagePresentation] = useState("");
+  const [messagePresentation, setMessagePresentation] = useState(
+    "Alooooooooooooooooooo balfalfkahnfkasglka "
+  );
   const [presentationInfo, setPresentationInfo] = useState({});
 
   const handleCloseAlert = () => {
@@ -123,19 +126,20 @@ function GroupInfo(prop) {
           Object.keys(groupDetail).length > 0 ? (
             <div>
               {messagePresentation && (
-                <Typography
-                  variant="body2"
-                  gutterBottom
-                  sx={{ marginBottom: "12px" }}
-                >
-                  {messagePresentation}.{" "}
-                  <a href={`/play/${presentationInfo?.access_code}`}>
-                    <Typography variant="span" sx={{ fontWeight: 600 }}>
-                      Join now
-                    </Typography>
-                  </a>{" "}
-                  !!!
-                </Typography>
+                <div className="group__notification">
+                  <Typography
+                    variant="body2"
+                    gutterBottom
+                    sx={{ marginBottom: "12px" }}
+                  >
+                    {messagePresentation}.{" "}
+                    <a href={`/play/${presentationInfo?.access_code}`}>
+                      <Typography variant="span" sx={{ fontWeight: 600 }}>
+                        JOIN NOW
+                      </Typography>
+                    </a>
+                  </Typography>
+                </div>
               )}
               <Typography variant="h4" gutterBottom>
                 {groupDetail?.name || ""}
