@@ -69,7 +69,7 @@ const style = {
   borderRadius: 1,
   boxShadow: 24,
   p: 4,
-  maxHeight: "1000px",
+  maxHeight: "750px",
   overflowY: "scroll"
 };
 
