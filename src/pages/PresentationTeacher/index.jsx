@@ -88,6 +88,7 @@ function PresentationTeacher() {
   const [totalStudent, setTotalStudent] = useState(0);
   const [open, setOpenModal] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
+  const [isOpenResultModal, setOpenResultModal] = useState(false);
   const [isOpenRemoveCollabModal, setIsOpenRemoveCollabModal] = useState(false);
   const [inviteCollabMessage, setInviteCollabMessage] = useState({
     success: false,
@@ -628,9 +629,104 @@ function PresentationTeacher() {
                     <GrLineChart className="presentation__result-icon" />
                     <span>This presentation has results</span>
                   </div>
-                  <button type="button" className="presentation__result-button">
+                  <button
+                    type="button"
+                    className="presentation__result-button"
+                    onClick={() => setOpenResultModal(true)}
+                  >
                     View Results
                   </button>
+                  <MUIModal
+                    open={isOpenResultModal}
+                    onClose={() => setOpenResultModal(false)}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                        sx={{
+                          fontWeight: "bold",
+                          mb: 2,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1
+                        }}
+                      >
+                        <GrLineChart size={20} />
+                        Presentation results
+                      </Typography>
+                      <div className="presentation__collaborator">
+                        <Typography id="modal-modal-description" sx={{ mb: 2 }}>
+                          <span>
+                            Results for Multiple Choice slides of{" "}
+                            <span style={{ fontWeight: "bold" }}>
+                              {presentationDetail.title}
+                            </span>{" "}
+                            presentation.
+                          </span>
+                        </Typography>
+                      </div>
+                      {presentationDetail?.slides
+                        ?.filter(
+                          (slide) => slide.slideType === "MultipleChoice"
+                        )
+                        .map((slide) => (
+                          <div key={slide.content.id}>
+                            <span
+                              style={{
+                                fontWeight: "bold",
+                                color: "#2a518f",
+                                fontSize: "20px"
+                              }}
+                            >
+                              {slide.content.question || "Multiple Choice"}
+                            </span>
+                            {slide.content.options?.map(
+                              (opt) =>
+                                opt.upvotes && (
+                                  <div
+                                    style={{ marginLeft: "32px" }}
+                                    key={opt.id}
+                                  >
+                                    <span style={{ fontWeight: "bold" }}>
+                                      {opt.content}
+                                    </span>
+                                    {opt.upvotes.length > 0 ? (
+                                      opt.upvotes.map((upvote) => (
+                                        <div
+                                          key={upvote.id}
+                                          style={{ marginLeft: "32px" }}
+                                        >
+                                          {upvote.userType === "Anonymous"
+                                            ? upvote.userId?.name
+                                            : `${upvote.userId?.firstName} ${upvote.userId?.lastName}`}{" "}
+                                          -{" "}
+                                          {new Date(
+                                            upvote.createdAt
+                                          ).toLocaleString("vi-VN")}
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div
+                                        style={{
+                                          marginLeft: "32px",
+                                          fontStyle: "italic",
+                                          color: "#ccc"
+                                        }}
+                                      >
+                                        Nobody choose this option.
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                            )}
+                          </div>
+                        ))}
+                    </Box>
+                  </MUIModal>
                 </div>
               )}
               <div

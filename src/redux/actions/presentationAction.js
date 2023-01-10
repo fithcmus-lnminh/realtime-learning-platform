@@ -9,6 +9,7 @@ import { isAuthenticated } from "../../utils/isAuthenticated";
 import { toQueryString, toSnake } from "../../utils/normalizer";
 import { socket } from "../../utils/socket";
 import { ApiResposeCodeNumber } from "../../constants/api";
+import { LOGIN_SUCCESS } from "../../constants/userConstants";
 
 const API_URL = process.env.REACT_APP_SERVER_URL;
 
@@ -553,6 +554,12 @@ export const studentJoinPresentationAnonymous =
 
       if (res.code === ApiResposeCodeNumber.Success) {
         localStorage.setItem("accessToken", res.data.token);
+        dispatch({
+          type: LOGIN_SUCCESS,
+          payload: {
+            id: res.data?.anonymousId
+          }
+        });
 
         dispatch(
           studentJoinPresentation(
