@@ -38,9 +38,7 @@ function GroupInfo(prop) {
     open: false
   });
 
-  const [messagePresentation, setMessagePresentation] = useState(
-    "Alooooooooooooooooooo balfalfkahnfkasglka "
-  );
+  const [messagePresentation, setMessagePresentation] = useState("");
   const [presentationInfo, setPresentationInfo] = useState({});
 
   const handleCloseAlert = () => {
