@@ -267,32 +267,13 @@ export const deleteMultipleChoiceSlide =
 
 /* eslint-disable import/prefer-default-export */
 export const updateMultipleChoiceSlideQuestion =
-  (presentationId, slideId, question) => async (dispatch) => {
+  (presentationId, slideId, question) => async () => {
     await $axios.put(
       `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}`,
       {
         question
       }
     );
-
-    const res = await $axios.get(
-      `${API_URL}/api/presentation/${presentationId}`
-    );
-
-    const newSlides = res.data.presentation.slides.map((slide, index) => ({
-      ...slide,
-      active:
-        index ===
-        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
-    }));
-
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      dispatch({
-        type: GET_PRESENTATION_SUCCESS,
-        payload: { ...res.data.presentation, slides: newSlides }
-      });
-    }
   };
 
 /* eslint-disable import/prefer-default-export */
@@ -324,30 +305,11 @@ export const createNewOption =
 
 /* eslint-disable import/prefer-default-export */
 export const updateTitleOption =
-  (presentationId, slideId, optionId, content) => async (dispatch) => {
+  (presentationId, slideId, optionId, content) => async () => {
     await $axios.put(
       `${API_URL}/api/presentation/${presentationId}/multiple-choice/${slideId}/option/${optionId}`,
       { content }
     );
-
-    const res = await $axios.get(
-      `${API_URL}/api/presentation/${presentationId}`
-    );
-
-    const newSlides = res.data.presentation.slides.map((slide, index) => ({
-      ...slide,
-      active:
-        index ===
-        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
-    }));
-
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      dispatch({
-        type: GET_PRESENTATION_SUCCESS,
-        payload: { ...res.data.presentation, slides: newSlides }
-      });
-    }
   };
 
 /* eslint-disable import/prefer-default-export */
@@ -707,122 +669,46 @@ export const createParagraphSlide = (presentationId) => async (dispatch) => {
 
 /* eslint-disable import/prefer-default-export */
 export const updateHeadingHeading =
-  (presentationId, slideId, heading) => async (dispatch) => {
+  (presentationId, slideId, heading) => async () => {
     await $axios.put(
       `${API_URL}/api/presentation/${presentationId}/heading/${slideId}`,
       {
         heading
       }
     );
-
-    const res = await $axios.get(
-      `${API_URL}/api/presentation/${presentationId}`
-    );
-
-    const newSlides = res.data.presentation.slides.map((slide, index) => ({
-      ...slide,
-      active:
-        index ===
-        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
-    }));
-
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      dispatch({
-        type: GET_PRESENTATION_SUCCESS,
-        payload: { ...res.data.presentation, slides: newSlides }
-      });
-    }
   };
 
 /* eslint-disable import/prefer-default-export */
 export const updateSubHeadingHeading =
-  (presentationId, slideId, subheading) => async (dispatch) => {
+  (presentationId, slideId, subheading) => async () => {
     await $axios.put(
       `${API_URL}/api/presentation/${presentationId}/heading/${slideId}`,
       {
         subheading
       }
     );
-
-    const res = await $axios.get(
-      `${API_URL}/api/presentation/${presentationId}`
-    );
-
-    const newSlides = res.data.presentation.slides.map((slide, index) => ({
-      ...slide,
-      active:
-        index ===
-        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
-    }));
-
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      dispatch({
-        type: GET_PRESENTATION_SUCCESS,
-        payload: { ...res.data.presentation, slides: newSlides }
-      });
-    }
   };
 
 /* eslint-disable import/prefer-default-export */
 export const updateHeadingParagraph =
-  (presentationId, slideId, heading) => async (dispatch) => {
+  (presentationId, slideId, heading) => async () => {
     await $axios.put(
       `${API_URL}/api/presentation/${presentationId}/paragraph/${slideId}`,
       {
         heading
       }
     );
-
-    const res = await $axios.get(
-      `${API_URL}/api/presentation/${presentationId}`
-    );
-
-    const newSlides = res.data.presentation.slides.map((slide, index) => ({
-      ...slide,
-      active:
-        index ===
-        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
-    }));
-
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      dispatch({
-        type: GET_PRESENTATION_SUCCESS,
-        payload: { ...res.data.presentation, slides: newSlides }
-      });
-    }
   };
 
 /* eslint-disable import/prefer-default-export */
 export const updateParagraphParagraph =
-  (presentationId, slideId, paragraph) => async (dispatch) => {
+  (presentationId, slideId, paragraph) => async () => {
     await $axios.put(
       `${API_URL}/api/presentation/${presentationId}/paragraph/${slideId}`,
       {
         paragraph
       }
     );
-
-    const res = await $axios.get(
-      `${API_URL}/api/presentation/${presentationId}`
-    );
-
-    const newSlides = res.data.presentation.slides.map((slide, index) => ({
-      ...slide,
-      active:
-        index ===
-        res.data.presentation.slides.findIndex((s) => s.content.id === slideId)
-    }));
-
-    /* eslint-disable prefer-destructuring */
-    if (res.code === ApiResposeCodeNumber.Success) {
-      dispatch({
-        type: GET_PRESENTATION_SUCCESS,
-        payload: { ...res.data.presentation, slides: newSlides }
-      });
-    }
   };
 
 /* eslint-disable import/prefer-default-export */
