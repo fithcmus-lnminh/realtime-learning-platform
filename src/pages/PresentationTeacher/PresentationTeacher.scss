@@ -246,7 +246,13 @@
     border: none;
     border-radius: 4px;
 
-    &:hover {
+    &:disabled {
+      background-color: #ccc;
+      color: #757575;
+      cursor: auto;
+    }
+
+    &:hover:not(:disabled) {
       background-color: #1b3257;
       transition: ease-out 0.3s;
     }

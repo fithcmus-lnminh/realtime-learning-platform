@@ -473,6 +473,7 @@ function PresentationTeacher() {
               <button
                 type="button"
                 className="button__primary"
+                disabled={presentationDetail?.slides?.length <= 0}
                 onClick={presentPresentation}
               >
                 <BsPlayFill /> Present
