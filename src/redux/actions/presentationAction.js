@@ -822,8 +822,6 @@ export const getQuestions = (queryObj) => async () => {
   const query = `?${toQueryString(toSnake(queryObj))}`;
   const res = await $axios.get(`${API_URL}/api/question${query}`);
 
-  console.log("res getQuestions:", res);
-
   if (res.code === ApiResposeCodeNumber.Success) {
     return res.data;
   }

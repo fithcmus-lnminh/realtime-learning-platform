@@ -57,6 +57,8 @@ function QuestionPopover(prop) {
       setQuestions([...data, toCamel(res.question)]);
     });
     socket.on("question-updated", (res) => {
+      getPresentationQuestions();
+
       const questionUpdated = toCamel(res.question);
       if (data.length > 0) {
         const newData = data.map((item) => {
